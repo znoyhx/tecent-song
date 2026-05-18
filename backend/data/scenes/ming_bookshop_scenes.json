@@ -1,0 +1,180 @@
+{
+  "scenes": [
+    {
+      "scene_id": "scene_front_hall",
+      "name": "书坊前厅",
+      "description": "柜台后的灯火被雨气压得发暗，账册边角卷起，空气里还有烧纸后的涩味。",
+      "background_asset": "assets/generated/visuals/scenes/scene_bookshop_front_hall.png",
+      "available_stage": ["intro", "investigation", "reversal", "choice"],
+      "npc_ids": ["npc_owner"],
+      "scene_text": "前厅看似收拾整齐，柜台角落却还压着一页缺口整齐的稿单，旧书箱边露出半枚朱红纸角，你守夜时刻下的更筹刻痕也还在门柱上。",
+      "highlights": [
+        {"text": "缺口整齐的稿单", "hotspot_id": "ledger_desk", "clue_id": "clue_missing_manuscript_list"},
+        {"text": "半枚朱红纸角", "hotspot_id": "old_box", "clue_id": "clue_red_seal"},
+        {"text": "更筹刻痕", "hotspot_id": "apprentice_watch", "clue_id": "clue_apprentice_watch_mark"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "ledger_desk", "label": "查看账册桌", "description": "账册边缘有整齐缺口，像是有人在火起前撕掉一行记录。", "clue_ids": ["clue_missing_manuscript_list"], "required_stage": "intro", "required_clue_ids": [], "repeat_text": "缺口仍整齐，说明它不是火后才坏掉的。"},
+        {"hotspot_id": "old_box", "label": "查看旧书箱", "description": "旧箱未完全烧透，缝隙里夹着带红印的纸角。", "clue_ids": ["clue_red_seal"], "required_stage": "intro", "required_clue_ids": [], "repeat_text": "红印纸角已经收入案卷，它和普通书稿纸色不同。"},
+        {"hotspot_id": "apprentice_watch", "label": "查看门柱刻痕", "description": "你守夜时习惯在门柱内侧刻下更筹，能证明你火起前的位置。", "clue_ids": ["clue_apprentice_watch_mark"], "required_stage": "intro", "required_clue_ids": [], "repeat_text": "刻痕时间与火势扩大前后的脚程对不上，仍可用于自证。"}
+      ]
+    },
+    {
+      "scene_id": "scene_account_room",
+      "name": "账房暗格",
+      "description": "账房窄小，墙角纸灰被雨靴带进来，抽屉锁眼边有新鲜木屑。",
+      "background_asset": "assets/generated/visuals/scenes/scene_account_room.png",
+      "available_stage": ["investigation", "reversal", "choice"],
+      "npc_ids": ["npc_owner"],
+      "scene_text": "账房里有一行被刮去的账目，夹在账册里的订金小票被水汽泡皱，抽屉锁眼边的新木屑像刚被匆忙撬过。",
+      "highlights": [
+        {"text": "被刮去的账目", "hotspot_id": "torn_ledger_line", "clue_id": "clue_ledger_line_erased"},
+        {"text": "订金小票", "hotspot_id": "deposit_receipt", "clue_id": "clue_deposit_receipt"},
+        {"text": "新木屑", "hotspot_id": "locked_inner_drawer", "clue_id": "clue_locked_inner_drawer"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "torn_ledger_line", "label": "辨认刮去账行", "description": "账行并非烧坏，而是被刀背反复刮薄。", "clue_ids": ["clue_ledger_line_erased"], "required_stage": "investigation", "required_clue_ids": ["clue_missing_manuscript_list"], "repeat_text": "账行被刮去的位置正对应缺失稿单附近。"},
+        {"hotspot_id": "deposit_receipt", "label": "查看订金小票", "description": "小票记着顾闻旧稿订金，却没有写正式书名。", "clue_ids": ["clue_deposit_receipt"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "订金小票只写“旧稿一摞”，避开了真正内容。"},
+        {"hotspot_id": "locked_inner_drawer", "label": "检查暗抽屉", "description": "抽屉锁眼旁新木屑很少，却足以说明有人急着开过。", "clue_ids": ["clue_locked_inner_drawer"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "暗抽屉没有更多纸页，只剩被撬开的痕迹。"},
+        {"hotspot_id": "account_ash", "label": "扫开账房纸灰", "description": "纸灰不是从后院吹来，而像在账房里另烧过一小撮。", "clue_ids": ["clue_account_room_ash"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "账房纸灰已经确认，它像是二次清理留下的尾巴。"}
+      ]
+    },
+    {
+      "scene_id": "scene_fire_yard",
+      "name": "书坊后院火场",
+      "description": "雨后的灰烬仍在冒潮气，塌下来的木梁边有一块地面被烧得尤其深。",
+      "background_asset": "assets/generated/visuals/scenes/scene_bookshop_backyard_fire.png",
+      "available_stage": ["intro", "investigation", "reversal", "choice"],
+      "npc_ids": [],
+      "scene_text": "灰烬里翻出一角写着辽东粮册的残纸，地面焦黑却偏离灯油架，旧书箱底部焦黑成圈，救火水桶却几乎没有被挪动。",
+      "highlights": [
+        {"text": "辽东粮册", "hotspot_id": "ash_pile", "clue_id": "clue_burned_page"},
+        {"text": "偏离灯油架", "hotspot_id": "char_mark", "clue_id": "clue_fire_origin_wrong"},
+        {"text": "旧书箱底部焦黑成圈", "hotspot_id": "scorched_box_bottom", "clue_id": "clue_scorched_box_bottom"},
+        {"text": "水桶却几乎没有被挪动", "hotspot_id": "fire_bucket", "clue_id": "clue_fire_bucket_unused"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "ash_pile", "label": "翻看灰烬", "description": "灰烬深处压着一角未完全烧净的残纸。", "clue_ids": ["clue_burned_page"], "required_stage": "intro", "required_clue_ids": [], "repeat_text": "残纸已收起，上面的“辽东粮册”四字仍是最刺眼的证据。"},
+        {"hotspot_id": "char_mark", "label": "查看起火点", "description": "最深焦黑不在灯油架，而在墙根旧箱旁。", "clue_ids": ["clue_fire_origin_wrong"], "required_stage": "intro", "required_clue_ids": [], "repeat_text": "焦痕位置仍说明火先从墙根扑出。"},
+        {"hotspot_id": "scorched_box_bottom", "label": "检查旧箱底部", "description": "箱底烧得更深，像是火先舔住箱底再往外扩。", "clue_ids": ["clue_scorched_box_bottom"], "required_stage": "intro", "required_clue_ids": [], "repeat_text": "箱底焦圈仍支持旧书箱被当作目标。"},
+        {"hotspot_id": "fire_bucket", "label": "查看救火水桶", "description": "水桶摆得太整齐，不像一场真正慌乱的救火。", "clue_ids": ["clue_fire_bucket_unused"], "required_stage": "intro", "required_clue_ids": [], "repeat_text": "水桶几乎没动过，说明火势扩大前有人犹豫或故意拖延。"}
+      ]
+    },
+    {
+      "scene_id": "scene_lamp_shelf",
+      "name": "灯油架旁",
+      "description": "灯油架半倒不倒，雨水在地上冲出细线，油味却沉在墙根附近。",
+      "background_asset": "assets/generated/visuals/scenes/scene_lamp_shelf.png",
+      "available_stage": ["investigation", "reversal"],
+      "npc_ids": [],
+      "scene_text": "灯油架边残留着不合时宜的火油味，雨水脚印从后门方向断断续续伸来，灯架脚下的拖痕却朝着旧书箱。",
+      "highlights": [
+        {"text": "不合时宜的火油味", "hotspot_id": "oil_jar", "clue_id": "clue_oil_smell"},
+        {"text": "雨水脚印", "hotspot_id": "rain_tracks", "clue_id": "clue_rainwater_tracks"},
+        {"text": "拖痕", "hotspot_id": "moved_lamp_stand", "clue_id": "clue_fire_origin_wrong"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "oil_jar", "label": "闻辨油罐", "description": "油味重得不像日常照明，更像被泼洒过。", "clue_ids": ["clue_oil_smell"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "火油味已经确认，它不该只留在墙根。"},
+        {"hotspot_id": "rain_tracks", "label": "辨认雨水脚印", "description": "雨水脚印从后门方向进来，又在旧箱旁变乱。", "clue_ids": ["clue_rainwater_tracks"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "雨水脚印已经记录，能帮助你自证并排查后门路线。"},
+        {"hotspot_id": "moved_lamp_stand", "label": "查看灯架拖痕", "description": "灯架像被事后推到更合理的位置。", "clue_ids": ["clue_fire_origin_wrong"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "灯架拖痕仍指向起火点被伪装。"}
+      ]
+    },
+    {
+      "scene_id": "scene_engraving_room",
+      "name": "烧毁的刻版间",
+      "description": "木屑、残墨和刻刀混在一起，后门下沿带着刚被雨泥蹭过的痕迹。",
+      "background_asset": "assets/generated/visuals/scenes/scene_burned_printing_room.png",
+      "available_stage": ["investigation", "reversal", "choice"],
+      "npc_ids": ["npc_worker"],
+      "scene_text": "刻版间的后门门闩松得厉害，替换过的刻版边角还留着新削痕，阿沈守在一旁，袖口沾着旧墨没洗净。",
+      "highlights": [
+        {"text": "后门门闩松得厉害", "hotspot_id": "back_door", "clue_id": "clue_backdoor_latch"},
+        {"text": "替换过的刻版", "hotspot_id": "carved_board", "clue_id": "clue_carved_board_replaced"},
+        {"text": "旧墨没洗净", "hotspot_id": "ink_rag", "clue_id": "clue_ink_on_sleeve"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "back_door", "label": "查看后门", "description": "后门门闩有新划痕，说明夜里开合过。", "clue_ids": ["clue_backdoor_latch"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "门闩的新划痕仍能证明后门并非一直关死。"},
+        {"hotspot_id": "carved_board", "label": "比对刻版边角", "description": "有一块刻版边角颜色太新，像临时换过。", "clue_ids": ["clue_carved_board_replaced"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "替换刻版已记录，它说明有人试图改掉书坊昨夜的刻印痕迹。"},
+        {"hotspot_id": "ink_rag", "label": "查看残墨布", "description": "残墨布上的墨色与阿沈袖口相近。", "clue_ids": ["clue_ink_on_sleeve"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "残墨布和袖口旧墨已经互相印证。"}
+      ]
+    },
+    {
+      "scene_id": "scene_back_gate",
+      "name": "后门雨泥处",
+      "description": "后门外雨泥被踩得发亮，墙根挂着一根极细的纸线。",
+      "background_asset": "assets/generated/visuals/scenes/scene_back_gate.png",
+      "available_stage": ["investigation", "reversal", "choice"],
+      "npc_ids": ["npc_worker"],
+      "scene_text": "后门门槛下有一串外出又折返的泥印，门闩内侧磨痕比外侧新，墙根细纸线像从装订残页上扯下来的。",
+      "highlights": [
+        {"text": "外出又折返的泥印", "hotspot_id": "mud_scrape", "clue_id": "clue_worker_back_gate_trip"},
+        {"text": "门闩内侧磨痕", "hotspot_id": "gate_latch", "clue_id": "clue_backdoor_latch"},
+        {"text": "细纸线", "hotspot_id": "hidden_thread", "clue_id": "clue_hidden_page_thread"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "mud_scrape", "label": "查看雨泥脚印", "description": "脚印从刻版间出去又折回，步幅急促。", "clue_ids": ["clue_worker_back_gate_trip"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "雨泥脚印已经记录，路线与阿沈的说法对不上。"},
+        {"hotspot_id": "gate_latch", "label": "检查门闩内侧", "description": "内侧磨痕新，说明开门者熟悉书坊内部。", "clue_ids": ["clue_backdoor_latch"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "门闩内侧磨痕仍指向书坊内部有人配合。"},
+        {"hotspot_id": "hidden_thread", "label": "拾起装订纸线", "description": "纸线细而韧，不像普通账册线，像从夹页上扯落。", "clue_ids": ["clue_hidden_page_thread"], "required_stage": "investigation", "required_clue_ids": [], "repeat_text": "装订纸线已收起，它可能属于被夹带的残页。"}
+      ]
+    },
+    {
+      "scene_id": "scene_rain_alley",
+      "name": "雨巷",
+      "description": "巷口行人稀少，雨线斜斜地打在墙上，顾闻在暗处来回踱步。",
+      "background_asset": "assets/generated/visuals/scenes/scene_rain_alley.png",
+      "available_stage": ["reversal", "choice"],
+      "npc_ids": ["npc_scholar"],
+      "scene_text": "巷口墙上新贴的搜检告示被雨水洇开，顾闻衣摆沾着城门方向的黄泥，你也忽然想起火起前曾有一名晚来客在门外避雨。",
+      "highlights": [
+        {"text": "搜检告示", "hotspot_id": "search_notice", "clue_id": "clue_city_gate_search"},
+        {"text": "黄泥", "hotspot_id": "muddy_hem", "clue_id": "clue_scholar_muddy_hem"},
+        {"text": "晚来客", "hotspot_id": "late_visitor_memory", "clue_id": "clue_memory_late_visitor"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "search_notice", "label": "查看搜检告示", "description": "告示写明私带文书从重拿问。", "clue_ids": ["clue_city_gate_search"], "required_stage": "reversal", "required_clue_ids": [], "repeat_text": "告示已记录，城门搜检与书坊封锁显然同时收紧。"},
+        {"hotspot_id": "muddy_hem", "label": "观察顾闻衣摆", "description": "顾闻衣摆的黄泥更像城门外坡道，而非书坊后院。", "clue_ids": ["clue_scholar_muddy_hem"], "required_stage": "reversal", "required_clue_ids": [], "repeat_text": "衣摆黄泥仍能说明顾闻来回奔走，而非一直藏在书坊。"},
+        {"hotspot_id": "late_visitor_memory", "label": "回想晚来客", "description": "火起前一晚，有人在门外避雨却不进前厅。", "clue_ids": ["clue_memory_late_visitor"], "required_stage": "reversal", "required_clue_ids": [], "repeat_text": "晚来客的影子仍模糊，但足够说明火前已有外部压力。"}
+      ]
+    },
+    {
+      "scene_id": "scene_city_gate",
+      "name": "城门搜检口",
+      "description": "城门未开，门洞下的火把照着湿漉漉的告示，守门人对纸包和书箱格外警惕。",
+      "background_asset": "assets/generated/visuals/scenes/scene_city_gate.png",
+      "available_stage": ["reversal", "choice"],
+      "npc_ids": ["npc_scholar"],
+      "scene_text": "城门处又贴出二次搜检告示，告示里有一个粮册术语写得过于准确，顾闻怀中诗稿外皮的折角也与残页装订纸线相合。",
+      "highlights": [
+        {"text": "二次搜检告示", "hotspot_id": "second_notice", "clue_id": "clue_city_gate_second_notice"},
+        {"text": "粮册术语", "hotspot_id": "grain_term", "clue_id": "clue_grain_term_mismatch"},
+        {"text": "诗稿外皮", "hotspot_id": "outer_wrapper", "clue_id": "clue_scholar_outer_wrapper"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "second_notice", "label": "查看二次告示", "description": "二次告示比雨巷旧告示多了“抄录”二字。", "clue_ids": ["clue_city_gate_second_notice"], "required_stage": "reversal", "required_clue_ids": ["clue_city_gate_search"], "repeat_text": "二次告示已经记录，它让封口令的范围更清楚。"},
+        {"hotspot_id": "grain_term", "label": "辨认粮册术语", "description": "告示里出现了不该由普通失火案触发的粮册用语。", "clue_ids": ["clue_grain_term_mismatch"], "required_stage": "reversal", "required_clue_ids": ["clue_burned_page"], "repeat_text": "粮册术语已记录，证明官面知道被烧的不只是诗稿。"},
+        {"hotspot_id": "outer_wrapper", "label": "查看诗稿外皮", "description": "顾闻外皮折角与装订纸线相合，说明诗稿曾包过另一份文书。", "clue_ids": ["clue_scholar_outer_wrapper"], "required_stage": "reversal", "required_clue_ids": [], "repeat_text": "诗稿外皮已记录，它是顾闻护证动机的关键。"}
+      ]
+    },
+    {
+      "scene_id": "scene_interrogation_room",
+      "name": "锦衣卫临时问话处",
+      "description": "门口挂着湿透的封条，案上铺着未干的墨迹，陆峥的手始终压着一叠薄纸。",
+      "background_asset": "assets/generated/visuals/scenes/scene_jinyiwei_interrogation.png",
+      "available_stage": ["reversal", "choice", "ending"],
+      "npc_ids": ["npc_jinyiwei"],
+      "scene_text": "你看不清案上纸张的全貌，只看见尚未盖完印的封条、写着查火却不问火因的命令旁注、一页临时问话记录和半张搜检名单。",
+      "highlights": [
+        {"text": "尚未盖完印的封条", "hotspot_id": "sealed_desk", "clue_id": "clue_jinyiwei_gag_order"},
+        {"text": "不问火因", "hotspot_id": "order_conflict_note", "clue_id": "clue_lu_order_conflict"},
+        {"text": "临时问话记录", "hotspot_id": "temp_record", "clue_id": "clue_temp_interrogation_record"},
+        {"text": "搜检名单", "hotspot_id": "search_list", "clue_id": "clue_lu_search_list"}
+      ],
+      "hotspots": [
+        {"hotspot_id": "sealed_desk", "label": "观察封条", "description": "封条未盖完印，却已经写明不得让残页离场。", "clue_ids": ["clue_jinyiwei_gag_order", "clue_gag_order_wording"], "required_stage": "reversal", "required_clue_ids": [], "repeat_text": "封条措辞已经记录，它不是普通查火文书。"},
+        {"hotspot_id": "order_conflict_note", "label": "查看命令旁注", "description": "旁注说封锁书坊，却没有半句追查火因。", "clue_ids": ["clue_lu_order_conflict"], "required_stage": "reversal", "required_clue_ids": [], "repeat_text": "命令旁注仍在提醒你：陆峥的任务不在火因。"},
+        {"hotspot_id": "temp_record", "label": "扫一眼问话记录", "description": "记录里先问残页去向，后问人物姓名，火势反倒排在末尾。", "clue_ids": ["clue_temp_interrogation_record"], "required_stage": "reversal", "required_clue_ids": ["clue_jinyiwei_gag_order"], "repeat_text": "问话记录已记录，提问顺序暴露出官面真正关心的东西。"},
+        {"hotspot_id": "search_list", "label": "辨认搜检名单", "description": "名单上圈出的不是纵火嫌疑，而是可接触旧稿和城门的人。", "clue_ids": ["clue_lu_search_list"], "required_stage": "reversal", "required_clue_ids": [], "repeat_text": "搜检名单已记录，它能证明陆峥只被要求截人和截纸。"}
+      ]
+    }
+  ]
+}

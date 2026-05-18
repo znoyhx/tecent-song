@@ -1,0 +1,419 @@
+{
+  "event_id": "ming_bookshop_fire",
+  "dynasty_id": "ming",
+  "title": "书坊焚稿案",
+  "surface_event": "雨夜里书坊后院失火，未刊诗稿、旧书箱与半册账页一并烧毁，玩家作为守夜学徒被卷入失职与私藏残页的嫌疑。",
+  "hidden_truth": "火不是偶然，真正被抹去的是夹带在诗稿中的辽东粮册抄录；书坊众人各自隐瞒一段动作，陆峥奉命封锁却未必知道完整上游动机。",
+  "stages": ["intro", "investigation", "reversal", "choice", "ending"],
+  "scene_ids": [
+    "scene_front_hall",
+    "scene_account_room",
+    "scene_fire_yard",
+    "scene_lamp_shelf",
+    "scene_engraving_room",
+    "scene_back_gate",
+    "scene_rain_alley",
+    "scene_city_gate",
+    "scene_interrogation_room"
+  ],
+  "npc_ids": ["npc_owner", "npc_worker", "npc_scholar", "npc_jinyiwei"],
+  "required_clue_ids": [
+    "clue_burned_page",
+    "clue_red_seal",
+    "clue_poem_hidden_copy",
+    "clue_jinyiwei_gag_order",
+    "clue_gag_order_wording"
+  ],
+  "ending_rule_ids": [
+    "ending_survival",
+    "ending_order",
+    "ending_truth",
+    "ending_tragedy",
+    "ending_hidden"
+  ],
+  "chapter_sections": [
+    {
+      "section_id": "section_01_rain_fire",
+      "stage": "intro",
+      "title": "雨夜火起",
+      "trigger_conditions": ["新建明代书坊学徒会话"],
+      "scene_id": "scene_front_hall",
+      "npc_ids": ["npc_owner"],
+      "hotspot_ids": ["ledger_desk", "old_box", "apprentice_watch"],
+      "clue_ids": ["clue_missing_manuscript_list", "clue_red_seal", "clue_apprentice_watch_mark"],
+      "next_section_ids": ["section_02_first_fire_yard"],
+      "goal": "在许掌柜催促和陆峥封门前找到第一处异常。",
+      "display_text": "雨水从檐角坠下，前厅灯火被烟气压得昏黄。你作为守夜学徒被推到众人面前，必须先证明自己不是放火或私藏残页的人。"
+    },
+    {
+      "section_id": "section_02_first_fire_yard",
+      "stage": "intro",
+      "title": "后院第一眼",
+      "trigger_conditions": ["进入后院火场"],
+      "scene_id": "scene_fire_yard",
+      "npc_ids": [],
+      "hotspot_ids": ["ash_pile", "char_mark", "scorched_box_bottom", "fire_bucket"],
+      "clue_ids": ["clue_burned_page", "clue_fire_origin_wrong", "clue_scorched_box_bottom", "clue_fire_bucket_unused"],
+      "next_section_ids": ["section_03_memory_before_fire"],
+      "goal": "证明火势不是普通灯油走水。",
+      "display_text": "灰烬未冷，纸灰贴在湿泥上。火起点、旧书箱和未动的水桶共同把你从普通失火的说法里拽出来。"
+    },
+    {
+      "section_id": "section_03_memory_before_fire",
+      "stage": "investigation",
+      "title": "火前回忆",
+      "trigger_conditions": ["发现任一 intro 异常线索"],
+      "scene_id": "scene_account_room",
+      "npc_ids": ["npc_owner"],
+      "hotspot_ids": ["torn_ledger_line", "deposit_receipt", "locked_inner_drawer"],
+      "clue_ids": ["clue_ledger_line_erased", "clue_deposit_receipt", "clue_locked_inner_drawer"],
+      "next_section_ids": ["section_04_self_clear"],
+      "goal": "回忆案发前书坊账房的异常动作。",
+      "display_text": "火起前一晚，许掌柜对某批旧稿异常紧张，账房里的订金、抽屉和被刮去的一行账目开始显得不再寻常。"
+    },
+    {
+      "section_id": "section_04_self_clear",
+      "stage": "investigation",
+      "title": "自证脱困",
+      "trigger_conditions": ["获得守夜刻痕、未动水桶和火起点异常"],
+      "scene_id": "scene_lamp_shelf",
+      "npc_ids": [],
+      "hotspot_ids": ["oil_jar", "rain_tracks", "moved_lamp_stand"],
+      "clue_ids": ["clue_oil_smell", "clue_rainwater_tracks", "clue_fire_origin_wrong"],
+      "next_section_ids": ["section_05_open_investigation"],
+      "goal": "以物证说明你不是主谋，争取继续调查资格。",
+      "display_text": "你不能命令官差，只能把火油味、雨水脚印与自己的守夜痕迹摆在一起，让陆峥暂时没有理由立刻拿你。"
+    },
+    {
+      "section_id": "section_05_open_investigation",
+      "stage": "investigation",
+      "title": "开放调查",
+      "trigger_conditions": ["进入 investigation"],
+      "scene_id": "scene_engraving_room",
+      "npc_ids": ["npc_worker"],
+      "hotspot_ids": ["back_door", "carved_board", "ink_rag"],
+      "clue_ids": ["clue_backdoor_latch", "clue_carved_board_replaced", "clue_ink_on_sleeve"],
+      "next_section_ids": ["section_06_worker_pressure", "section_07_owner_lie"],
+      "goal": "盘查刻版间和后门，找出谁在三更后动过旧稿。",
+      "display_text": "刻刀、木屑、残墨和后门泥痕把调查推向阿沈。他的沉默不等于主谋，却足以证明昨夜有人进出。"
+    },
+    {
+      "section_id": "section_06_worker_pressure",
+      "stage": "investigation",
+      "title": "阿沈证词裂缝",
+      "trigger_conditions": ["发现阿沈矛盾证言或后门痕迹"],
+      "scene_id": "scene_back_gate",
+      "npc_ids": ["npc_worker"],
+      "hotspot_ids": ["mud_scrape", "gate_latch", "hidden_thread"],
+      "clue_ids": ["clue_worker_back_gate_trip", "clue_backdoor_latch", "clue_hidden_page_thread"],
+      "next_section_ids": ["section_08_scholar_returns"],
+      "goal": "逼出三更搬箱的事实，但不让阿沈直接说出完整真相。",
+      "display_text": "后门外的泥水比屋内更诚实。阿沈终于承认自己听见过‘那箱东西不能留到天亮’，但仍不敢说是谁在催。"
+    },
+    {
+      "section_id": "section_07_owner_lie",
+      "stage": "investigation",
+      "title": "掌柜自保谎言",
+      "trigger_conditions": ["发现账房线索并询问许掌柜"],
+      "scene_id": "scene_account_room",
+      "npc_ids": ["npc_owner"],
+      "hotspot_ids": ["torn_ledger_line", "account_ash", "deposit_receipt"],
+      "clue_ids": ["clue_owner_moved_box", "clue_account_room_ash", "clue_deposit_receipt"],
+      "next_section_ids": ["section_08_scholar_returns"],
+      "goal": "确认许掌柜提前清理证据，但不把他简单当作唯一主谋。",
+      "display_text": "许掌柜想保住书坊，也想保住自己。他的谎言被账页和纸灰击破，却仍把真正命令链挡在门外。"
+    },
+    {
+      "section_id": "section_08_scholar_returns",
+      "stage": "reversal",
+      "title": "顾闻冒雨归来",
+      "trigger_conditions": ["关键线索数达到阈值或火灾人为组合成立"],
+      "scene_id": "scene_rain_alley",
+      "npc_ids": ["npc_scholar"],
+      "hotspot_ids": ["search_notice", "muddy_hem", "late_visitor_memory"],
+      "clue_ids": ["clue_city_gate_search", "clue_scholar_muddy_hem", "clue_memory_late_visitor"],
+      "next_section_ids": ["section_09_first_reversal"],
+      "goal": "弄清顾闻为何冒雨回来找稿，而不是单纯纵火。",
+      "display_text": "顾闻像嫌疑人，却更像被火逼回来的送证人。雨巷里的搜检告示提醒你：这桩案子已越过书坊门槛。"
+    },
+    {
+      "section_id": "section_09_first_reversal",
+      "stage": "reversal",
+      "title": "第一反转：烧的不是诗稿",
+      "trigger_conditions": ["完成粮册相关组合或发现诗稿夹带抄录"],
+      "scene_id": "scene_city_gate",
+      "npc_ids": ["npc_scholar"],
+      "hotspot_ids": ["second_notice", "grain_term", "outer_wrapper"],
+      "clue_ids": ["clue_city_gate_second_notice", "clue_grain_term_mismatch", "clue_scholar_outer_wrapper"],
+      "next_section_ids": ["section_10_lu_boundary"],
+      "goal": "把残页、红印和诗稿外皮拼成粮册抄录证据链。",
+      "display_text": "城门搜检的措辞、粮册术语和诗稿外皮互相咬合，第一次证明被烧毁的目标不是几卷诗文。"
+    },
+    {
+      "section_id": "section_10_lu_boundary",
+      "stage": "reversal",
+      "title": "陆峥的命令边界",
+      "trigger_conditions": ["进入临时问话处"],
+      "scene_id": "scene_interrogation_room",
+      "npc_ids": ["npc_jinyiwei"],
+      "hotspot_ids": ["sealed_desk", "order_conflict_note", "temp_record", "search_list"],
+      "clue_ids": ["clue_jinyiwei_gag_order", "clue_lu_order_conflict", "clue_temp_interrogation_record", "clue_lu_search_list"],
+      "next_section_ids": ["section_11_second_reversal"],
+      "goal": "证明陆峥执行封口令，但未必知道完整上游动机。",
+      "display_text": "陆峥的冷硬不是全知。他奉命盯残页、不问火因，这道矛盾把官面压力也切成了上下两层。"
+    },
+    {
+      "section_id": "section_11_second_reversal",
+      "stage": "reversal",
+      "title": "第二反转：封口令背后另有链路",
+      "trigger_conditions": ["发现封口令措辞、搜检名单和临时问话记录"],
+      "scene_id": "scene_interrogation_room",
+      "npc_ids": ["npc_jinyiwei"],
+      "hotspot_ids": ["sealed_desk", "temp_record", "search_list"],
+      "clue_ids": ["clue_gag_order_wording", "clue_temp_interrogation_record", "clue_lu_search_list"],
+      "next_section_ids": ["section_12_deductions"],
+      "goal": "把封口令从单点命令扩展成城门、书坊、问话处之间的链路。",
+      "display_text": "封口令不是一句吓唬人的话，而是一张网。网眼落在书坊、城门和每一页残纸上。"
+    },
+    {
+      "section_id": "section_12_deductions",
+      "stage": "choice",
+      "title": "思维疑团",
+      "trigger_conditions": ["完成焚毁目标证据链与封口链路证据链后进入抉择前推理"],
+      "scene_id": "scene_front_hall",
+      "npc_ids": ["npc_owner", "npc_worker"],
+      "hotspot_ids": ["ledger_desk", "old_box", "apprentice_watch"],
+      "clue_ids": ["clue_fire_origin_wrong", "clue_poem_hidden_copy", "clue_jinyiwei_gag_order"],
+      "next_section_ids": ["section_13_final_accusation"],
+      "goal": "连续确认火因、焚毁目标、顾闻动机、阿沈谎言、许掌柜自保与陆峥命令矛盾。",
+      "display_text": "案卷右侧的线索不再只是收藏品。每一道疑团都要求你拿出对应证据，才能把真相往前推。"
+    },
+    {
+      "section_id": "section_13_final_accusation",
+      "stage": "choice",
+      "title": "最终指证",
+      "trigger_conditions": ["已确认烧毁目标不是普通诗稿，且确认封口令背后另有链路"],
+      "scene_id": "scene_interrogation_room",
+      "npc_ids": ["npc_jinyiwei"],
+      "hotspot_ids": ["sealed_desk", "order_conflict_note"],
+      "clue_ids": ["clue_gag_order_wording", "clue_lu_order_conflict"],
+      "next_section_ids": ["section_14_final_choice"],
+      "goal": "不追求单一真凶伏法，而是还原事件链并指出每个人的边界。",
+      "display_text": "你可以指出：火起点被移动，诗稿只是外壳，顾闻不是单纯纵火者，阿沈说谎但不是主谋，许掌柜自保造成证据断裂，陆峥的命令只遮住一半真相。"
+    },
+    {
+      "section_id": "section_14_final_choice",
+      "stage": "choice",
+      "title": "历史压力下的抉择",
+      "trigger_conditions": ["焚毁目标与封口链路均成立后进入 choice 阶段"],
+      "scene_id": "scene_front_hall",
+      "npc_ids": ["npc_owner", "npc_worker", "npc_scholar", "npc_jinyiwei"],
+      "hotspot_ids": ["ledger_desk", "old_box"],
+      "clue_ids": ["clue_burned_page", "clue_jinyiwei_gag_order", "clue_city_gate_second_notice"],
+      "next_section_ids": ["section_15_history_echo"],
+      "goal": "在保命、交官、护证、逼证、反查之间选择代价。",
+      "display_text": "你不能改变时代，只能选择把哪一页纸留给明天，把哪一个人推到风口。"
+    },
+    {
+      "section_id": "section_15_history_echo",
+      "stage": "ending",
+      "title": "历史回声",
+      "trigger_conditions": ["后端结局规则判定完成"],
+      "scene_id": "scene_interrogation_room",
+      "npc_ids": ["npc_owner", "npc_worker", "npc_scholar", "npc_jinyiwei"],
+      "hotspot_ids": [],
+      "clue_ids": [],
+      "next_section_ids": [],
+      "goal": "回收玩家选择、NPC 去向与关键证据的时代回声。",
+      "display_text": "每个结局都引用你实际找到的证据和选择，让书坊火案不止停在一句结案词里。"
+    }
+  ],
+  "choices": [
+    {
+      "choice_id": "choice_destroy_evidence",
+      "title": "焚尽余稿，先保书坊",
+      "description": "顺着许掌柜的意思，把残页、抄录痕迹和账房灰烬一并处理干净，换取暂时平安。",
+      "effects": {
+        "scores": {"survival": 4},
+        "flags": ["burned_remaining_pages"],
+        "risk": 0
+      }
+    },
+    {
+      "choice_id": "choice_give_to_lu",
+      "title": "将残页交给陆峥",
+      "description": "相信秩序比私藏更稳妥，把残页和封口令矛盾一并交到锦衣卫手里。",
+      "effects": {
+        "scores": {"order": 4},
+        "flags": ["surrendered_to_lu"],
+        "risk": 1,
+        "trust": {"npc_jinyiwei": 1}
+      }
+    },
+    {
+      "choice_id": "choice_help_scholar",
+      "title": "暗助顾闻护出残页",
+      "description": "保住抄录与残页，赌一次真相能越过今夜的城门搜检。",
+      "effects": {
+        "scores": {"truth": 3, "survival": 1},
+        "flags": ["preserved_evidence"],
+        "risk": 2,
+        "trust": {"npc_scholar": 1, "npc_worker": 1}
+      }
+    },
+    {
+      "choice_id": "choice_force_worker",
+      "title": "逼阿沈作证换路",
+      "description": "强行推出最脆弱的人顶在前面，希望能换得一条脱身路。",
+      "effects": {
+        "scores": {"sacrifice": 2},
+        "flags": ["forced_testimony"],
+        "risk": 6,
+        "trust": {"npc_worker": -2, "npc_scholar": -1}
+      }
+    },
+    {
+      "choice_id": "choice_reverse_trace",
+      "title": "顺着封口令反查上游",
+      "description": "不急着交卷，而是沿着封口令、城门搜检与残页来源反向追查。",
+      "effects": {
+        "scores": {"truth": 2, "order": 1},
+        "flags": ["preserved_evidence", "attempted_reverse_trace"],
+        "risk": 1,
+        "trust": {"npc_jinyiwei": 1, "npc_scholar": 1}
+      }
+    }
+  ],
+  "combos": [
+    {
+      "combo_id": "combo_fire_is_arson",
+      "required_clue_ids": ["clue_fire_origin_wrong", "clue_oil_smell", "clue_backdoor_latch"],
+      "result_title": "火灾并非意外",
+      "result_text": "火起位置、火油气味与门闩异常说明，这场火更像是人为安排。",
+      "effects": {"truth": 2, "risk": 1, "flags": ["fire_is_arson"]}
+    },
+    {
+      "combo_id": "combo_apprentice_self_clear",
+      "required_clue_ids": ["clue_apprentice_watch_mark", "clue_fire_bucket_unused", "clue_rainwater_tracks"],
+      "result_title": "学徒暂时自证",
+      "result_text": "守夜刻痕、未动水桶与雨水脚印说明你在火起前后没有搬箱纵火的完整机会。",
+      "effects": {"survival": 1, "flags": ["apprentice_self_cleared"]}
+    },
+    {
+      "combo_id": "combo_owner_cleanup",
+      "required_clue_ids": ["clue_missing_manuscript_list", "clue_ledger_line_erased", "clue_owner_moved_box"],
+      "result_title": "掌柜提前清理痕迹",
+      "result_text": "缺失稿单、被刮账行和提前清箱拼在一起，许掌柜至少比火更早知道有东西不能留。",
+      "effects": {"truth": 1, "survival": 1, "flags": ["owner_cleanup_confirmed"]}
+    },
+    {
+      "combo_id": "combo_worker_route",
+      "required_clue_ids": ["clue_worker_lie", "clue_worker_back_gate_trip", "clue_ink_on_sleeve"],
+      "result_title": "阿沈夜里走过后门",
+      "result_text": "阿沈的证言、后门泥痕和袖口旧墨说明他接触过旧稿，却更像被迫搬动而非主使。",
+      "effects": {"truth": 1, "risk": 1, "flags": ["worker_route_confirmed"]}
+    },
+    {
+      "combo_id": "combo_burned_text_is_ledger",
+      "required_clue_ids": ["clue_burned_page", "clue_red_seal", "clue_poem_hidden_copy"],
+      "result_title": "焚毁的不是普通诗稿",
+      "result_text": "残页、官印纸角与夹带抄录共同指向：被烧掉的是能牵出粮册流向的文书。",
+      "effects": {"truth": 2, "flags": ["ledger_truth_exposed"]}
+    },
+    {
+      "combo_id": "combo_scholar_not_arson",
+      "required_clue_ids": ["clue_scholar_searches_manuscript", "clue_scholar_muddy_hem", "clue_scholar_outer_wrapper"],
+      "result_title": "顾闻不是单纯纵火者",
+      "result_text": "顾闻回来的路线、湿泥和诗稿外皮说明他更急于找回证据，而不是趁乱毁证。",
+      "effects": {"truth": 1, "flags": ["scholar_not_simple_arson"], "trust": {"npc_scholar": 1}}
+    },
+    {
+      "combo_id": "combo_lu_partial_knowledge",
+      "required_clue_ids": ["clue_jinyiwei_gag_order", "clue_lu_order_conflict", "clue_lu_search_list"],
+      "result_title": "陆峥并非全知",
+      "result_text": "封口令、命令矛盾和搜检名单显示陆峥只被要求截住残页，并未被告知完整粮册流向。",
+      "effects": {"truth": 1, "order": 1, "flags": ["lu_partial_knowledge"], "trust": {"npc_jinyiwei": 1}}
+    },
+    {
+      "combo_id": "combo_hidden_chain",
+      "required_clue_ids": ["clue_gag_order_wording", "clue_temp_interrogation_record", "clue_city_gate_second_notice"],
+      "result_title": "封口令背后另有链路",
+      "result_text": "封口令措辞、问话记录与城门二次告示拼在一起，说明真正要截断的是文书流转链。",
+      "effects": {"truth": 2, "order": 1, "flags": ["found_hidden_chain"]}
+    }
+  ],
+  "deductions": [
+    {
+      "deduction_id": "deduce_fire_not_accident",
+      "question": "火是意外走水吗？",
+      "required_clue_ids": ["clue_fire_origin_wrong", "clue_oil_smell"],
+      "correct_clue_ids": ["clue_fire_origin_wrong", "clue_oil_smell"],
+      "wrong_feedback": "只看灯油架还不够，必须同时证明起火点被移动过。",
+      "success_text": "火起点与火油气味互相印证，走水说法不能成立。",
+      "effects": {"add_flags": ["deduced_fire_not_accident"], "score_delta": {"truth": 1}, "risk_delta": 0}
+    },
+    {
+      "deduction_id": "deduce_apprentice_not_mastermind",
+      "question": "玩家为什么暂时不是主谋？",
+      "required_clue_ids": ["clue_apprentice_watch_mark", "clue_fire_bucket_unused", "clue_rainwater_tracks"],
+      "correct_clue_ids": ["clue_apprentice_watch_mark", "clue_fire_bucket_unused", "clue_rainwater_tracks"],
+      "wrong_feedback": "单凭口供无法自证，必须用守夜刻痕和现场行动痕迹互相支撑。",
+      "success_text": "守夜位置、未动水桶与外来脚印说明你更像被卷入者，而非完整布局者。",
+      "effects": {"add_flags": ["deduced_apprentice_not_mastermind"], "score_delta": {"survival": 1}, "risk_delta": 0}
+    },
+    {
+      "deduction_id": "deduce_burned_not_poem",
+      "question": "被烧毁的只是诗稿吗？",
+      "required_clue_ids": ["clue_burned_page", "clue_red_seal", "clue_grain_term_mismatch"],
+      "correct_clue_ids": ["clue_burned_page", "clue_red_seal", "clue_grain_term_mismatch"],
+      "wrong_feedback": "诗稿外皮会误导判断，必须找到粮册字样和官式纸角。",
+      "success_text": "残页、红印和粮册术语共同证明，被烧毁的是夹在诗稿里的账册抄录。",
+      "effects": {"add_flags": ["deduced_burned_not_poem"], "score_delta": {"truth": 1}, "risk_delta": 1}
+    },
+    {
+      "deduction_id": "deduce_owner_lie",
+      "question": "许掌柜的谎言被什么击破？",
+      "required_clue_ids": ["clue_missing_manuscript_list", "clue_ledger_line_erased", "clue_owner_moved_box"],
+      "correct_clue_ids": ["clue_missing_manuscript_list", "clue_ledger_line_erased", "clue_owner_moved_box"],
+      "wrong_feedback": "许掌柜的破绽不在一句话，而在账册和旧箱被提前处理。",
+      "success_text": "账册缺口、刮去账行和提前清箱足以证明他在火前已动过手脚。",
+      "effects": {"add_flags": ["deduced_owner_lie"], "score_delta": {"truth": 1}, "risk_delta": 0}
+    },
+    {
+      "deduction_id": "deduce_worker_not_mastermind",
+      "question": "阿沈说谎但为什么不是主谋？",
+      "required_clue_ids": ["clue_worker_lie", "clue_worker_back_gate_trip", "clue_box_before_dawn"],
+      "correct_clue_ids": ["clue_worker_lie", "clue_worker_back_gate_trip", "clue_box_before_dawn"],
+      "wrong_feedback": "不能把最害怕的人直接当成主谋，要看他说谎保护的是哪一段动作。",
+      "success_text": "阿沈隐瞒三更后搬箱和后门路线，但他的证词更像受压后的参与痕迹。",
+      "effects": {"add_flags": ["deduced_worker_not_mastermind"], "score_delta": {"truth": 1}, "risk_delta": 0}
+    },
+    {
+      "deduction_id": "deduce_scholar_motive",
+      "question": "顾闻为何冒雨回到书坊？",
+      "required_clue_ids": ["clue_scholar_searches_manuscript", "clue_scholar_outer_wrapper", "clue_poem_hidden_copy"],
+      "correct_clue_ids": ["clue_scholar_searches_manuscript", "clue_scholar_outer_wrapper", "clue_poem_hidden_copy"],
+      "wrong_feedback": "若只看他深夜出现，会误以为他纵火；要看他真正想找回什么。",
+      "success_text": "顾闻回来的目标是被诗稿外皮保护的抄录，而不是毁掉书坊。",
+      "effects": {"add_flags": ["deduced_scholar_motive"], "score_delta": {"truth": 1}, "risk_delta": 0}
+    },
+    {
+      "deduction_id": "deduce_lu_order_boundary",
+      "question": "陆峥为何只盯残页而不问火因？",
+      "required_clue_ids": ["clue_jinyiwei_gag_order", "clue_lu_order_conflict", "clue_lu_search_list"],
+      "correct_clue_ids": ["clue_jinyiwei_gag_order", "clue_lu_order_conflict", "clue_lu_search_list"],
+      "wrong_feedback": "陆峥不是普通查火差役，他的命令重点藏在不问火因这一点。",
+      "success_text": "陆峥奉命截住残页，但命令本身没有给他完整真相。",
+      "effects": {"add_flags": ["deduced_lu_order_boundary"], "score_delta": {"order": 1, "truth": 1}, "risk_delta": 0}
+    },
+    {
+      "deduction_id": "deduce_hidden_chain",
+      "question": "封口令背后是否还有上游命令？",
+      "required_clue_ids": ["clue_gag_order_wording", "clue_temp_interrogation_record", "clue_city_gate_second_notice"],
+      "correct_clue_ids": ["clue_gag_order_wording", "clue_temp_interrogation_record", "clue_city_gate_second_notice"],
+      "wrong_feedback": "一张封条只能说明眼前压力，必须把城门与问话记录也纳入证据链。",
+      "success_text": "书坊封锁、城门搜检和问话记录形成链路，上游真正要截断的是粮册抄录的流向。",
+      "effects": {"add_flags": ["deduced_hidden_chain", "found_hidden_chain"], "score_delta": {"truth": 1}, "risk_delta": 0}
+    }
+  ]
+}

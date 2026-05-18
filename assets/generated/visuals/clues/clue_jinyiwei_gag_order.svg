@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">锦衣卫封口令证物图</title>
+  <desc id="desc">潮湿封口令压着红印，纸面写有不得外泄的命令。</desc>
+  <defs>
+    <linearGradient id="room" x1=".15" y1="0" x2=".92" y2="1">
+      <stop offset="0" stop-color="#09090c"/>
+      <stop offset=".44" stop-color="#312117"/>
+      <stop offset="1" stop-color="#080708"/>
+    </linearGradient>
+    <linearGradient id="orderPaper" x1=".22" y1=".07" x2=".9" y2="1">
+      <stop offset="0" stop-color="#e4cda3"/>
+      <stop offset=".62" stop-color="#bd9361"/>
+      <stop offset="1" stop-color="#5a3825"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#room)"/>
+  <path d="M182 784 C366 700 518 726 812 622 L990 1024 L126 1024 Z" fill="#050506" opacity=".62"/>
+  <path d="M278 158 L770 247 L670 836 L176 746 Z" fill="#140d0b" opacity=".64"/>
+  <path d="M306 134 L792 226 L694 808 L204 720 Z" fill="url(#orderPaper)" stroke="#2c1710" stroke-width="9"/>
+  <path d="M263 231 L730 318" stroke="#5d3925" stroke-width="8" opacity=".42"/>
+  <path d="M250 312 L718 398" stroke="#5d3925" stroke-width="8" opacity=".42"/>
+  <path d="M236 393 L704 478" stroke="#5d3925" stroke-width="8" opacity=".42"/>
+  <path d="M222 474 L690 560" stroke="#5d3925" stroke-width="8" opacity=".42"/>
+  <path d="M208 556 L676 642" stroke="#5d3925" stroke-width="8" opacity=".42"/>
+  <g fill="#3c2117" font-family="serif" opacity=".74">
+    <text x="338" y="340" font-size="38" transform="rotate(10 338 340)">不许残页离场</text>
+    <text x="314" y="468" font-size="32" transform="rotate(10 314 468)">不得问来处</text>
+    <text x="374" y="548" font-size="32" transform="rotate(10 374 548)">只截去向</text>
+  </g>
+  <circle cx="584" cy="666" r="108" fill="#8f241f" opacity=".88"/>
+  <circle cx="584" cy="666" r="76" fill="none" stroke="#d6a071" stroke-width="12" opacity=".36"/>
+  <path d="M525 638 L643 660 M540 708 L628 626" stroke="#d6a071" stroke-width="11" opacity=".32" stroke-linecap="round"/>
+  <path d="M290 129 C330 180 301 230 254 260" stroke="#dcc095" stroke-width="6" opacity=".35" fill="none"/>
+  <path d="M758 235 C716 278 722 332 778 365" stroke="#dcc095" stroke-width="6" opacity=".3" fill="none"/>
+  <text x="64" y="112" fill="#ead8bd" font-family="serif" font-size="44" letter-spacing="6">锦衣卫封口令</text>
+  <text x="64" y="168" fill="#d48672" font-family="serif" font-size="25">真正关心的不是火因，而是残页去向</text>
+</svg>

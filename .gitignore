@@ -1,0 +1,5 @@
+docs/DeepseekAPIKey
+docs/ImageGenerateKey
+backend/.env
+.env
+backend/logs/

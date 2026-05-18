@@ -1,0 +1,31 @@
+{
+  "roles": [
+    {
+      "role_id": "role_ming_bookshop_apprentice",
+      "dynasty_id": "ming",
+      "name": "书坊学徒",
+      "enabled": true,
+      "social_position": "低权力、熟悉书坊空间、能接触账册与刻版间",
+      "permissions": ["调查书坊", "询问熟人", "整理线索", "出示证据"],
+      "limitations": ["不能命令锦衣卫", "不能调阅官府密档"]
+    },
+    {
+      "role_id": "role_ming_watchman_preview",
+      "dynasty_id": "ming",
+      "name": "巡夜更夫（未开放）",
+      "enabled": false,
+      "social_position": "占位身份",
+      "permissions": [],
+      "limitations": ["当前阶段不可游玩"]
+    },
+    {
+      "role_id": "role_ming_copyist_preview",
+      "dynasty_id": "ming",
+      "name": "抄手文士（未开放）",
+      "enabled": false,
+      "social_position": "占位身份",
+      "permissions": [],
+      "limitations": ["当前阶段不可游玩"]
+    }
+  ]
+}

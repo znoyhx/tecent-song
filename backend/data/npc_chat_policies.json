@@ -1,0 +1,72 @@
+{
+  "default_policy": {
+    "mainline_anchors": ["旧书箱", "后门泥痕", "残页"],
+    "smalltalk_reply": "对方只短短应了一句，随即把话收回案情：眼下更要紧的是旧书箱、后门泥痕和残页。",
+    "smalltalk_action": "对方没有顺着闲话展开，只把目光转回案发处。",
+    "force_truth_reply": "对方脸色一沉：这话不能这样问。我只说我亲眼见过的，其余不能替你定案。",
+    "force_truth_action": "对方压低声音，避开了足以定案的说法。",
+    "suggested_by_intent": {
+      "smalltalk": ["昨夜旧书箱是谁动过？", "后门泥痕能说明什么？", "残页为什么不能离开书坊？"],
+      "off_topic": ["昨夜旧书箱是谁动过？", "后门泥痕能说明什么？", "残页为什么不能离开书坊？"],
+      "force_truth": ["你亲眼见过哪一步？", "昨夜谁碰过旧书箱？", "你不敢说的是哪一段？"]
+    }
+  },
+  "policies": {
+    "npc_worker": {
+      "mainline_anchors": ["旧书箱", "后门泥痕", "袖口旧墨"],
+      "smalltalk_reply": "阿沈苦笑一下，说平日有口热粥就够了，立刻又压低声音：眼下别问吃喝，先看旧书箱、后门泥痕和我袖口那点旧墨。",
+      "smalltalk_action": "他先看门口，确认没人靠近才敢继续站住。",
+      "force_truth_reply": "阿沈脸色发白：别把话说死，我不敢替你定案。我只知道旧书箱和后门昨夜都不干净。",
+      "force_truth_action": "他把袖口攥得更紧，避开了关于最终主使的说法。",
+      "intent_clue_map": {
+        "ask_timeline": ["clue_worker_lie", "clue_box_before_dawn", "clue_worker_back_gate_trip"],
+        "ask_location": ["clue_worker_back_gate_trip", "clue_worker_lie"],
+        "ask_object": ["clue_ink_on_sleeve", "clue_box_before_dawn", "clue_hidden_page_thread"],
+        "ask_relationship": ["clue_worker_lie", "clue_box_before_dawn"],
+        "ask_motive": ["clue_worker_lie", "clue_box_before_dawn"],
+        "accuse": ["clue_worker_lie", "clue_worker_back_gate_trip"]
+      },
+      "suggested_by_intent": {
+        "ask_timeline": ["三更后你听见了什么？", "你为何说整夜都在刻坊？", "谁先靠近旧书箱？"],
+        "ask_object": ["你袖口的旧墨从哪里来？", "那箱东西为什么不能留到天亮？", "后门泥印是不是你的？"],
+        "force_truth": ["你亲眼见过哪一步？", "旧书箱是谁让你碰的？", "你最怕被谁推出去？"]
+      }
+    },
+    "npc_owner": {
+      "mainline_anchors": ["账册", "旧书箱", "火场焦痕"],
+      "smalltalk_reply": "许掌柜敷衍一句，说书坊人哪有闲心讲这些，随即把话压回账册、旧书箱和火场焦痕。",
+      "force_truth_reply": "许掌柜低声打断你：别把话说成定案。你若真想问，就先问旧书箱和账册为何在火前被动过。",
+      "intent_clue_map": {
+        "ask_timeline": ["clue_owner_moved_box", "clue_owner_prepared_water"],
+        "ask_location": ["clue_account_room_ash", "clue_owner_moved_box"],
+        "ask_object": ["clue_missing_manuscript_list", "clue_owner_moved_box", "clue_owner_prepared_water"],
+        "ask_motive": ["clue_owner_moved_box", "clue_account_room_ash"],
+        "accuse": ["clue_owner_moved_box", "clue_owner_prepared_water"]
+      }
+    },
+    "npc_scholar": {
+      "mainline_anchors": ["旧稿", "残页", "城门搜检"],
+      "smalltalk_reply": "顾闻皱眉说自己无心闲谈，话锋立刻回到旧稿、残页和城门搜检。",
+      "force_truth_reply": "顾闻咬住话头：我能说旧稿不是普通诗文，却不能替你把整条案子说成定论。",
+      "intent_clue_map": {
+        "ask_timeline": ["clue_scholar_searches_manuscript", "clue_city_gate_search"],
+        "ask_location": ["clue_scholar_muddy_hem", "clue_city_gate_search"],
+        "ask_object": ["clue_poem_hidden_copy", "clue_scholar_outer_wrapper"],
+        "ask_motive": ["clue_scholar_searches_manuscript", "clue_poem_hidden_copy"],
+        "accuse": ["clue_scholar_searches_manuscript", "clue_scholar_outer_wrapper"]
+      }
+    },
+    "npc_jinyiwei": {
+      "mainline_anchors": ["封口令", "残页去向", "问话记录"],
+      "smalltalk_reply": "陆峥冷冷回了一句无关紧要，随即把话压回封口令、残页去向和问话记录。",
+      "force_truth_reply": "陆峥眼神一冷：你问得太满了。我奉命封锁书坊，但不会替你越过证据直接定案。",
+      "intent_clue_map": {
+        "ask_timeline": ["clue_lu_order_conflict", "clue_temp_interrogation_record"],
+        "ask_location": ["clue_jinyiwei_gag_order", "clue_lu_search_list"],
+        "ask_object": ["clue_jinyiwei_gag_order", "clue_gag_order_wording", "clue_temp_interrogation_record"],
+        "ask_motive": ["clue_lu_order_conflict", "clue_lu_search_list"],
+        "accuse": ["clue_lu_order_conflict", "clue_jinyiwei_gag_order"]
+      }
+    }
+  }
+}

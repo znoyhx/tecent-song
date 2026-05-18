@@ -1,0 +1,73 @@
+- main [ref=e148]:
+  - generic [ref=e149]:
+    - generic [ref=e151]:
+      - generic [ref=e152]:
+        - generic [ref=e153]: 朝代
+        - strong [ref=e154]: 明代
+      - generic [ref=e155]:
+        - generic [ref=e156]: 身份
+        - strong [ref=e157]: 书坊学徒
+      - generic [ref=e158]:
+        - generic [ref=e159]: 地点
+        - strong [ref=e160]: 书坊前厅
+      - generic [ref=e161]:
+        - generic [ref=e162]: 阶段
+        - strong [ref=e163]: 引子
+      - generic [ref=e164]: 目标：先稳住火后的局面，找出最先不对劲的痕迹。
+    - button "许掌柜立绘" [active] [ref=e165] [cursor=pointer]:
+      - generic "许掌柜立绘" [ref=e166]:
+        - img "许掌柜立绘" [ref=e167]
+        - generic [ref=e168]: 许掌柜
+    - generic [ref=e169]:
+      - strong [ref=e170]: 书坊前厅
+      - generic [ref=e171]: 已生成场景
+  - region "当前对话" [ref=e172]:
+    - generic [ref=e173]:
+      - generic [ref=e174]: 许掌柜
+      - generic [ref=e175]: 书坊掌柜
+    - paragraph [ref=e177]: 本局事件已经展开，你正站在第一幕的雨声里。
+    - generic [ref=e178]:
+      - generic [ref=e179]:
+        - button "出示证据" [disabled] [ref=e180]
+        - generic "当前选择的证据" [ref=e181]:
+          - generic [ref=e182]: 未选择证据
+      - generic "推荐回复" [ref=e183]:
+        - button "昨夜第一眼看见什么？" [ref=e184] [cursor=pointer]
+        - button "谁最先靠近过旧书箱？" [ref=e185] [cursor=pointer]
+      - generic [ref=e186]:
+        - textbox "低声追问，例如：昨夜是谁先到火场？" [ref=e187]
+        - button "发送" [ref=e188] [cursor=pointer]
+  - complementary "右侧信息栏":
+    - navigation "一级栏目" [ref=e189]:
+      - button "案卷" [ref=e190] [cursor=pointer]
+      - button "地点" [ref=e191] [cursor=pointer]
+      - button "调查" [ref=e192] [cursor=pointer]
+    - generic [ref=e193]:
+      - generic [ref=e194]:
+        - button "收起" [ref=e195] [cursor=pointer]
+        - paragraph [ref=e196]: 右侧栏目
+        - heading "地点" [level=3] [ref=e218]
+        - generic [ref=e198]: 书坊焚稿案 · 引子 · 0 条线索
+      - generic [ref=e219]:
+        - article [ref=e220]:
+          - strong [ref=e221]: 当前地点：书坊前厅
+          - paragraph [ref=e222]: 柜台后的灯火被雨气压得发暗，账册边角卷起，空气里还有烧纸后的涩味。
+          - paragraph [ref=e223]:
+            - text: 前厅看似收拾整齐，柜台角落却还压着一页
+            - button "缺口整齐的稿单" [ref=e224] [cursor=pointer]
+            - text: ，旧书箱边露出
+            - button "半枚朱红纸角" [ref=e225] [cursor=pointer]
+            - text: ，你守夜时刻下的
+            - button "更筹刻痕" [ref=e226] [cursor=pointer]
+            - text: 也还在门柱上。
+        - article [ref=e227]:
+          - strong [ref=e228]: 可前往地点
+          - generic [ref=e229]:
+            - button "书坊前厅" [disabled] [ref=e230]
+            - button "书坊后院火场" [ref=e231] [cursor=pointer]
+        - article [ref=e232]:
+          - strong [ref=e233]: 场景内可疑物件
+          - list [ref=e234]:
+            - listitem [ref=e235]: 查看账册桌：账册边缘有整齐缺口，像是有人在火起前撕掉一行记录。
+            - listitem [ref=e236]: 查看旧书箱：旧箱未完全烧透，缝隙里夹着带红印的纸角。
+            - listitem [ref=e237]: 查看门柱刻痕：你守夜时习惯在门柱内侧刻下更筹，能证明你火起前的位置。

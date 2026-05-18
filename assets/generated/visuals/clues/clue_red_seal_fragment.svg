@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">半枚红印纸角证物图</title>
+  <desc id="desc">旧书箱缝隙里夹着半枚官式红印纸角。</desc>
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111013"/>
+      <stop offset=".48" stop-color="#3b261b"/>
+      <stop offset="1" stop-color="#0b090b"/>
+    </linearGradient>
+    <linearGradient id="sealPaper" x1=".16" y1=".08" x2=".84" y2="1">
+      <stop offset="0" stop-color="#ead7ad"/>
+      <stop offset=".62" stop-color="#c99f68"/>
+      <stop offset="1" stop-color="#745035"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".45" numOctaves="5" seed="11"/>
+      <feColorMatrix type="saturate" values=".25"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .2"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#wood)"/>
+  <rect width="1024" height="1024" filter="url(#grain)" opacity=".75"/>
+  <g opacity=".32" stroke="#6f4b32" stroke-width="18" stroke-linecap="round">
+    <path d="M58 760 C224 690 340 718 520 642 C682 572 794 580 982 494"/>
+    <path d="M88 840 C250 778 394 792 570 718 C726 654 836 658 990 600"/>
+    <path d="M112 916 C294 864 450 874 626 802 C754 748 864 744 1014 698"/>
+  </g>
+  <path d="M292 238 L744 342 L674 755 L253 628 C297 544 255 498 306 434 C349 381 274 315 292 238 Z" fill="url(#sealPaper)" stroke="#2b1711" stroke-width="9"/>
+  <path d="M522 370 C613 372 670 433 665 505 C660 577 592 622 507 607 C530 554 528 506 506 461 C489 425 493 397 522 370 Z" fill="#8f241f" opacity=".9"/>
+  <path d="M544 406 C595 410 631 449 626 497 C621 544 580 569 524 562" fill="none" stroke="#d6a071" stroke-width="10" opacity=".36"/>
+  <g fill="#4e2219" opacity=".54" font-family="serif" font-size="32">
+    <text x="349" y="392" transform="rotate(12 349 392)">封</text>
+    <text x="380" y="469" transform="rotate(12 380 469)">口</text>
+    <text x="415" y="548" transform="rotate(13 415 548)">火案</text>
+  </g>
+  <path d="M253 628 C314 594 356 610 410 648 C474 693 543 702 674 755" fill="none" stroke="#251611" stroke-width="10" opacity=".45"/>
+  <text x="64" y="112" fill="#ead8bd" font-family="serif" font-size="44" letter-spacing="6">半枚红印纸角</text>
+  <text x="64" y="168" fill="#d98a74" font-family="serif" font-size="25">旧书箱里不该出现的官式红印</text>
+</svg>

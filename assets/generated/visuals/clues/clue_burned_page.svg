@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">烧焦残页证物图</title>
+  <desc id="desc">雨夜灰烬中的烧焦残页，纸面隐约可见辽东粮册字样。</desc>
+  <defs>
+    <radialGradient id="ember" cx="32%" cy="78%" r="70%">
+      <stop offset="0" stop-color="#8f3427"/>
+      <stop offset=".44" stop-color="#201819"/>
+      <stop offset="1" stop-color="#08090c"/>
+    </radialGradient>
+    <linearGradient id="paper" x1=".18" y1=".08" x2=".9" y2="1">
+      <stop offset="0" stop-color="#d9c092"/>
+      <stop offset=".5" stop-color="#a77c4f"/>
+      <stop offset="1" stop-color="#342018"/>
+    </linearGradient>
+    <filter id="ash">
+      <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="4" seed="7"/>
+      <feColorMatrix type="saturate" values=".15"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .18"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#ember)"/>
+  <rect width="1024" height="1024" filter="url(#ash)" opacity=".75"/>
+  <g opacity=".24" stroke="#c8b08d" stroke-width="2">
+    <path d="M126 88 L-80 980"/>
+    <path d="M278 62 L72 1018"/>
+    <path d="M462 44 L258 1024"/>
+    <path d="M646 74 L438 1024"/>
+    <path d="M826 118 L618 1024"/>
+    <path d="M998 162 L792 1024"/>
+  </g>
+  <path d="M265 215 C388 179 516 190 667 236 C734 256 771 315 736 397 C711 457 749 536 696 596 C628 673 678 778 564 823 C453 867 328 808 292 720 C258 638 189 606 216 507 C238 426 169 343 222 278 C235 261 248 234 265 215 Z" fill="#1b1110" opacity=".74"/>
+  <path d="M304 213 C427 190 555 218 670 282 C649 346 680 400 636 461 C594 520 632 594 581 665 C531 734 431 748 356 707 C363 640 299 605 326 542 C355 476 288 426 311 365 C333 304 282 264 304 213 Z" fill="url(#paper)" stroke="#241210" stroke-width="10"/>
+  <path d="M310 228 C352 277 333 316 310 365 C363 353 393 378 397 431 C448 397 499 412 517 470 C560 431 616 430 650 468 C653 403 628 355 668 282 C544 218 421 190 304 213 Z" fill="#19100f" opacity=".82"/>
+  <g fill="#2b1913" opacity=".62" font-family="serif" font-size="42" font-weight="700">
+    <text x="405" y="448" transform="rotate(-7 405 448)">辽</text>
+    <text x="469" y="457" transform="rotate(-4 469 457)">东</text>
+    <text x="533" y="470" transform="rotate(4 533 470)">粮</text>
+    <text x="597" y="485" transform="rotate(8 597 485)">册</text>
+  </g>
+  <g fill="none" stroke="#5c3423" stroke-width="6" opacity=".42">
+    <path d="M382 535 C460 511 539 526 607 565"/>
+    <path d="M349 596 C429 579 501 594 572 631"/>
+    <path d="M388 660 C439 650 487 657 532 681"/>
+  </g>
+  <circle cx="250" cy="768" r="5" fill="#e88658" opacity=".85"/>
+  <circle cx="700" cy="706" r="4" fill="#d06a42" opacity=".7"/>
+  <text x="64" y="112" fill="#e8d7ba" font-family="serif" font-size="44" letter-spacing="6">烧焦残页</text>
+  <text x="64" y="168" fill="#bd7660" font-family="serif" font-size="25">灰烬中的残纸仍露出“辽东粮册”四字</text>
+</svg>

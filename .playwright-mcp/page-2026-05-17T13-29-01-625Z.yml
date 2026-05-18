@@ -1,0 +1,69 @@
+- main [ref=e145]:
+  - generic [ref=e146]:
+    - generic [ref=e148]:
+      - generic [ref=e149]:
+        - generic [ref=e150]: 朝代
+        - strong [ref=e151]: 明代
+      - generic [ref=e152]:
+        - generic [ref=e153]: 身份
+        - strong [ref=e154]: 书坊学徒
+      - generic [ref=e155]:
+        - generic [ref=e156]: 地点
+        - strong [ref=e157]: 书坊前厅
+      - generic [ref=e158]:
+        - generic [ref=e159]: 阶段
+        - strong [ref=e160]: 引子
+      - generic [ref=e161]: 目标：先稳住火后的局面，找出最先不对劲的痕迹。
+    - button "许掌柜立绘" [ref=e162] [cursor=pointer]:
+      - generic "许掌柜立绘" [ref=e163]:
+        - img "许掌柜立绘" [ref=e164]
+        - generic [ref=e165]: 许掌柜
+    - generic [ref=e166]:
+      - strong [ref=e167]: 书坊前厅
+      - generic [ref=e168]: 已生成场景
+  - region "当前对话" [ref=e169]:
+    - generic [ref=e170]:
+      - generic [ref=e171]: 许掌柜
+      - generic [ref=e172]: 书坊掌柜
+    - paragraph [ref=e174]: 本局事件已经展开，你正站在第一幕的雨声里。
+    - generic [ref=e175]:
+      - generic [ref=e176]:
+        - button "出示证据" [disabled] [ref=e177]
+        - generic "当前选择的证据" [ref=e178]:
+          - generic [ref=e179]: 未选择证据
+      - generic "推荐回复" [ref=e180]:
+        - button "昨夜第一眼看见什么？" [ref=e181] [cursor=pointer]
+        - button "谁最先靠近过旧书箱？" [ref=e182] [cursor=pointer]
+      - generic [ref=e183]:
+        - textbox "低声追问，例如：昨夜是谁先到火场？" [ref=e184]
+        - button "发送" [ref=e185] [cursor=pointer]
+  - complementary "右侧信息栏":
+    - navigation "一级栏目" [ref=e186]:
+      - button "案卷" [ref=e187] [cursor=pointer]
+      - button "地点" [ref=e188] [cursor=pointer]
+      - button "调查" [ref=e189] [cursor=pointer]
+    - generic [ref=e190]:
+      - generic [ref=e191]:
+        - button "收起" [ref=e192] [cursor=pointer]
+        - paragraph [ref=e193]: 右侧栏目
+        - heading "案卷" [level=3] [ref=e194]
+        - generic [ref=e195]: 书坊焚稿案 · 引子 · 0 条线索
+      - navigation "案卷二级分类" [ref=e196]:
+        - button "案卷" [ref=e197] [cursor=pointer]
+        - button "线索" [ref=e198] [cursor=pointer]
+        - button "人物" [ref=e199] [cursor=pointer]
+      - generic [ref=e200]:
+        - article [ref=e201]:
+          - strong [ref=e202]: 当前事件
+          - paragraph [ref=e203]: 书坊焚稿案
+          - paragraph [ref=e204]: 目标：先稳住火后的局面，找出最先不对劲的痕迹。
+          - paragraph [ref=e205]: 剧情阶段：引子 · 先抓住最表层的异常。
+        - article [ref=e206]:
+          - strong [ref=e207]: 已知事实摘要
+          - list [ref=e208]:
+            - listitem [ref=e209]: 案卷尚未形成稳定事实，请先从右侧【调查】查看账桌与旧书箱。
+        - article [ref=e210]:
+          - strong [ref=e211]: 主动推理
+          - paragraph [ref=e212]: 当前还没有证据足够的疑团，继续调查或盘问人物。
+        - group [ref=e213]:
+          - generic "查看完整会话记录" [ref=e214] [cursor=pointer]

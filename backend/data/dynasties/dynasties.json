@@ -1,0 +1,34 @@
+{
+  "dynasties": [
+    {
+      "dynasty_id": "ming",
+      "name": "明代",
+      "enabled": true,
+      "period_label": "晚明书坊雨夜",
+      "core_mood": "文稿风险、焚稿疑云与封口压力",
+      "allowed_roles": ["role_ming_bookshop_apprentice"],
+      "forbidden_terms": ["手机", "互联网", "八旗"],
+      "visual_keywords": ["低饱和国风", "雨夜", "暗红火痕", "悬疑书坊"]
+    },
+    {
+      "dynasty_id": "song",
+      "name": "北宋",
+      "enabled": false,
+      "period_label": "后续阶段开放",
+      "core_mood": "占位入口",
+      "allowed_roles": [],
+      "forbidden_terms": ["手机", "互联网"],
+      "visual_keywords": ["占位"]
+    },
+    {
+      "dynasty_id": "tang",
+      "name": "晚唐",
+      "enabled": false,
+      "period_label": "后续阶段开放",
+      "core_mood": "占位入口",
+      "allowed_roles": [],
+      "forbidden_terms": ["手机", "互联网"],
+      "visual_keywords": ["占位"]
+    }
+  ]
+}

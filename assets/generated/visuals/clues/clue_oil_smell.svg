@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">异常火油痕证物图</title>
+  <desc id="desc">湿石地上残留暗色火油痕，与普通灯油走水不相合。</desc>
+  <defs>
+    <radialGradient id="lampGlow" cx="28%" cy="20%" r="70%">
+      <stop offset="0" stop-color="#7a3a23"/>
+      <stop offset=".42" stop-color="#222025"/>
+      <stop offset="1" stop-color="#07090b"/>
+    </radialGradient>
+    <linearGradient id="oil" x1=".22" y1=".12" x2=".86" y2=".9">
+      <stop offset="0" stop-color="#c88734" stop-opacity=".78"/>
+      <stop offset=".42" stop-color="#4c3220" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#100b0b" stop-opacity=".96"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#lampGlow)"/>
+  <g stroke="#87909a" stroke-width="3" opacity=".18">
+    <path d="M76 248 L942 186"/>
+    <path d="M82 372 L956 308"/>
+    <path d="M42 512 L972 452"/>
+    <path d="M78 650 L974 594"/>
+    <path d="M36 790 L948 738"/>
+    <path d="M208 160 L128 902"/>
+    <path d="M402 142 L318 910"/>
+    <path d="M612 128 L534 914"/>
+    <path d="M816 128 L744 900"/>
+  </g>
+  <path d="M346 268 C406 200 490 217 520 286 C544 342 631 332 675 392 C735 474 674 578 576 590 C514 598 481 674 407 654 C314 630 282 522 336 449 C378 392 290 332 346 268 Z" fill="url(#oil)" opacity=".9"/>
+  <path d="M444 333 C485 319 529 338 550 380 C573 425 621 421 642 461 C673 519 617 552 563 544 C522 538 502 590 456 579 C401 566 379 496 410 456 C439 419 386 356 444 333 Z" fill="#121010" opacity=".62"/>
+  <g stroke="#d59a55" stroke-width="7" stroke-linecap="round" opacity=".5" fill="none">
+    <path d="M375 249 C422 282 448 308 463 352"/>
+    <path d="M605 367 C580 408 591 455 634 488"/>
+    <path d="M404 616 C453 594 490 605 523 642"/>
+  </g>
+  <g opacity=".44" fill="#b9c5c4">
+    <ellipse cx="252" cy="625" rx="42" ry="18" transform="rotate(18 252 625)"/>
+    <ellipse cx="302" cy="676" rx="41" ry="17" transform="rotate(18 302 676)"/>
+    <ellipse cx="724" cy="272" rx="35" ry="13" transform="rotate(-24 724 272)"/>
+  </g>
+  <path d="M188 230 L300 196 L334 258 L216 292 Z" fill="#2b1d16" stroke="#7d5538" stroke-width="8"/>
+  <path d="M224 189 L276 174 L299 206 L205 234 Z" fill="#553925" opacity=".9"/>
+  <text x="64" y="112" fill="#ead8bd" font-family="serif" font-size="44" letter-spacing="6">异常火油痕</text>
+  <text x="64" y="168" fill="#d59a65" font-family="serif" font-size="25">雨水冲不散的重油味，偏离灯油架</text>
+</svg>

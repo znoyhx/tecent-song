@@ -1,0 +1,74 @@
+{
+  "endings": [
+    {
+      "ending_id": "ending_hidden",
+      "title": "引火反查",
+      "priority": 1,
+      "conditions": {"required_flags": ["found_hidden_chain", "preserved_evidence", "deduced_scholar_motive"], "any_required_flags": ["ledger_truth_exposed", "deduced_burned_not_poem"], "required_clue_ids": ["clue_poem_hidden_copy"], "required_choice_ids": ["choice_reverse_trace"], "min_trust": {"npc_jinyiwei": 2, "npc_scholar": 2}, "max_risk": 6},
+      "required_flags": ["found_hidden_chain", "preserved_evidence", "deduced_scholar_motive"],
+      "blocked_flags": [],
+      "result_summary": "你没有把证据立刻交出去，而是借封口令的缝隙反向摸到上游链路。",
+      "ending_text": "你把残页分成两份，一份随顾闻离开城门阴影，一份留在陆峥未盖完印的封条后。许掌柜以为你选择了沉默，阿沈却知道自己没有白白冒险。火案仍被写成书坊失火，可城门二次告示、问话记录和封口令措辞已经被人暗中串起。真相没有当场昭雪，却第一次拥有了反向追索的路。",
+      "history_echo": "引火反查不是胜利，而是在封口令与城门搜检之间保住一根线。",
+      "related_clue_ids": ["clue_poem_hidden_copy", "clue_gag_order_wording", "clue_temp_interrogation_record", "clue_city_gate_second_notice", "clue_lu_search_list"],
+      "related_choice_ids": ["choice_reverse_trace"],
+      "npc_fates": {"npc_owner": "继续守着书坊，却再也不敢问你藏了什么", "npc_worker": "知道你没有把他推出去顶罪，愿在必要时补上一句证词", "npc_scholar": "带着另一份抄录悄然出城，仍被搜检阴影追着", "npc_jinyiwei": "把自己的怀疑留在一纸未尽的封条里"}
+    },
+    {
+      "ending_id": "ending_tragedy",
+      "title": "身陷诏狱",
+      "priority": 2,
+      "conditions": {"min_risk": 6, "low_trust_any": ["npc_jinyiwei", "npc_scholar"]},
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "你把最危险的一步走得太急，整条线在你手里突然绷断了。",
+      "ending_text": "阿沈被逼着作证，却没等到任何人替他挡第一刀。陆峥按令封门，顾闻被迫丢下诗稿外皮，许掌柜则把账房纸灰扫得更干净。第二天清晨，你也被带进更深的门后。火案成了卷宗上的一句“疑有私藏文书”，而烧焦残页、后门脚印和三更搬箱都被压成没人敢认的灰。",
+      "history_echo": "当证据链还没稳住，最先承受代价的人往往不是主谋，而是离火最近、最无力的人。",
+      "related_clue_ids": ["clue_worker_lie", "clue_box_before_dawn", "clue_worker_back_gate_trip", "clue_city_gate_second_notice"],
+      "related_choice_ids": ["choice_force_worker"],
+      "npc_fates": {"npc_owner": "以病为由闭门，却终究逃不过追问", "npc_worker": "被当作最快能交出的名字", "npc_scholar": "仓促遁逃，旧稿和外皮尽失", "npc_jinyiwei": "奉命结案，不再回头看那份未盖完的封条"}
+    },
+    {
+      "ending_id": "ending_truth",
+      "title": "暗藏残页",
+      "priority": 3,
+      "conditions": {"min_truth": 5, "required_flags": ["preserved_evidence"], "required_choice_ids": ["choice_help_scholar", "choice_reverse_trace"]},
+      "required_flags": ["preserved_evidence"],
+      "blocked_flags": [],
+      "result_summary": "你保住了最关键的残页，也保住了继续追索真相的余地。",
+      "ending_text": "你没有把证据交给最显眼的人，而是把烧焦残页和诗稿外皮分开藏下。顾闻带着一份抄录离开前回望书坊，阿沈终于敢承认自己只是被迫搬箱，许掌柜沉默着扣上门闩，像是默认这场火并没有烧净一切。封口令还在，但辽东粮册、红印纸角和粮册术语已足够让真相活过今夜。",
+      "history_echo": "许多年代里，真相不是一朝昭雪，而是有人愿意先把纸页藏过一个夜晚。",
+      "related_clue_ids": ["clue_burned_page", "clue_red_seal", "clue_poem_hidden_copy", "clue_scholar_outer_wrapper"],
+      "related_choice_ids": ["choice_help_scholar", "choice_reverse_trace"],
+      "npc_fates": {"npc_owner": "继续经营书坊，却再不敢轻看学徒", "npc_worker": "知道有人替他扛住了第一阵风声", "npc_scholar": "背着未毁的证据离开此城", "npc_jinyiwei": "明知事情没完，也只能暂时收手"}
+    },
+    {
+      "ending_id": "ending_order",
+      "title": "误信告发",
+      "priority": 4,
+      "conditions": {"min_order": 4},
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "你把残页交了出去，秩序立刻恢复，但真正的真相也跟着被锁进了更深的地方。",
+      "ending_text": "陆峥接过残页时神情复杂，却仍按命封卷。封口令有了交代，书坊暂时保住，许掌柜也能把账册重新摆回柜台。只是顾闻的诗稿外皮、城门搜检告示和问话记录再也无法互相证明，阿沈也重新低头做工。你很清楚，那一角残页一旦离手，就再也不会替书坊说话。",
+      "history_echo": "秩序能迅速合上裂缝，但裂缝里原本藏着什么，也往往就此沉下去。",
+      "related_clue_ids": ["clue_jinyiwei_gag_order", "clue_red_seal", "clue_lu_order_conflict", "clue_lu_search_list"],
+      "related_choice_ids": ["choice_give_to_lu"],
+      "npc_fates": {"npc_owner": "勉强保住书坊门面", "npc_worker": "继续沉默做工，当作什么都没看见", "npc_scholar": "失了旧稿，只能离城", "npc_jinyiwei": "按令收卷，却对上游命令更加不安"}
+    },
+    {
+      "ending_id": "ending_survival",
+      "title": "焚稿自保",
+      "priority": 5,
+      "conditions": {"min_survival": 4},
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "你亲手让最后的证据也化成了灰，换来今夜所有人表面上的平安。",
+      "ending_text": "火案后第二次升起的火更小，却更干净。残页、抄录、账册缺口和账房纸灰被你一并处理，许掌柜长长松了一口气，阿沈也终于敢抬头看人。顾闻在雨巷尽头停了很久，最后什么也没有取走。书坊活了下来，但从这一刻起，再没有谁能替那些被烧掉的字作证。",
+      "history_echo": "很多人都懂得在风雨里求活，但活下来之后，记得曾经看见过什么的人就更少了。",
+      "related_clue_ids": ["clue_owner_moved_box", "clue_missing_manuscript_list", "clue_account_room_ash", "clue_fire_bucket_unused"],
+      "related_choice_ids": ["choice_destroy_evidence"],
+      "npc_fates": {"npc_owner": "保住了书坊，也把心事压得更深", "npc_worker": "终于不用再作证，却从此不提那一夜", "npc_scholar": "失去旧稿，只能带着沉默离开", "npc_jinyiwei": "得到一份看似完整的结案结果"}
+    }
+  ]
+}

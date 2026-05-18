@@ -1,0 +1,2 @@
+INFO:     127.0.0.1:58696 - "POST /api/session/start HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58696 - "POST /api/dialogue HTTP/1.1" 200 OK

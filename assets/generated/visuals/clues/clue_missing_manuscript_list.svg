@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">缺失稿单证物图</title>
+  <desc id="desc">一张稿单边缘有整齐缺口，暗示某行记录被提前取走。</desc>
+  <defs>
+    <linearGradient id="desk" x1=".12" y1="0" x2=".86" y2="1">
+      <stop offset="0" stop-color="#100c0c"/>
+      <stop offset=".55" stop-color="#423020"/>
+      <stop offset="1" stop-color="#0b0909"/>
+    </linearGradient>
+    <linearGradient id="sheet" x1=".2" y1=".05" x2=".92" y2=".96">
+      <stop offset="0" stop-color="#e2cba0"/>
+      <stop offset=".58" stop-color="#c39b68"/>
+      <stop offset="1" stop-color="#6a452c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#desk)"/>
+  <path d="M174 187 L769 136 L822 802 L228 852 Z" fill="#17100e" opacity=".62"/>
+  <path d="M202 166 L792 126 L838 786 L247 835 L234 658 C318 642 336 584 276 536 C225 495 218 439 262 403 L202 166 Z" fill="url(#sheet)" stroke="#2d1a12" stroke-width="9"/>
+  <path d="M236 657 C314 636 339 584 276 536 C225 495 218 439 262 403" fill="#120d0d" opacity=".72"/>
+  <g stroke="#5f3a25" stroke-width="8" stroke-linecap="round" opacity=".5">
+    <path d="M318 288 L706 256"/>
+    <path d="M324 360 L722 326"/>
+    <path d="M334 434 L736 400"/>
+    <path d="M348 508 L748 474"/>
+    <path d="M384 586 L762 554"/>
+    <path d="M342 662 L774 626"/>
+    <path d="M352 736 L786 700"/>
+  </g>
+  <g fill="#3d2117" font-family="serif" font-size="34" opacity=".62">
+    <text x="340" y="281" transform="rotate(-4 340 281)">稿单</text>
+    <text x="365" y="575" transform="rotate(-4 365 575)">旧稿订收</text>
+  </g>
+  <path d="M294 414 C246 457 251 498 306 538 C353 572 344 623 281 655" fill="none" stroke="#c65b49" stroke-width="8" opacity=".82"/>
+  <circle cx="278" cy="655" r="7" fill="#d96554"/>
+  <text x="64" y="112" fill="#ead8bd" font-family="serif" font-size="44" letter-spacing="6">缺失稿单</text>
+  <text x="64" y="168" fill="#cfa47a" font-family="serif" font-size="25">边缘缺口太整齐，像被人先一步取走</text>
+</svg>

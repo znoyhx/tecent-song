@@ -1,0 +1,67 @@
+- main [ref=e145]:
+  - generic [ref=e146]:
+    - generic [ref=e148]:
+      - generic [ref=e149]:
+        - generic [ref=e150]: 朝代
+        - strong [ref=e151]: 明代
+      - generic [ref=e152]:
+        - generic [ref=e153]: 身份
+        - strong [ref=e154]: 书坊学徒
+      - generic [ref=e155]:
+        - generic [ref=e156]: 地点
+        - strong [ref=e157]: 书坊前厅
+      - generic [ref=e158]:
+        - generic [ref=e159]: 阶段
+        - strong [ref=e160]: 调查
+      - generic [ref=e161]: 目标：在矛盾证词与物证之间建立第一层证据链。
+    - button "许掌柜立绘" [active] [ref=e162] [cursor=pointer]:
+      - generic "许掌柜立绘" [ref=e163]:
+        - img "许掌柜立绘" [ref=e164]
+        - generic [ref=e165]: 许掌柜
+    - generic [ref=e166]:
+      - strong [ref=e167]: 书坊前厅
+      - generic [ref=e168]: 已生成场景
+  - region "当前对话" [ref=e169]:
+    - generic [ref=e170]:
+      - generic [ref=e171]: 许掌柜
+      - generic [ref=e172]: 书坊掌柜
+    - paragraph [ref=e174]: 你拨开旧书箱边缘的碎纸，摸出半枚带朱红印痕的纸角。它不该出现在寻常书箱里。 你获得了：半枚红印纸角。
+    - generic [ref=e175]:
+      - generic [ref=e176]:
+        - button "出示证据" [ref=e177] [cursor=pointer]
+        - generic "当前选择的证据" [ref=e178]:
+          - generic [ref=e179]: 未选择证据
+      - generic "最近关键线索" [ref=e231]:
+        - button "半枚红印纸角" [ref=e232] [cursor=pointer]
+      - generic "推荐回复" [ref=e180]:
+        - button "昨夜第一眼看见什么？" [ref=e181] [cursor=pointer]
+        - button "谁最先靠近过旧书箱？" [ref=e182] [cursor=pointer]
+      - generic [ref=e183]:
+        - textbox "低声追问，例如：昨夜是谁先到火场？" [ref=e184]
+        - button "发送" [ref=e185] [cursor=pointer]
+  - complementary "右侧信息栏":
+    - navigation "一级栏目" [ref=e186]:
+      - button "案卷" [ref=e187] [cursor=pointer]
+      - button "地点" [ref=e188] [cursor=pointer]
+      - button "调查" [ref=e189] [cursor=pointer]
+    - generic [ref=e190]:
+      - generic [ref=e191]:
+        - button "收起" [ref=e192] [cursor=pointer]
+        - paragraph [ref=e193]: 右侧栏目
+        - heading "调查" [level=3] [ref=e215]
+        - generic [ref=e195]: 书坊焚稿案 · 调查 · 1 条线索
+      - generic [ref=e216]:
+        - article [ref=e217]:
+          - strong [ref=e218]: 可执行调查
+          - generic [ref=e219]:
+            - button "查看账册桌" [ref=e220] [cursor=pointer]
+            - button "查看旧书箱" [ref=e221] [cursor=pointer]
+            - button "查看门柱刻痕" [ref=e222] [cursor=pointer]
+            - button "继续推进" [ref=e223] [cursor=pointer]
+        - article [ref=e224]:
+          - strong [ref=e225]: 已完成调查
+          - list [ref=e226]:
+            - listitem [ref=e233]: 半枚红印纸角
+        - article [ref=e228]:
+          - strong [ref=e229]: 下一步建议
+          - paragraph [ref=e230]: 若台词提示卡住，可先调查红字高亮、账桌与旧书箱，再回到底部向当前人物追问。
