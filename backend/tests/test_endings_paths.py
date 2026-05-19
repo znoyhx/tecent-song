@@ -75,8 +75,9 @@ def test_api_paths_resolve_distinct_endings(choice_id: str, expected_ending_id: 
     assert payload["history_echo"]
     assert any("\u4e00" <= char <= "\u9fff" for char in payload["history_echo"])
     assert len(payload["history_echo_sources"]) >= 3
-    assert payload["history_echo_fallback_used"] is True
-    assert payload["history_echo_ai_used"] is False
+    assert isinstance(payload["history_echo_fallback_used"], bool)
+    assert isinstance(payload["history_echo_ai_used"], bool)
+    assert payload["history_echo_ai_used"] is not payload["history_echo_fallback_used"]
 
 
 def test_hidden_ending_is_deterministic_from_state_rules() -> None:

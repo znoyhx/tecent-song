@@ -110,10 +110,23 @@ class Scene(BaseModel):
     hotspots: list[SceneHotspot] = Field(default_factory=list)
 
 
+class NPCProfileReveal(BaseModel):
+    text: str
+    required_stage: str | None = None
+    required_clue_ids: list[str] = Field(default_factory=list)
+    required_flags: list[str] = Field(default_factory=list)
+
+
 class NPCProfile(BaseModel):
     npc_id: str
     name: str
     public_identity: str
+    appearance: str = ""
+    personality: str = ""
+    background_suspicion: str = ""
+    case_connection: str = ""
+    event_behavior: str = ""
+    profile_progression: dict[str, list[NPCProfileReveal]] = Field(default_factory=dict)
     public_goal: str
     hidden_motive: str
     known_info: list[str] = Field(default_factory=list)
@@ -194,6 +207,7 @@ class EventTemplate(BaseModel):
     surface_event: str
     hidden_truth: str
     stages: list[str]
+    stage_goals: dict[str, str] = Field(default_factory=dict)
     scene_ids: list[str]
     npc_ids: list[str]
     required_clue_ids: list[str]

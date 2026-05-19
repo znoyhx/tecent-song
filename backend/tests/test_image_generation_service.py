@@ -113,6 +113,7 @@ def test_generate_success_saves_local_file_without_leaking_headers(tmp_path, mon
     assert "Authorization" not in serialized
     assert "Bearer " not in serialized
     assert "unit-test-image-key" not in serialized
+    assert manifest_payload["assets"]["clue_burned_page"]["prompt_version"] == "clue_no_text_v3"
 
 
 def test_octet_stream_png_download_is_accepted(tmp_path) -> None:

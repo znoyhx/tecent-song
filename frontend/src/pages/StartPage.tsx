@@ -41,7 +41,7 @@ export function StartPage({
         <h1>史隙</h1>
         <h2>选择一个朝代，生成属于你的历史事件。</h2>
         <p className="cover-text">
-          你先决定时代，系统再从朝代知识库、事件语法库与 NPC 关系模板中，生成本局的身份、事件、人物、线索与多结局分支。
+          你先决定时代，系统再从朝代知识库、事件语法库与人物关系模板中，生成本局的身份、事件、人物、线索与多结局分支。
         </p>
 
         <div className="cover-process-strip">
@@ -132,7 +132,7 @@ export function StartPage({
         </div>
 
         <div className="selector-block demo-boundary">
-          <p className="meta-label">当前 Demo 边界</p>
+          <p className="meta-label">当前演示边界</p>
           <ul>
             {demoNotes.map((note) => (
               <li key={note}>{note}</li>

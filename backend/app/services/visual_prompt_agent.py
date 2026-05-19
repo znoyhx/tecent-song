@@ -17,7 +17,14 @@ NEGATIVE_PROMPT = (
     "western fantasy armor, anime school uniform, sci-fi, futuristic, bright cartoon, "
     "cute style, comedy, low quality, blurry, distorted, wrong dynasty, "
     "Qing dynasty queue hairstyle, Qing eight banners, Japanese samurai, modern police, "
-    "Republican era clothes, English signs, gore, sexual content"
+    "Republican era clothes, English signs, gore, sexual content, "
+    "question marks, ???, fake text, gibberish letters, unreadable Chinese characters, "
+    "watermark, subtitle, label"
+)
+
+CLUE_PROMPT_SUFFIX = (
+    "object-focused clue illustration, no visible text, no letters, no question marks, "
+    "no unreadable marks, no watermark, no UI icons"
 )
 
 
@@ -78,6 +85,9 @@ class VisualPromptAgent:
     def _compose(self, subject: str) -> str:
         return f"{subject}, {UNIFIED_STYLE_PROMPT}"
 
+    def _compose_clue(self, subject: str) -> str:
+        return self._compose(f"{subject}, {CLUE_PROMPT_SUFFIX}")
+
     def _build_assets(self) -> dict[str, VisualAssetPrompt]:
         scene_size = "1024x1024"
         npc_size = "768x1024"
@@ -137,7 +147,7 @@ class VisualPromptAgent:
                 category="scenes",
                 title="城门搜检口",
                 image_size=scene_size,
-                prompt=self._compose("Ming dynasty city gate search checkpoint at rainy night, guards with torches, wet official search notice on wall, paper bundles and book crates being inspected, tense historical suspense background"),
+                prompt=self._compose("Ming dynasty city gate search checkpoint at rainy night, guards with torches, blank sealed notice sheets on wall, paper bundles and book crates being inspected, tense historical suspense background"),
             ),
             VisualAssetPrompt(
                 asset_id="scene_jinyiwei_interrogation",
@@ -179,35 +189,35 @@ class VisualPromptAgent:
                 category="clues",
                 title="烧焦残页",
                 image_size=clue_size,
-                prompt=self._compose("close-up clue illustration of a burned manuscript fragment in wet ash, faint Chinese characters suggesting Liaodong grain register, red ember glow, Ming dynasty paper texture"),
+                prompt=self._compose_clue("close-up clue illustration of a charred blank manuscript fragment in wet ash, torn burned edges, red ember glow, Ming dynasty paper texture, the clue is shown by burn pattern and paper state only"),
             ),
             VisualAssetPrompt(
                 asset_id="clue_red_seal_fragment",
                 category="clues",
                 title="半枚红印纸角",
                 image_size=clue_size,
-                prompt=self._compose("close-up clue illustration of half red seal paper corner caught in an old book crate, Ming dynasty official document texture, wet paper, dark investigation lighting"),
+                prompt=self._compose_clue("close-up clue illustration of half red-seal paper corner caught in an old book crate, blank damp official paper texture, torn edge, dark investigation lighting"),
             ),
             VisualAssetPrompt(
                 asset_id="clue_missing_manuscript_list",
                 category="clues",
                 title="缺口整齐的稿单",
                 image_size=clue_size,
-                prompt=self._compose("close-up clue illustration of a manuscript list with a neatly cut missing corner, ink brush writing, Ming dynasty bookshop account paper, candle shadow"),
+                prompt=self._compose_clue("close-up clue illustration of blank manuscript account paper with a neatly cut missing corner, Ming dynasty bookshop paper texture, candle shadow, no writing on the sheet"),
             ),
             VisualAssetPrompt(
                 asset_id="clue_oil_smell",
                 category="clues",
                 title="异常火油痕",
                 image_size=clue_size,
-                prompt=self._compose("close-up clue illustration of abnormal fire oil stains on wet stone near a lamp shelf, dark amber reflection, Ming dynasty bookshop fire investigation"),
+                prompt=self._compose_clue("close-up clue illustration of abnormal fire oil stains on wet stone near a lamp shelf, dark amber reflection, Ming dynasty bookshop fire investigation"),
             ),
             VisualAssetPrompt(
                 asset_id="clue_jinyiwei_gag_order",
                 category="clues",
                 title="锦衣卫封口令",
                 image_size=clue_size,
-                prompt=self._compose("close-up clue illustration of a Ming dynasty Jinyiwei gag order document under a red seal, damp paper, candlelight, oppressive official atmosphere"),
+                prompt=self._compose_clue("close-up clue illustration of a folded blank Ming dynasty official order document under a red seal, damp paper, candlelight, oppressive official atmosphere, the seal and folds carry the clue without any written words"),
             ),
         ]
         return {item.asset_id: item for item in items}

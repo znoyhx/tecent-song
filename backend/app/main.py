@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.routers.game import router as game_router
+from app.routers.music import router as music_router
 from app.routers.visual import router as visual_router
 
 app = FastAPI(title=settings.app_name, version=settings.version)
@@ -18,6 +19,7 @@ app.add_middleware(
 )
 app.include_router(game_router)
 app.include_router(visual_router)
+app.include_router(music_router)
 
 
 

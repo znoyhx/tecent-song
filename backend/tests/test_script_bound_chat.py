@@ -104,15 +104,6 @@ class GreetingAIClient:
         )
 
 
-class BlockingAIClient:
-    def __init__(self) -> None:
-        self.calls = 0
-
-    def generate_json_sync(self, *, module: str, prompt: str, schema_hint: dict) -> AIResponse:
-        self.calls += 1
-        raise AssertionError("命中剧本规则的对话不应调用真实 AI。")
-
-
 def test_smalltalk_hooks_back_to_main_case_without_long_chat() -> None:
     session_id = start_session_in_scene()
 
@@ -161,8 +152,8 @@ def test_natural_greeting_uses_ai_agent_when_real_mode_enabled(monkeypatch, tmp_
     assert engine.sessions[session_id]["logs"][-1].module == "NPCDialogueAgent"
 
 
-def test_rule_matched_dialogue_uses_fast_path_without_ai_when_real_mode_enabled(monkeypatch, tmp_path) -> None:
-    fake_ai = BlockingAIClient()
+def test_rule_matched_dialogue_still_uses_ai_agent_when_real_mode_enabled(monkeypatch, tmp_path) -> None:
+    fake_ai = GreetingAIClient()
     runtime_settings = Settings(
         app_name="测试",
         version="0.4.0",
@@ -186,11 +177,9 @@ def test_rule_matched_dialogue_uses_fast_path_without_ai_when_real_mode_enabled(
     response = post_dialogue(session_id, "npc_worker", "你袖口的旧墨怎么回事？")
 
     assert response.status_code == 200, response.text
-    assert fake_ai.calls == 0
-    payload = response.json()
-    assert payload["fallback_used"] is False
-    assert payload["dialogue"]["intent"] == "ask_object"
-    assert engine.sessions[session_id]["logs"][-1].module == "script_bound_fast_dialogue"
+    assert "ScriptBoundChat" in fake_ai.last_prompt
+    assert "RAG" in fake_ai.last_prompt
+    assert engine.sessions[session_id]["logs"][-1].module == "NPCDialogueAgent"
 
 
 def test_force_truth_does_not_reveal_final_truth_or_superior() -> None:

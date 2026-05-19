@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from './api/client';
+import { AudioDirector } from './components/audio/AudioDirector';
 import {
   buildScenarioPreview,
   getFallbackDynasties,
@@ -441,6 +442,7 @@ function App() {
 
   return (
     <div className="app-frame">
+      <AudioDirector snapshot={snapshot} selectedNpcId={selectedNpcId} />
       {snapshot ? (
         <>
           {errorText ? <div className="error-banner floating">{errorText}</div> : null}

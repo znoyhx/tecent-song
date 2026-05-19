@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from html import escape
 import base64
 import json
 import os
@@ -13,6 +12,8 @@ from uuid import uuid4
 import httpx
 
 from app.services.visual_prompt_agent import VisualAssetPrompt, visual_prompt_agent
+
+CLUE_PROMPT_VERSION = "clue_no_text_v3"
 
 
 GAME_VISUAL_ASSET_MAP = {
@@ -126,7 +127,7 @@ class ImageGenerationService:
         if prompt is None:
             raise ValueError("未知视觉资产。")
 
-        existing = self._find_existing_file(prompt)
+        existing = self._find_existing_file(prompt, asset_id)
         if existing and not force:
             self._update_manifest(asset_id, prompt, existing, status="generated", cached=True)
             return self._asset_status(asset_id, cached=True, message="已复用本地生成图片。")
@@ -189,7 +190,7 @@ class ImageGenerationService:
         prompt = visual_prompt_agent.get_asset(asset_id)
         if prompt is None:
             return None
-        return self._find_existing_file(prompt)
+        return self._find_existing_file(prompt, asset_id)
 
     def asset_media_type(self, asset_id: str) -> str:
         file_path = self.asset_file_path(asset_id)
@@ -245,10 +246,9 @@ class ImageGenerationService:
         return exc.__class__.__name__
 
     def fallback_svg(self, asset_id: str) -> str:
-
         prompt = visual_prompt_agent.get_asset(asset_id)
-        title = prompt.title if prompt else asset_id
-        safe_title = escape(title)
+        if prompt and prompt.category == "clues":
+            return self._clue_fallback_svg(prompt.asset_id)
         return f"""<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1024\" height=\"1024\" viewBox=\"0 0 1024 1024\">
   <defs>
     <radialGradient id=\"fire\" cx=\"24%\" cy=\"76%\" r=\"70%\"><stop offset=\"0%\" stop-color=\"#803528\"/><stop offset=\"42%\" stop-color=\"#2b2323\"/><stop offset=\"100%\" stop-color=\"#0d0c10\"/></radialGradient>
@@ -258,9 +258,68 @@ class ImageGenerationService:
   <rect width=\"1024\" height=\"1024\" fill=\"url(#rain)\" opacity=\".65\"/>
   <path d=\"M70 760 C220 670 318 705 464 632 C612 558 720 590 950 470 L950 1024 L70 1024 Z\" fill=\"#07080b\" opacity=\".58\"/>
   <g opacity=\".22\" stroke=\"#d8b48a\" stroke-width=\"2\">{''.join(f'<line x1=\"{i}\" y1=\"0\" x2=\"{i - 180}\" y2=\"1024\"/>' for i in range(100, 1200, 95))}</g>
-  <text x=\"72\" y=\"120\" fill=\"#e7d6bd\" font-family=\"serif\" font-size=\"42\" letter-spacing=\"6\">史隙视觉占位</text>
-  <text x=\"72\" y=\"188\" fill=\"#b95b4f\" font-family=\"serif\" font-size=\"34\">{safe_title}</text>
-  <text x=\"72\" y=\"900\" fill=\"#c4aa8d\" font-family=\"serif\" font-size=\"24\">未生成图片时保留低饱和雨夜与火光占位图</text>
+  <circle cx=\"764\" cy=\"244\" r=\"96\" fill=\"#b95b4f\" opacity=\".22\"/>
+  <path d=\"M318 736 C410 660 515 650 612 706 C678 744 746 738 824 678\" fill=\"none\" stroke=\"#d8b48a\" stroke-width=\"10\" opacity=\".18\"/>
+</svg>"""
+
+    def _clue_fallback_svg(self, source_asset_id: str) -> str:
+        object_markup = {
+            "clue_burned_page": """
+  <ellipse cx=\"512\" cy=\"730\" rx=\"330\" ry=\"92\" fill=\"#080608\" opacity=\".7\"/>
+  <path d=\"M318 260 L706 300 L762 626 L594 806 L350 716 L288 530 L332 442 Z\" fill=\"#b98550\" stroke=\"#20100d\" stroke-width=\"18\"/>
+  <path d=\"M492 304 L716 310 L744 468 L560 438 Z\" fill=\"#1a0705\" opacity=\".92\"/>
+  <path d=\"M364 536 C454 494 554 492 650 530\" fill=\"none\" stroke=\"#3a211a\" stroke-width=\"9\" opacity=\".55\"/>
+  <path d=\"M360 618 C474 570 602 586 678 640\" fill=\"none\" stroke=\"#3a211a\" stroke-width=\"8\" opacity=\".42\"/>
+  <circle cx=\"262\" cy=\"784\" r=\"10\" fill=\"#d36840\" opacity=\".9\"/>
+  <circle cx=\"708\" cy=\"724\" r=\"9\" fill=\"#d36840\" opacity=\".72\"/>
+""",
+            "clue_red_seal_fragment": """
+  <rect x=\"262\" y=\"318\" width=\"496\" height=\"390\" rx=\"26\" fill=\"#2b180f\" opacity=\".75\"/>
+  <path d=\"M372 274 L692 360 L612 740 L300 632 Z\" fill=\"#c99b68\" stroke=\"#1b0d09\" stroke-width=\"14\"/>
+  <path d=\"M548 382 L704 424 L650 642 L504 592 Z\" fill=\"#8f2d2d\" opacity=\".88\"/>
+  <path d=\"M580 414 L658 436 L626 568 L548 546 Z\" fill=\"#c8574a\" opacity=\".55\"/>
+  <path d=\"M324 600 L450 634 L432 704 L300 662 Z\" fill=\"#e6c18a\" opacity=\".5\"/>
+""",
+            "clue_missing_manuscript_list": """
+  <ellipse cx=\"512\" cy=\"736\" rx=\"310\" ry=\"84\" fill=\"#070608\" opacity=\".62\"/>
+  <path d=\"M300 248 L708 218 L740 702 L350 762 L278 626 L334 560 Z\" fill=\"#d6b982\" stroke=\"#352119\" stroke-width=\"12\"/>
+  <path d=\"M300 248 L430 258 L342 548 L278 626 Z\" fill=\"#0f0908\" opacity=\".38\"/>
+  <path d=\"M410 342 L646 324\" stroke=\"#8a684a\" stroke-width=\"8\" opacity=\".22\"/>
+  <path d=\"M398 430 L664 404\" stroke=\"#8a684a\" stroke-width=\"8\" opacity=\".2\"/>
+  <path d=\"M390 520 L636 502\" stroke=\"#8a684a\" stroke-width=\"8\" opacity=\".18\"/>
+""",
+            "clue_oil_smell": """
+  <rect x=\"186\" y=\"250\" width=\"652\" height=\"548\" rx=\"36\" fill=\"#1c1715\" opacity=\".86\"/>
+  <path d=\"M274 652 C376 584 442 644 530 590 C640 522 704 586 774 522 L774 748 L274 748 Z\" fill=\"#5e3a1f\" opacity=\".54\"/>
+  <path d=\"M332 566 C408 492 524 502 596 560 C654 606 704 600 752 560\" fill=\"none\" stroke=\"#d28645\" stroke-width=\"32\" opacity=\".38\"/>
+  <path d=\"M358 592 C454 546 562 574 646 616\" fill=\"none\" stroke=\"#e4b36a\" stroke-width=\"18\" opacity=\".22\"/>
+  <circle cx=\"702\" cy=\"468\" r=\"42\" fill=\"#6e3a20\" opacity=\".48\"/>
+""",
+            "clue_jinyiwei_gag_order": """
+  <ellipse cx=\"512\" cy=\"742\" rx=\"330\" ry=\"88\" fill=\"#070608\" opacity=\".65\"/>
+  <path d=\"M314 236 L690 290 L744 698 L376 762 Z\" fill=\"#c8a96f\" stroke=\"#2c1711\" stroke-width=\"14\"/>
+  <path d=\"M354 286 L666 332 L706 662 L400 716 Z\" fill=\"#e0c891\" opacity=\".42\"/>
+  <circle cx=\"560\" cy=\"500\" r=\"86\" fill=\"#7f2426\" opacity=\".9\"/>
+  <circle cx=\"560\" cy=\"500\" r=\"48\" fill=\"#c44d43\" opacity=\".46\"/>
+  <path d=\"M418 342 L652 376\" stroke=\"#8a684a\" stroke-width=\"10\" opacity=\".16\"/>
+  <path d=\"M392 654 L642 610\" stroke=\"#8a684a\" stroke-width=\"9\" opacity=\".14\"/>
+""",
+        }.get(source_asset_id)
+        if object_markup is None:
+            object_markup = """
+  <ellipse cx=\"512\" cy=\"730\" rx=\"320\" ry=\"86\" fill=\"#070608\" opacity=\".65\"/>
+  <path d=\"M330 300 L704 276 L748 674 L392 760 L292 578 Z\" fill=\"#c6a06b\" stroke=\"#25140f\" stroke-width=\"14\"/>
+  <circle cx=\"622\" cy=\"520\" r=\"78\" fill=\"#8f2d2d\" opacity=\".72\"/>
+"""
+        return f"""<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1024\" height=\"1024\" viewBox=\"0 0 1024 1024\">
+  <defs>
+    <radialGradient id=\"glow\" cx=\"30%\" cy=\"74%\" r=\"72%\"><stop offset=\"0%\" stop-color=\"#7b3526\"/><stop offset=\"45%\" stop-color=\"#292121\"/><stop offset=\"100%\" stop-color=\"#0a090d\"/></radialGradient>
+    <linearGradient id=\"shade\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#26323a\" stop-opacity=\".75\"/><stop offset=\"100%\" stop-color=\"#100c11\" stop-opacity=\".96\"/></linearGradient>
+  </defs>
+  <rect width=\"1024\" height=\"1024\" fill=\"url(#glow)\"/>
+  <rect width=\"1024\" height=\"1024\" fill=\"url(#shade)\" opacity=\".66\"/>
+  <g opacity=\".2\" stroke=\"#d8b48a\" stroke-width=\"2\">{''.join(f'<line x1=\"{i}\" y1=\"0\" x2=\"{i - 180}\" y2=\"1024\"/>' for i in range(100, 1200, 95))}</g>
+{object_markup}
 </svg>"""
 
     def attach_visual(self, payload: dict[str, Any], game_object_id: str) -> dict[str, Any]:
@@ -289,12 +348,14 @@ class ImageGenerationService:
                 "message": "未找到对应视觉资产。",
             }
 
-        file_path = self._find_existing_file(prompt)
+        file_path = self._find_existing_file(prompt, asset_id)
         manifest_item = self._manifest.get("assets", {}).get(asset_id, {})
-        generation_status = "generated" if file_path else manifest_item.get("status", "fallback")
-        status = "generated" if file_path else "fallback"
+        file_is_generated_png = file_path is not None and file_path.suffix.lower() == ".png"
+        generation_status = "generated" if file_is_generated_png else manifest_item.get("status", "fallback")
+        status = "generated" if file_is_generated_png else "fallback"
         route_path = f"/api/visual/assets/{asset_id}"
         description = ASSET_DESCRIPTIONS.get(asset_id) or ASSET_DESCRIPTIONS.get(visual_prompt_agent.normalize_asset_id(asset_id), prompt.title)
+        generated_path = str(file_path.relative_to(self.workspace_dir)).replace("\\", "/") if file_is_generated_png and file_path else None
         result: dict[str, Any] = {
             "asset_id": asset_id,
             "source_asset_id": prompt.asset_id,
@@ -305,11 +366,11 @@ class ImageGenerationService:
             "category": prompt.category,
             "status": status,
             "generation_status": generation_status,
-            "blocked": generation_status == "blocked" and not file_path,
+            "blocked": generation_status == "blocked" and not file_is_generated_png,
             "url": route_path,
             "fallback_path": route_path,
-            "generated_path": str(file_path.relative_to(self.workspace_dir)).replace("\\", "/") if file_path else None,
-            "path": str(file_path.relative_to(self.workspace_dir)).replace("\\", "/") if file_path else None,
+            "generated_path": generated_path,
+            "path": generated_path,
             "updated_at": manifest_item.get("updated_at"),
             "message": message or self._status_message(status, generation_status),
         }
@@ -374,7 +435,13 @@ class ImageGenerationService:
     def _target_file(self, prompt: VisualAssetPrompt) -> Path:
         return self.assets_root / prompt.category / f"{prompt.asset_id}.png"
 
-    def _find_existing_file(self, prompt: VisualAssetPrompt) -> Path | None:
+    def _find_existing_file(self, prompt: VisualAssetPrompt, requested_asset_id: str | None = None) -> Path | None:
+        if prompt.category == "clues":
+            manifest_item = self._manifest.get("assets", {}).get(requested_asset_id or prompt.asset_id, {})
+            png_path = self._target_file(prompt)
+            if manifest_item.get("prompt_version") == CLUE_PROMPT_VERSION and png_path.exists():
+                return png_path
+            return None
         for file_path in (self._target_file(prompt), self.assets_root / prompt.category / f"{prompt.asset_id}.svg"):
             if file_path.exists():
                 return file_path
@@ -415,6 +482,8 @@ class ImageGenerationService:
             "call_id": f"img_{uuid4().hex[:8]}",
             "input_summary": f"{prompt.title} / {ASSET_TYPE_BY_CATEGORY.get(prompt.category, prompt.category)}",
         }
+        if prompt.category == "clues":
+            item["prompt_version"] = CLUE_PROMPT_VERSION
         if error:
             item["error"] = error
         self._manifest.setdefault("assets", {})[requested_asset_id] = item

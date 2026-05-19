@@ -15,8 +15,8 @@ def test_visual_asset_endpoint_returns_image_or_chinese_fallback() -> None:
     assert "image/png" in content_type or "image/svg+xml" in content_type
     if "image/svg+xml" in content_type:
         text = response.text
-        assert "史隙视觉占位" in text
-        assert "占位图" in text
+        assert "<text" not in text
+        assert "?" not in text
         assert "fallback" not in text.lower()
 
 

@@ -47,6 +47,8 @@ def _start_demo_session() -> str:
     assert payload["state"]["current_stage"] == "intro"
     assert payload["scene"]["name"] == "书坊前厅"
     _assert_has_chinese(payload["current_goal"])
+    assert payload["current_goal"] == engine.event.stage_goals["intro"]
+    assert "第一层证据链" not in payload["current_goal"]
     return payload["session_id"]
 
 

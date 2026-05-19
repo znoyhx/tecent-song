@@ -1,0 +1,50 @@
+{
+  "tasks": [
+    {
+      "task_id": "t2m_WPnZjVKkKiLweowiz",
+      "item_id": "t2m_WPnZjVKkKiLweowiz",
+      "bgm_id": "pre_game_entry",
+      "status": "succeeded",
+      "api": "instrumental.generate",
+      "request_id": "bc534e9c-990d-42a0-acc9-8623c2e290bb",
+      "created_at": "2026-05-19T09:43:47",
+      "updated_at": "2026-05-19T09:44:59",
+      "audio_url_present": true,
+      "audio_hi_status": "sub_succeeded",
+      "generated_path": "assets/generated/music/pre_game_entry.wav"
+    },
+    {
+      "task_id": "t2m_QPUZ7V6RbFuqLJgTK",
+      "item_id": "t2m_QPUZ7V6RbFuqLJgTK",
+      "bgm_id": "pre_game_entry",
+      "status": "running",
+      "api": "instrumental.generate",
+      "request_id": "299ec26b-6630-45e9-bb71-8e92ff32d250",
+      "created_at": "2026-05-19T16:19:47",
+      "updated_at": "2026-05-19T16:19:48",
+      "audio_url_present": false
+    },
+    {
+      "task_id": "t2m_hPbZjVdRfHa2Lew4r",
+      "item_id": "t2m_hPbZjVdRfHa2Lew4r",
+      "bgm_id": "pre_game_entry",
+      "status": "running",
+      "api": "instrumental.generate",
+      "request_id": "66c8cb97-4fc2-4dc8-8401-4c79cadd1e1c",
+      "created_at": "2026-05-19T16:22:15",
+      "updated_at": "2026-05-19T16:22:17",
+      "audio_url_present": false
+    },
+    {
+      "task_id": "t2m_7PlZEVGRnPNsHi2Lr",
+      "item_id": "t2m_7PlZEVGRnPNsHi2Lr",
+      "bgm_id": "pre_game_entry",
+      "status": "running",
+      "api": "instrumental.generate",
+      "request_id": "4bf127ae-b77d-4df4-8f67-3bdfba9323ff",
+      "created_at": "2026-05-19T16:37:17",
+      "updated_at": "2026-05-19T16:37:18",
+      "audio_url_present": false
+    }
+  ]
+}

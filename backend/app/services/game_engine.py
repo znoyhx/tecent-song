@@ -371,24 +371,21 @@ class GameEngine:
         current_scene = self.scenes[state.current_scene_id]
         discovered_clues = [self.clues[clue_id] for clue_id in state.discovered_clue_ids if clue_id in self.clues]
         presented_clues = [self.clues[clue_id] for clue_id in request.presented_clue_ids if clue_id in self.clues]
-        use_fast_path = self._should_use_local_dialogue_fast_path(rule=rule, context=script_context)
-        orchestrated = None
-        if not use_fast_path:
-            orchestrated = self.dialogue_orchestrator.handle_dialogue(
-                state=state,
-                dynasty=self.dynasties[state.dynasty_id],
-                player_role=player_role,
-                player_identity=state.player_identity,
-                current_scene=current_scene,
-                npc=npc,
-                request=request,
-                discovered_clues=discovered_clues,
-                presented_clues=presented_clues,
-                clue_map=self.clues,
-                mock_response=mock_response,
-                supervisor=self.supervisor,
-                script_context=script_context,
-            )
+        orchestrated = self.dialogue_orchestrator.handle_dialogue(
+            state=state,
+            dynasty=self.dynasties[state.dynasty_id],
+            player_role=player_role,
+            player_identity=state.player_identity,
+            current_scene=current_scene,
+            npc=npc,
+            request=request,
+            discovered_clues=discovered_clues,
+            presented_clues=presented_clues,
+            clue_map=self.clues,
+            mock_response=mock_response,
+            supervisor=self.supervisor,
+            script_context=script_context,
+        )
         if orchestrated is not None:
             response = self.script_bound_chat.finalize_response(
                 response=orchestrated.response,
@@ -416,7 +413,7 @@ class GameEngine:
             )
             fallback_used = False
             ai_success = True
-            log_module = "script_bound_fast_dialogue" if use_fast_path else "mock_dialogue"
+            log_module = "mock_dialogue"
             if not supervisor_result.pass_:
                 response = self.script_bound_chat.response_for_context(
                     base_response=self._fallback_response_for_npc(npc.name),
@@ -498,18 +495,6 @@ class GameEngine:
             "fallback_used": fallback_used,
             "current_goal": self._current_goal(state.current_stage),
         }
-
-    def _should_use_local_dialogue_fast_path(self, *, rule: DialogueRule | None, context) -> bool:
-        runtime_settings = self.dialogue_orchestrator.settings
-        if runtime_settings.use_mock_ai:
-            return False
-        if runtime_settings.ai_provider != "deepseek" or not runtime_settings.deepseek_api_key_available:
-            return False
-        if context.intent in {"smalltalk", "force_truth"}:
-            return True
-        if context.intent == "off_topic":
-            return False
-        return rule is not None or bool(context.preferred_clue_ids)
 
     def submit_deduction(self, request: DeductionSubmitRequest) -> dict:
         record = self._require_session(request.session_id)
@@ -705,14 +690,17 @@ class GameEngine:
         state.available_choice_ids = [choice.choice_id for choice in self.event.choices] if state.current_stage == "choice" else []
 
     def _current_goal(self, stage: str) -> str:
-        goals = {
-            "intro": "先稳住火后的局面，找出最先不对劲的痕迹。",
-            "investigation": "在矛盾证词与物证之间建立第一层证据链。",
-            "reversal": "确认焚毁的并非普通诗稿，而是牵动封口命令的抄录。",
-            "choice": "决定你要保全书坊、自救，还是把真相往前推一步。",
-            "ending": "结局已定，查看众人命运与这场焚稿案留下的回声。",
+        scripted_goal = self.event.stage_goals.get(stage)
+        if scripted_goal:
+            return scripted_goal
+        fallback_goals = {
+            "intro": "先查清眼前异常，稳住局面再继续追问。",
+            "investigation": "继续调查现场和人物证言，找出火灾前后的关键动作。",
+            "reversal": "核对新发现的证据，确认表面说法背后藏着什么。",
+            "choice": "整理已掌握的证据，选择接下来要承担的代价。",
+            "ending": "查看结局、人物去向和这桩案子留下的回声。",
         }
-        return goals[stage]
+        return fallback_goals.get(stage, "继续调查案情，寻找下一条可靠线索。")
 
     def _scene_payload(self, scene_id: str) -> dict:
         payload = self.scenes[scene_id].model_dump()

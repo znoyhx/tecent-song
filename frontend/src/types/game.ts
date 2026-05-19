@@ -122,6 +122,17 @@ export type NPCProfile = VisualFields & {
   avatarUrl?: string;
   imageUrl?: string;
   public_identity: string;
+  appearance?: string;
+  personality?: string;
+  background_suspicion?: string;
+  case_connection?: string;
+  event_behavior?: string;
+  profile_progression?: Record<string, Array<{
+    text: string;
+    required_stage?: string | null;
+    required_clue_ids?: string[];
+    required_flags?: string[];
+  }>>;
   public_goal: string;
   hidden_motive: string;
   known_info: string[];

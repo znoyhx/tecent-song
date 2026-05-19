@@ -5,6 +5,13 @@
   "surface_event": "雨夜里书坊后院失火，未刊诗稿、旧书箱与半册账页一并烧毁，玩家作为守夜学徒被卷入失职与私藏残页的嫌疑。",
   "hidden_truth": "火不是偶然，真正被抹去的是夹带在诗稿中的辽东粮册抄录；书坊众人各自隐瞒一段动作，陆峥奉命封锁却未必知道完整上游动机。",
   "stages": ["intro", "investigation", "reversal", "choice", "ending"],
+  "stage_goals": {
+    "intro": "先查明火从哪里起，洗清守夜学徒的嫌疑。",
+    "investigation": "查清书坊火灾真相：谁在火前动过旧书箱，烧掉的到底是什么。",
+    "reversal": "确认被烧的不是普通诗稿，并追出封口令背后的文书流向。",
+    "choice": "用已成立的证据链，决定交官、护证、自保还是反查上游。",
+    "ending": "查看众人去向与书坊焚稿案留下的历史回声。"
+  },
   "scene_ids": [
     "scene_front_hall",
     "scene_account_room",

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { resolveApiUrl } from '../../api/client';
 import { stageDescriptions, getTrustLabel } from '../../store/gameStore';
-import type { Clue, SessionSnapshot } from '../../types/game';
+import type { Clue, NPCProfile, SessionSnapshot } from '../../types/game';
 import { ClueHotspotText } from '../dialogue/ClueHotspotText';
 
 
@@ -28,8 +28,16 @@ const primaryTabs: Array<{ id: PrimaryTab; label: string }> = [
 const dossierSubTabs: Array<{ id: DossierSubTab; label: string }> = [
   { id: 'case', label: '案卷' },
   { id: 'clues', label: '线索' },
-  { id: 'people', label: '人物' },
+  { id: 'people', label: '身份介绍' },
 ];
+
+const stageOrder: Record<string, number> = {
+  intro: 0,
+  investigation: 1,
+  reversal: 2,
+  choice: 3,
+  ending: 4,
+};
 
 function buildKnownFacts(snapshot: SessionSnapshot): string[] {
   const clueFacts = snapshot.clues.slice(-3).map((clue) => `你已发现「${clue.title}」。`);
@@ -55,6 +63,43 @@ function getClueImageUrl(clue?: Clue): string {
     return withAssetVersion(resolveApiUrl(`/api/visual/assets/${clue.visual_asset_id}`));
   }
   return '';
+}
+
+function isProfileRevealUnlocked(
+  reveal: NonNullable<NPCProfile['profile_progression']>[string][number],
+  snapshot: SessionSnapshot,
+): boolean {
+  const requiredStage = reveal.required_stage;
+  if (requiredStage && (stageOrder[snapshot.state.current_stage] ?? 0) < (stageOrder[requiredStage] ?? 0)) {
+    return false;
+  }
+  const discovered = new Set(snapshot.state.discovered_clue_ids);
+  const flags = new Set(snapshot.state.flags);
+  if ((reveal.required_clue_ids ?? []).some((clueId) => !discovered.has(clueId))) {
+    return false;
+  }
+  if ((reveal.required_flags ?? []).some((flag) => !flags.has(flag))) {
+    return false;
+  }
+  return true;
+}
+
+function resolveNpcProfileValue(npc: NPCProfile, field: keyof Pick<NPCProfile, 'appearance' | 'personality' | 'background_suspicion' | 'case_connection' | 'event_behavior'>, snapshot: SessionSnapshot): string {
+  const baseValue = String(npc[field] ?? '');
+  const reveals = npc.profile_progression?.[field] ?? [];
+  const unlocked = reveals.filter((reveal) => isProfileRevealUnlocked(reveal, snapshot));
+  return unlocked.length > 0 ? unlocked[unlocked.length - 1].text : baseValue;
+}
+
+function buildNpcIdentityRows(npc: NPCProfile, snapshot: SessionSnapshot): Array<{ label: string; value: string }> {
+  return [
+    { label: '身份', value: npc.public_identity },
+    { label: '外貌', value: resolveNpcProfileValue(npc, 'appearance', snapshot) },
+    { label: '性格', value: resolveNpcProfileValue(npc, 'personality', snapshot) },
+    { label: '背景疑点', value: resolveNpcProfileValue(npc, 'background_suspicion', snapshot) },
+    { label: '与案件关联', value: resolveNpcProfileValue(npc, 'case_connection', snapshot) },
+    { label: '事件表现', value: resolveNpcProfileValue(npc, 'event_behavior', snapshot) },
+  ].filter((row) => row.value.trim().length > 0);
 }
 
 
@@ -387,20 +432,26 @@ export function ClueSidebar({ snapshot, selectedNpcId, busy, onEnterScene, onIns
             {activeDossierTab === 'people' ? (
               <div className="dossier-section paper-list">
                 {snapshot.scene_npcs.length > 0 ? (
-                  snapshot.scene_npcs.map((npc) => (
-                    <article key={npc.npc_id} className={npc.npc_id === selectedNpcId ? 'detail-card dossier-note active-person' : 'detail-card dossier-note'}>
-                      <div className="detail-head">
-                        <strong>{npc.name}</strong>
-                        <span className="key-badge subtle">{getTrustLabel(snapshot.state.npc_trust[npc.npc_id] ?? 0)}</span>
-                      </div>
-                      <p>{npc.public_identity}</p>
-                      <p className="detail-note">公开目标：{npc.public_goal}</p>
-                      {npc.known_info.length > 0 ? <p className="detail-tag">已知：{npc.known_info.join('；')}</p> : null}
-                      <button type="button" className="side-action" onClick={() => onSelectNpc(npc.npc_id)} disabled={busy || npc.npc_id === selectedNpcId}>
-                        {npc.npc_id === selectedNpcId ? '当前对话对象' : '切换对话对象'}
-                      </button>
-                    </article>
-                  ))
+                  snapshot.scene_npcs.map((npc) => {
+                    const identityRows = buildNpcIdentityRows(npc, snapshot);
+                    return (
+                      <article key={npc.npc_id} className={npc.npc_id === selectedNpcId ? 'detail-card dossier-note active-person' : 'detail-card dossier-note'}>
+                        <div className="detail-head">
+                          <strong>{npc.name}</strong>
+                          <span className="key-badge subtle">{getTrustLabel(snapshot.state.npc_trust[npc.npc_id] ?? 0)}</span>
+                        </div>
+                        <strong>身份介绍</strong>
+                        <div className="fact-list">
+                          {identityRows.map((row) => (
+                            <p key={row.label} className="detail-note"><strong>{row.label}：</strong>{row.value}</p>
+                          ))}
+                        </div>
+                        <button type="button" className="side-action" onClick={() => onSelectNpc(npc.npc_id)} disabled={busy || npc.npc_id === selectedNpcId}>
+                          {npc.npc_id === selectedNpcId ? '当前对话对象' : '切换对话对象'}
+                        </button>
+                      </article>
+                    );
+                  })
                 ) : (
                   <div className="empty-card">此处暂无可盘问人物。</div>
                 )}

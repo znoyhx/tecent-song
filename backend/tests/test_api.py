@@ -245,6 +245,40 @@ def test_visual_status_and_fallback_asset_endpoints() -> None:
     assert generate_unknown.status_code == 404
 
 
+def test_npc_identity_profile_fields_are_player_facing() -> None:
+    for npc in engine.npcs.values():
+        assert npc.public_identity
+        assert npc.appearance
+        assert npc.personality
+        assert npc.background_suspicion
+        assert npc.case_connection
+        assert npc.event_behavior
+        assert npc.profile_progression
+
+
+def test_initial_owner_profile_does_not_spoil_undiscovered_clues() -> None:
+    start = client.post(
+        "/api/session/start",
+        json={
+            "dynasty_id": "ming",
+            "role_id": "role_ming_bookshop_apprentice",
+            "event_id": "ming_bookshop_fire",
+        },
+    )
+    assert start.status_code == 200
+    owner = next(item for item in start.json()["scene_npcs"] if item["npc_id"] == "npc_owner")
+    visible_text = "".join([
+        owner["background_suspicion"],
+        owner["event_behavior"],
+        owner["case_connection"],
+    ])
+    assert "提前挪动旧书箱" not in visible_text
+    assert "被刮去的账目" not in visible_text
+    assert "不能留到天亮" not in visible_text
+    assert "红印纸角" not in visible_text
+    assert owner["profile_progression"]["background_suspicion"]
+
+
 def test_cannot_present_undiscovered_clue() -> None:
 
     start = client.post(

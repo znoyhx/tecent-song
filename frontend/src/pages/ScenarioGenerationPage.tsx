@@ -75,7 +75,7 @@ export function ScenarioGenerationPage({
       ['身份', preview.roleName],
       ['事件', preview.eventName],
       ['核心矛盾', preview.coreConflict],
-      ['主要 NPC', `${preview.npcCount} 人`],
+      ['主要人物', `${preview.npcCount} 人`],
       ['线索数量', `${preview.clueCount} 条`],
       ['结局数量', `${preview.endingCount} 个`],
     ],
@@ -154,7 +154,7 @@ export function ScenarioGenerationPage({
         <h1>史隙</h1>
         <h2>{statusTitle}</h2>
         <p className="cover-text">
-          系统已根据所选朝代，从朝代知识库、事件语法库和 NPC 关系模板中整理出本局剧本原型。确认后即可进入正式剧情页面。
+          系统已根据所选朝代，从朝代知识库、事件语法库和人物关系模板中整理出本局剧本原型。确认后即可进入正式剧情页面。
         </p>
 
         <div className="cover-process-strip">

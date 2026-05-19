@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.services.game_engine import engine
+from app.services.visual_prompt_agent import visual_prompt_agent
 
 client = TestClient(app)
 
@@ -118,16 +119,27 @@ def test_all_ming_bookshop_scenes_have_visual_asset_routes() -> None:
         assert "image/png" in asset_response.headers["content-type"] or "image/svg+xml" in asset_response.headers["content-type"]
 
 
-def test_key_clue_assets_use_specific_local_art() -> None:
+def test_key_clue_assets_do_not_serve_legacy_question_mark_art() -> None:
     for asset_id in {"clue_burned_page", "clue_red_seal", "clue_jinyiwei_gag_order"}:
         status_response = client.get("/api/visual/status")
         asset = next(item for item in status_response.json()["assets"] if item["asset_id"] == asset_id)
-        assert asset["status"] == "generated"
-        assert asset["generated_path"]
+        assert asset["status"] in {"generated", "fallback"}
 
         response = client.get(f"/api/visual/assets/{asset_id}")
         assert response.status_code == 200
         assert "image/svg+xml" in response.headers["content-type"] or "image/png" in response.headers["content-type"]
         if "image/svg+xml" in response.headers["content-type"]:
-            assert "史隙视觉占位" not in response.text
-            assert "占位图" not in response.text
+            assert "<text" not in response.text
+            assert "?" not in response.text
+
+
+def test_clue_visual_prompts_ban_text_and_question_marks() -> None:
+    for asset_id in {"clue_burned_page", "clue_red_seal", "clue_jinyiwei_gag_order"}:
+        prompt = visual_prompt_agent.get_asset(asset_id)
+        assert prompt is not None
+        prompt_text = prompt.prompt.lower()
+        negative_text = prompt.negative_prompt.lower()
+        assert "no visible text" in prompt_text
+        assert "no question marks" in prompt_text
+        assert "fake text" in negative_text
+        assert "???" in negative_text

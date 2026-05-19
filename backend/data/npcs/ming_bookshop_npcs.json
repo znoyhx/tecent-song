@@ -4,6 +4,41 @@
       "npc_id": "npc_owner",
       "name": "许掌柜",
       "public_identity": "书坊掌柜",
+      "appearance": "常穿半旧深色长衫，袖口沾着纸灰与墨痕，遇到官面问话时总会先把账册往身前拢。",
+      "personality": "谨慎圆滑，习惯用书坊生计遮掩真正担忧，表面护短，实际每句话都留退路。",
+      "background_suspicion": "事发后一直强调灯油走水，却不愿细说火前谁碰过旧书箱；他的手总压在账册上，像怕有人翻到不该看的地方。",
+      "case_connection": "书坊是案发地点，他掌管稿单、账册和旧书箱，是最清楚书坊进出文稿的人。",
+      "event_behavior": "火后忙着稳住前厅和账册，反复催你别把事情闹大，也不太愿意让人细看后院与账房。",
+      "profile_progression": {
+        "background_suspicion": [
+          {
+            "required_clue_ids": ["clue_owner_moved_box"],
+            "text": "许掌柜已承认火起前让人挪过旧书箱，理由仍含混；他很可能早知道那箱旧稿不能按寻常文稿处置。"
+          },
+          {
+            "required_clue_ids": ["clue_owner_moved_box", "clue_ledger_line_erased"],
+            "text": "提前清箱与被刮账行互相印证：他不只是救火后慌乱，而是在火前就开始处理某批旧稿留下的痕迹。"
+          },
+          {
+            "required_flags": ["owner_cleanup_confirmed"],
+            "text": "缺失稿单、被刮账行和提前清箱已经拼成一段清理动作；许掌柜至少知道有东西不能留到天亮，但未必掌握完整上游。"
+          }
+        ],
+        "event_behavior": [
+          {
+            "required_clue_ids": ["clue_red_seal"],
+            "text": "半枚红印纸角出现后，他仍急着把火归为灯油走水，并试图把话题带回书坊生计。"
+          },
+          {
+            "required_clue_ids": ["clue_ledger_line_erased"],
+            "text": "账行刮痕被发现后，他开始收紧话头，不再只是护书坊，更像在护住自己火前做过的处理。"
+          },
+          {
+            "required_flags": ["deduced_owner_lie"],
+            "text": "许掌柜的说法已被账册缺口、刮去账行和提前清箱击破；他逐渐露出自保谎言，却仍避开真正的命令来源。"
+          }
+        ]
+      },
       "public_goal": "保住书坊门面，不让火事牵出粮册抄录和官面追责",
       "hidden_motive": "火起前提前挪动旧书箱、刮去账行并清理部分纸灰，想把书坊和自己一起摘出去",
       "known_info": ["失火前书箱被动过", "顾闻的诗稿并不普通", "账房里有一行不该留下的账目", "官府压力已逼近书坊"],
@@ -24,6 +59,41 @@
       "npc_id": "npc_worker",
       "name": "阿沈",
       "public_identity": "书坊刻工",
+      "appearance": "身形偏瘦，常把刻刀袋抱在怀里，袖口和指缝里有旧墨，低头时会下意识看向后门。",
+      "personality": "胆小怕事却并不麻木，遇到追问容易慌乱，只有确认自己不会立刻被推出去顶罪时才肯多说半句。",
+      "background_suspicion": "他反复说自己整夜在刻版间，却总避开后门方向；袖口旧墨和慌张神色让这句证词显得不稳。",
+      "case_connection": "刻版间连着后门，他能接触旧稿、刻版和装订纸线，是还原火前时间线的关键人物。",
+      "event_behavior": "起初只想把自己从火案里摘出去，说话短促，常看门口，像随时准备把后半句话吞回去。",
+      "profile_progression": {
+        "background_suspicion": [
+          {
+            "required_clue_ids": ["clue_backdoor_latch"],
+            "text": "刻版间后门门闩有新划痕，阿沈“整夜没离开”的说法开始站不稳。"
+          },
+          {
+            "required_clue_ids": ["clue_worker_back_gate_trip", "clue_ink_on_sleeve"],
+            "text": "后门往返泥印和袖口旧墨说明他接触过旧稿，也走过后门；这更像被迫参与某段搬动，而非独自布局。"
+          },
+          {
+            "required_flags": ["worker_route_confirmed"],
+            "text": "阿沈夜里走过后门已基本成立，他说谎保护的是三更后的动作，不是完整幕后。"
+          }
+        ],
+        "event_behavior": [
+          {
+            "required_clue_ids": ["clue_worker_lie"],
+            "text": "被问到整夜行踪时，他的否认开始出现停顿，越解释越像在避开三更后的事。"
+          },
+          {
+            "required_clue_ids": ["clue_box_before_dawn"],
+            "text": "他终于承认听见“那箱东西不能留到天亮”，但仍不敢说是谁让他动手。"
+          },
+          {
+            "required_flags": ["deduced_worker_not_mastermind"],
+            "text": "阿沈说谎已被拆开：他隐瞒后门与搬箱，却更像受压的弱者，不是能调动全局的主谋。"
+          }
+        ]
+      },
       "public_goal": "别把自己牵进火案、搬箱和官府盘问里",
       "hidden_motive": "听见三更后搬箱的话，也从后门往返过，却害怕说出口后先被推出去顶罪",
       "known_info": ["自己并非整夜无知", "三更后后院有人", "有人说那箱东西不能留到天亮", "后门和刻版间昨夜都被动过"],
@@ -44,6 +114,47 @@
       "npc_id": "npc_scholar",
       "name": "顾闻",
       "public_identity": "落第士子",
+      "appearance": "清瘦憔悴，旧袍下摆沾着城门黄泥，怀里护着受潮诗稿，说话时指节总攥得发白。",
+      "personality": "自尊强而急躁，宁愿被误会成来讨诗稿的穷士子，也不愿轻易说出稿中夹带的真正东西。",
+      "background_suspicion": "火后冒雨返回书坊，只说要找回自己的旧稿；他焦急得过分，像那摞稿子不只是诗文。",
+      "case_connection": "被烧旧稿与他有关，他是火后主动回到书坊的人，也可能知道旧稿为什么会被盯上。",
+      "event_behavior": "初见时焦急讨稿，遭盘问便恼怒退让；在没有证据逼近前，他只愿把自己说成丢了诗稿的人。",
+      "profile_progression": {
+        "background_suspicion": [
+          {
+            "required_clue_ids": ["clue_scholar_searches_manuscript"],
+            "text": "顾闻承认自己不是来救火，而是来找稿；他的目标明显落在那摞旧稿上。"
+          },
+          {
+            "required_clue_ids": ["clue_scholar_outer_wrapper", "clue_hidden_page_thread"],
+            "text": "诗稿外皮折角与夹页纸线相合，说明那摞诗稿曾包过另一份东西。"
+          },
+          {
+            "required_flags": ["deduced_scholar_motive"],
+            "text": "顾闻回书坊的动机已被证据修正：他不是单纯纵火嫌疑人，而是在追回被诗稿外皮保护的抄录。"
+          }
+        ],
+        "case_connection": [
+          {
+            "required_clue_ids": ["clue_poem_hidden_copy"],
+            "text": "顾闻承认诗稿里夹带过一份抄录；被烧旧稿、残页和他冒雨回返由此连成一线。"
+          }
+        ],
+        "event_behavior": [
+          {
+            "required_clue_ids": ["clue_burned_page"],
+            "text": "看到烧焦残页后，他的反应明显超过普通失稿，开始避开“这页纸从哪来”的追问。"
+          },
+          {
+            "required_clue_ids": ["clue_poem_hidden_copy"],
+            "text": "被残页和旧稿证据逼住后，他才承认诗稿只是外皮，真正要保的是夹带抄录。"
+          },
+          {
+            "required_flags": ["scholar_not_simple_arson"],
+            "text": "顾闻的路线、湿泥和诗稿外皮已能修正误导：他更像护证者，而不是趁乱毁证的人。"
+          }
+        ]
+      },
       "public_goal": "找回自己那摞诗稿，不让旧稿落进封口令里",
       "hidden_motive": "想保住夹带在诗稿中的辽东粮册抄录，也想保住自己最后一点名节",
       "known_info": ["诗稿中夹过抄录", "烧掉的并非单纯诗文", "城门搜检将要加严", "诗稿外皮可以证明他是在护证"],
@@ -64,6 +175,47 @@
       "npc_id": "npc_jinyiwei",
       "name": "陆峥",
       "public_identity": "锦衣卫低级校尉",
+      "appearance": "穿深色短袍与便于行动的官面服色，佩刀不张扬，站在门边时像一道不让人越过的影子。",
+      "personality": "冷硬克制，习惯先压住场面再听证据；他不轻信任何人，但对命令中的矛盾会有短暂迟疑。",
+      "background_suspicion": "他来得很快，封门也很果断；比起安抚众人，他更在意有没有人把纸页带出书坊。",
+      "case_connection": "他负责封锁现场，是官面压力进入书坊的代表，也决定谁能离开、哪些东西不能带走。",
+      "event_behavior": "前期以封锁和威压压住书坊，不轻信任何解释，也不让玩家轻易越过门槛。",
+      "profile_progression": {
+        "background_suspicion": [
+          {
+            "required_clue_ids": ["clue_jinyiwei_gag_order"],
+            "text": "陆峥承认奉到的不是普通查火令，而是“不许残页离场”的封口令。"
+          },
+          {
+            "required_clue_ids": ["clue_lu_order_conflict"],
+            "text": "他封锁书坊却不急着问火因，只盯残页去向；命令真正关心的似乎不是火灾本身。"
+          },
+          {
+            "required_flags": ["lu_partial_knowledge"],
+            "text": "封口令、命令矛盾和搜检名单显示陆峥只被要求截住流向，并不掌握完整上游。"
+          }
+        ],
+        "case_connection": [
+          {
+            "required_clue_ids": ["clue_lu_search_list"],
+            "text": "搜检名单圈出的不是普通纵火嫌疑，而是能接触旧稿、城门和残页的人；陆峥手里的命令正在指向文书流转链。"
+          },
+          {
+            "required_flags": ["found_hidden_chain"],
+            "text": "封口令措辞、问话记录和城门二次告示已连成链路，陆峥是这条链路在书坊现场的执行端。"
+          }
+        ],
+        "event_behavior": [
+          {
+            "required_clue_ids": ["clue_lu_order_conflict"],
+            "text": "命令矛盾被指出后，他的冷硬出现短暂停顿，开始意识到自己可能也只掌握一半。"
+          },
+          {
+            "required_flags": ["deduced_lu_order_boundary"],
+            "text": "陆峥的边界已经清楚：他奉命截残页，却没有得到完整真相；高信任时，他可能默认玩家留下一份痕迹。"
+          }
+        ]
+      },
       "public_goal": "完成封锁命令，不让残页和抄录流出书坊与城门",
       "hidden_motive": "执行封锁时逐渐发现上级并未把完整目标告诉自己，开始怀疑自己只是截断流向的刀口",
       "known_info": ["奉命封锁书坊", "不得让人带走残页", "命令中有不合常理之处", "搜检名单只圈接触旧稿的人"],

@@ -61,14 +61,14 @@
       "source_asset_id": "clue_burned_page",
       "display_name": "烧焦残页",
       "category": "clues",
-      "status": "blocked",
-      "path": null,
+      "status": "generated",
+      "path": "assets/generated/visuals/clues/clue_burned_page.png",
       "model": "Kwai-Kolors/Kolors",
       "cached": false,
-      "updated_at": "2026-05-16T21:41:08",
-      "call_id": "img_ab3fb31e",
+      "updated_at": "2026-05-19T16:37:15",
+      "call_id": "img_46afa158",
       "input_summary": "烧焦残页 / clue_item",
-      "error": "invalid_image_content"
+      "prompt_version": "clue_no_text_v3"
     },
     "scene_bookshop_fire_yard": {
       "asset_id": "scene_bookshop_fire_yard",
