@@ -7,6 +7,7 @@ import {
   getFallbackDynasties,
   getFallbackIdentityRecommendations,
   getFallbackRoleForDynasty,
+  normalizeScenarioKeywordText,
   type GeneratedScenarioPreview,
 } from './mock/entryFlow';
 import { GamePage } from './pages/GamePage';
@@ -17,6 +18,11 @@ import type { DialogueActionResult, DialogueHighlight, Dynasty, GameState, Healt
 
 const debugStorageKey = 'historyGameDebug';
 const debugUiAllowed = import.meta.env.DEV && import.meta.env.VITE_SHOW_DEBUG_PANEL === '1';
+const demoRuntimePayload = {
+  dynasty_id: 'ming',
+  role_id: 'role_ming_bookshop_apprentice',
+  event_id: 'ming_bookshop_fire',
+};
 
 function getInitialDebugEnabled(): boolean {
   if (!debugUiAllowed || typeof window === 'undefined') {
@@ -109,9 +115,11 @@ function buildPresentationFeedback(
 }
 
 function App() {
+  const [entryMode, setEntryMode] = useState<'home' | 'setup'>('home');
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [dynasties, setDynasties] = useState<Dynasty[]>([]);
   const [selectedDynastyId, setSelectedDynastyId] = useState('');
+  const [scenarioKeywordText, setScenarioKeywordText] = useState('');
   const [generatedScenario, setGeneratedScenario] = useState<GeneratedScenarioPreview | null>(null);
   const [snapshot, setSnapshot] = useState<SessionSnapshot | null>(null);
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
@@ -195,7 +203,7 @@ function App() {
       // 使用本地兜底身份，确保离线时仍可演示前两步流程。
     }
 
-    const fallbackRole = getFallbackRoleForDynasty(dynasty.dynasty_id);
+    const fallbackRole = getFallbackRoleForDynasty(dynasty.dynasty_id) ?? getFallbackRoleForDynasty('ming');
     if (!fallbackRole) {
       throw new Error('当前朝代暂无可用身份，无法生成本局事件。');
     }
@@ -203,32 +211,32 @@ function App() {
   };
 
   const handlePrepareScenario = async () => {
-    if (!selectedDynasty) {
-      setErrorText('请先选择一个朝代。');
-      return;
-    }
-    if (!selectedDynasty.enabled) {
-      setErrorText('该朝代的完整可玩链路尚未开放，请先体验当前已开放的朝代。');
+    const targetDynasty = selectedDynasty ?? dynasties.find((item) => item.enabled) ?? dynasties[0] ?? null;
+    if (!targetDynasty) {
+      setErrorText('朝代资料还没有载入，请稍后再试。');
       return;
     }
 
     setBusy(true);
     setErrorText('');
     try {
-      const role = await resolveRoleForDynasty(selectedDynasty);
-      const basePreview = buildScenarioPreview(selectedDynasty, role);
+      const normalizedKeywords = normalizeScenarioKeywordText(scenarioKeywordText);
+      setScenarioKeywordText(normalizedKeywords);
+      setSelectedDynastyId(targetDynasty.dynasty_id);
+      const role = await resolveRoleForDynasty(targetDynasty);
+      const basePreview = buildScenarioPreview(targetDynasty, role, undefined, normalizedKeywords);
       let identityRecommendations = getFallbackIdentityRecommendations();
       if (backendReady) {
         try {
           identityRecommendations = await api.getPlayerIdentities({
-            dynasty_id: selectedDynasty.dynasty_id,
+            dynasty_id: targetDynasty.dynasty_id,
             event_id: basePreview.eventId,
           });
         } catch {
           identityRecommendations = getFallbackIdentityRecommendations();
         }
       }
-      setGeneratedScenario(buildScenarioPreview(selectedDynasty, role, identityRecommendations));
+      setGeneratedScenario(buildScenarioPreview(targetDynasty, role, identityRecommendations, normalizedKeywords));
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : '生成本局事件失败，请稍后重试。');
     } finally {
@@ -250,18 +258,19 @@ function App() {
       setErrorText('请先完成本局事件生成。');
       return;
     }
-    if (!backendReady) {
-      setErrorText('当前仍处于离线展示模式。请先启动后端服务，再进入正式剧情。');
-      return;
-    }
 
     setBusy(true);
     setErrorText('');
     try {
+      const runtimePayload = generatedScenario.eventId === demoRuntimePayload.event_id
+        ? {
+          dynasty_id: generatedScenario.dynastyId,
+          role_id: generatedScenario.roleId,
+          event_id: generatedScenario.eventId,
+        }
+        : demoRuntimePayload;
       const nextSnapshot = await api.startSession({
-        dynasty_id: generatedScenario.dynastyId,
-        role_id: generatedScenario.roleId,
-        event_id: generatedScenario.eventId,
+        ...runtimePayload,
         ...identityPayload,
       });
 
@@ -415,6 +424,8 @@ function App() {
     setSnapshot(null);
     setGeneratedScenario(null);
     setSelectedDynastyId('');
+    setScenarioKeywordText('');
+    setEntryMode('home');
     setSelectedNpcId(null);
     setSuggestedQuestions([]);
     setDialogueHighlights([]);
@@ -468,17 +479,14 @@ function App() {
         </>
       ) : generatedScenario ? (
         <ScenarioGenerationPage
-          health={health}
           backendReady={backendReady}
           preview={generatedScenario}
           busy={busy}
           errorText={errorText}
           onBack={() => {
             setGeneratedScenario(null);
+            setEntryMode('setup');
             setErrorText('');
-          }}
-          onRefreshBackend={() => {
-            void handleRefreshBackend();
           }}
           onEnterEvent={(identityPayload) => {
             void handleStart(identityPayload);
@@ -486,15 +494,20 @@ function App() {
         />
       ) : (
         <StartPage
-          health={health}
-          backendReady={backendReady}
+          mode={entryMode}
           dynasties={dynasties}
           selectedDynastyId={selectedDynastyId}
+          keywordText={scenarioKeywordText}
           busy={busy}
           errorText={errorText}
+          onStart={() => {
+            setEntryMode('setup');
+            setErrorText('');
+          }}
           onSelectDynasty={handleSelectDynasty}
-          onRefreshBackend={() => {
-            void handleRefreshBackend();
+          onKeywordTextChange={(value) => {
+            setScenarioKeywordText(value);
+            setErrorText('');
           }}
           onPrepareScenario={() => {
             void handlePrepareScenario();

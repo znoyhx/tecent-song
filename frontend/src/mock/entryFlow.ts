@@ -25,6 +25,7 @@ export type GeneratedScenarioPreview = {
   dynastyId: string;
   dynastyName: string;
   dynastyPeriod: string;
+  keywordText: string;
   roleId: string;
   roleName: string;
   roleSummary: string;
@@ -40,6 +41,12 @@ export type GeneratedScenarioPreview = {
   generationSteps: ScenarioGenerationStep[];
   identityRecommendations: PlayerIdentityRecommendations;
 };
+
+export const defaultScenarioKeywordText = '雨夜、书坊、失火、封口令';
+
+export function normalizeScenarioKeywordText(value: string): string {
+  return value.trim() || defaultScenarioKeywordText;
+}
 
 const generationSteps: ScenarioGenerationStep[] = [
   {
@@ -80,7 +87,7 @@ const fallbackDynasties: Dynasty[] = [
     name: '明代',
     enabled: true,
     period_label: '洪武至崇祯间的书坊疑案演示',
-    core_mood: '文祸、书坊、锦衣卫、暗线侦缉',
+    core_mood: '焚稿疑云、封口压力、雨夜追证',
     allowed_roles: ['role_ming_bookshop_apprentice'],
     forbidden_terms: ['清代辫发', '玻璃窗', '电灯'],
     visual_keywords: ['雨夜', '纸灰', '火光', '书坊'],
@@ -172,14 +179,14 @@ const fallbackIdentityRecommendations: PlayerIdentityRecommendations = {
 const entryCatalog: Record<string, DynastyEntryMeta> = {
   ming: {
     dynastyId: 'ming',
-    keywords: ['文祸', '书坊', '锦衣卫', '暗线侦缉'],
-    teaser: '文祸阴影压住灯火，书坊里每一页残稿都可能通向更深的封口令。',
-    description: '适合展示“制度压迫 + 书坊案卷 + 人物证词冲突”的悬疑生成效果。',
+    keywords: ['雨夜', '残稿', '封口令', '火痕'],
+    teaser: '雨夜火痕还没有冷透，每一页残稿都可能牵出新的封口线索。',
+    description: '适合展示“制度压力 + 案卷现场 + 人物证词冲突”的悬疑生成效果。',
     coverAssetId: 'scene_bookshop_front_hall',
     eventId: 'ming_bookshop_fire',
     eventName: '雨夜焚稿案',
     eventSummary: '雨夜火起于书坊后院，玩家从被怀疑的守夜学徒开始自证，逐步追出粮册抄录、封口令、城门搜检和众人各自隐瞒的证据链。',
-    coreConflict: '文祸风险、权力侦缉、保命与留证',
+    coreConflict: '封口压力、权力追索、保命与留证',
     npcCount: 4,
     clueCount: 35,
     endingCount: 5,
@@ -255,12 +262,14 @@ export function buildScenarioPreview(
   dynasty: Dynasty,
   role: PlayerRole,
   identityRecommendations: PlayerIdentityRecommendations = getFallbackIdentityRecommendations(),
+  keywordText = defaultScenarioKeywordText,
 ): GeneratedScenarioPreview {
   const meta = getDynastyEntryMeta(dynasty);
   return {
     dynastyId: dynasty.dynasty_id,
     dynastyName: dynasty.name,
     dynastyPeriod: dynasty.period_label,
+    keywordText: normalizeScenarioKeywordText(keywordText),
     roleId: role.role_id,
     roleName: role.name,
     roleSummary: role.social_position,

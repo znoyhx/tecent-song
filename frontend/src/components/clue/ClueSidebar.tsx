@@ -529,10 +529,6 @@ export function ClueSidebar({ snapshot, selectedNpcId, busy, onEnterScene, onIns
                 {completedSceneClues.length > 0 ? completedSceneClues.map((clue) => <li key={clue.clue_id}>{clue.title}</li>) : <li>当前地点尚无确认发现。</li>}
               </ul>
             </article>
-            <article className="detail-card dossier-note">
-              <strong>下一步建议</strong>
-              <p>若台词提示卡住，可先调查红字高亮、账桌与旧书箱，再回到底部向当前人物追问。</p>
-            </article>
           </div>
         ) : null}
       </div>

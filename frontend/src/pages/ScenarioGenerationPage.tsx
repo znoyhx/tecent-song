@@ -2,16 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api, visualAssetUrl } from '../api/client';
 import type { GeneratedScenarioPreview } from '../mock/entryFlow';
-import type { HealthResponse, PlayerIdentityValidationResult } from '../types/game';
+import type { PlayerIdentityValidationResult } from '../types/game';
 
 type ScenarioGenerationPageProps = {
-  health: HealthResponse | null;
   backendReady: boolean;
   preview: GeneratedScenarioPreview;
   busy: boolean;
   errorText: string;
   onBack: () => void;
-  onRefreshBackend: () => void;
   onEnterEvent: (identityPayload?: { identity_id?: string; custom_identity_text?: string }) => void;
 };
 
@@ -21,7 +19,6 @@ export function ScenarioGenerationPage({
   busy,
   errorText,
   onBack,
-  onRefreshBackend,
   onEnterEvent,
 }: ScenarioGenerationPageProps) {
   const [resolvedStepCount, setResolvedStepCount] = useState(1);
@@ -51,9 +48,6 @@ export function ScenarioGenerationPage({
   }, [preview]);
 
   const generationDone = resolvedStepCount >= preview.generationSteps.length;
-  const copyClassName = generationDone
-    ? 'cover-copy generation-copy generation-copy-ready'
-    : 'cover-copy generation-copy generation-copy-pending';
   const identityOptions = preview.identityRecommendations.options;
   const selectedIdentity = identityOptions.find((option) => option.identity_id === selectedIdentityId) ?? identityOptions[0] ?? null;
   const customTrimmed = customIdentityText.trim();
@@ -62,19 +56,18 @@ export function ScenarioGenerationPage({
   const activeBackground = customMode && customIdentityValid && identityValidation?.identity
     ? identityValidation.identity.background
     : selectedIdentity?.background ?? '';
-  const activeIdentityName = customMode && customIdentityValid && identityValidation?.identity
-    ? identityValidation.identity.display_name
+  const activeIdentityName = customMode
+    ? customTrimmed
     : selectedIdentity?.display_name ?? '书坊学徒';
   const rankLabelMap = {
     low: '低身份',
     middle: '中身份',
     high: '高身份',
   } as const;
-  const statusTitle = generationDone ? '本局事件已生成' : '本局事件生成中';
   const summaryPairs = useMemo(
     () => [
       ['朝代', preview.dynastyName],
-      ['身份', preview.roleName],
+      ['关键词', preview.keywordText],
       ['事件', preview.eventName],
       ['核心矛盾', preview.coreConflict],
       ['主要人物', `${preview.npcCount} 人`],
@@ -84,22 +77,12 @@ export function ScenarioGenerationPage({
     [preview],
   );
 
-  const badgeClassName = generationDone
-    ? backendReady
-      ? 'generation-badge ready'
-      : 'generation-badge waiting'
-    : 'generation-badge pending';
-  const badgeText = generationDone ? (backendReady ? '可进入' : '等待后端') : '处理中';
   const enterButtonLabel = busy
     ? '正在载入剧情…'
     : identityBusy
       ? '正在校验身份…'
-    : generationDone
-      ? backendReady
-        ? '开始游戏'
-        : '启动后端服务后可进入剧情'
-      : '等待剧本生成完成';
-  const enterDisabled = busy || identityBusy || !generationDone || !backendReady || (customMode && !customIdentityValid);
+      : '开始游戏';
+  const enterDisabled = busy || identityBusy || !generationDone;
 
   const handleValidateIdentity = async () => {
     if (!customTrimmed) {
@@ -108,7 +91,7 @@ export function ScenarioGenerationPage({
       return;
     }
     if (!backendReady) {
-      setIdentityError('当前后端未连通，暂时不能校验自定义身份。');
+      setIdentityError('当前无法连接身份校验，仍可直接开始游戏。');
       setIdentityValidation(null);
       return;
     }
@@ -122,7 +105,7 @@ export function ScenarioGenerationPage({
       });
       setIdentityValidation(result);
       if (!result.is_valid) {
-        setIdentityError(result.rejection_reason || '这个身份暂时不适合当前剧本，请换成时代内可存在、不会压过主线的身份，例如书生、樵夫、游方探事人。');
+        setIdentityError(result.rejection_reason || '这个身份暂时不适合当前剧本，可以换成书生、樵夫、游方探事人一类身份。');
       }
     } catch (error) {
       setIdentityValidation(null);
@@ -134,145 +117,25 @@ export function ScenarioGenerationPage({
 
   const handleEnterEvent = () => {
     if (customMode) {
-      if (!customIdentityValid) {
-        setIdentityError('自定义身份需要先校验通过，才能开始游戏。');
-        return;
-      }
       onEnterEvent({ custom_identity_text: customTrimmed });
       return;
     }
     onEnterEvent({ identity_id: selectedIdentity?.identity_id ?? preview.identityRecommendations.default_identity });
   };
 
-  return (
-    <main
-      className="cover-page generation-page"
-      style={{ backgroundImage: `linear-gradient(90deg, rgba(8, 7, 9, .86), rgba(8, 7, 9, .38)), url(${visualAssetUrl(preview.coverAssetId)})` }}
-    >
-      <div className="cover-rain" />
-
-      <section className={copyClassName} aria-hidden={!generationDone}>
-        <p className="seal-kicker">剧本生成确认</p>
-        <h1>史隙</h1>
-        <h2>{statusTitle}</h2>
-        <p className="cover-text">
-          系统已根据所选朝代，从朝代知识库、事件语法库和人物关系模板中整理出本局剧本原型。确认后即可进入正式剧情页面。
-        </p>
-
-        <div className="cover-process-strip">
-          <span className="process-pill complete">1 选择朝代</span>
-          <span className="process-pill active">2 生成剧本</span>
-          <span className="process-pill">3 进入剧情</span>
-        </div>
-
-        <div className="generation-summary-grid">
-          {summaryPairs.map(([label, value]) => (
-            <article key={label} className="generation-stat-card">
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </article>
-          ))}
-        </div>
-
-        <article className="system-explain-card scenario-brief-card">
-          <p className="meta-label">事件简介</p>
-          <p>{preview.eventSummary}</p>
-          <small>{preview.roleSummary}</small>
-          {!backendReady ? <small>当前为离线剧本预览模式。启动后端服务后即可真正进入可玩的剧情环节。</small> : null}
-        </article>
-
-        <section className="identity-panel" aria-label="你的身份">
-          <div className="identity-panel-header">
-            <div>
-              <p className="meta-label">你的身份</p>
-              <h3>{activeIdentityName}</h3>
-            </div>
-            {selectedIdentity?.is_default && !customMode ? <span className="identity-default-badge">默认身份</span> : null}
-          </div>
-
-          <div className="identity-option-list">
-            {identityOptions.map((option) => {
-              const active = !customMode && option.identity_id === selectedIdentityId;
-              return (
-                <button
-                  key={option.identity_id}
-                  type="button"
-                  className={active ? 'identity-option active' : 'identity-option'}
-                  onClick={() => {
-                    setSelectedIdentityId(option.identity_id);
-                    setCustomIdentityText('');
-                    setIdentityValidation(null);
-                    setIdentityError('');
-                  }}
-                  disabled={busy || identityBusy}
-                >
-                  <span className="identity-option-title">
-                    <strong>{option.display_name}</strong>
-                    <em>{rankLabelMap[option.social_rank]}</em>
-                    {option.is_default ? <b>默认</b> : null}
-                  </span>
-                  <small>{option.description}</small>
-                  <small>{option.attitude_hint}</small>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="identity-custom-row">
-            <input
-              value={customIdentityText}
-              onChange={(event) => {
-                setCustomIdentityText(event.target.value);
-                setIdentityValidation(null);
-                setIdentityError('');
-              }}
-              placeholder="也可以输入自定义身份，例如爱喝水的侦探"
-              disabled={busy || identityBusy}
-            />
-            <button type="button" className="secondary-button" onClick={handleValidateIdentity} disabled={busy || identityBusy || !backendReady}>
-              {identityBusy ? '校验中…' : '校验身份'}
-            </button>
-          </div>
-
-          {customMode && customIdentityValid ? <p className="identity-valid-hint">身份校验通过，可以开始游戏。</p> : null}
-          {identityError ? <div className="identity-error">{identityError}</div> : null}
-
-          <div className="identity-background-preview">
-            <span>身份背景预览</span>
-            <p>{activeBackground}</p>
-          </div>
-        </section>
-
-        {errorText ? <div className="error-banner cover-error">{errorText}</div> : null}
-
-        <div className="generation-actions">
-          <button type="button" className="secondary-button" onClick={onBack} disabled={busy}>
-            重新选择朝代
-          </button>
-          {!backendReady ? (
-            <button type="button" className="secondary-button" onClick={onRefreshBackend} disabled={busy}>
-              {busy ? '正在检测引擎…' : '重新检测引擎'}
-            </button>
-          ) : null}
-          <button type="button" className="primary-button" onClick={handleEnterEvent} disabled={enterDisabled}>
-            {enterButtonLabel}
-          </button>
-        </div>
-      </section>
-
-      <aside className="cover-selector generation-selector">
-        <div className="selector-block generation-progress-panel">
-          <div className="generation-panel-header">
-            <div>
-              <p className="meta-label">生成流程</p>
-              <h3>{generationDone ? '生成完成' : '正在构建本局事件'}</h3>
-            </div>
-            <span className={badgeClassName}>{badgeText}</span>
-          </div>
-
-          <div className="generation-step-list">
+  if (!generationDone) {
+    return (
+      <main
+        className="script-loading-stage"
+        style={{ backgroundImage: `linear-gradient(90deg, rgba(7, 8, 10, .9), rgba(7, 8, 10, .58)), url(${visualAssetUrl(preview.coverAssetId)})` }}
+      >
+        <div className="cover-rain" />
+        <section className="script-progress-card" aria-live="polite">
+          <p className="seal-kicker">剧本生成</p>
+          <h1>正在构建本局事件</h1>
+          <div className="generation-step-list script-step-list">
             {preview.generationSteps.map((step, index) => {
-              const state = index + 1 < resolvedStepCount ? 'done' : index + 1 === resolvedStepCount && !generationDone ? 'active' : generationDone ? 'done' : 'pending';
+              const state = index + 1 < resolvedStepCount ? 'done' : index + 1 === resolvedStepCount ? 'active' : 'pending';
               return (
                 <article key={step.id} className={`generation-step ${state}`}>
                   <span className="generation-step-dot" />
@@ -284,8 +147,116 @@ export function ScenarioGenerationPage({
               );
             })}
           </div>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main
+      className="script-overview-page"
+      style={{ backgroundImage: `linear-gradient(90deg, rgba(7, 8, 10, .86), rgba(7, 8, 10, .48)), url(${visualAssetUrl(preview.coverAssetId)})` }}
+    >
+      <div className="cover-rain" />
+
+      <section className="script-overview-shell" aria-label="剧本概览">
+        <header className="script-overview-header">
+          <div>
+            <p className="seal-kicker">剧本概览</p>
+            <h1>{preview.eventName}</h1>
+          </div>
+          <button type="button" className="secondary-button" onClick={onBack} disabled={busy}>
+            重新选择
+          </button>
+        </header>
+
+        <div className="script-overview-grid">
+          <section className="script-case-panel" aria-label="事件概览">
+            <p className="script-summary-text">{preview.eventSummary}</p>
+            <div className="generation-summary-grid script-summary-grid">
+              {summaryPairs.map(([label, value]) => (
+                <article key={label} className="generation-stat-card">
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </article>
+              ))}
+            </div>
+            <article className="scenario-brief-card script-role-brief">
+              <p className="meta-label">初始立场</p>
+              <p>{preview.roleSummary}</p>
+            </article>
+          </section>
+
+          <section className="identity-panel script-identity-panel" aria-label="你的身份">
+            <div className="identity-panel-header">
+              <div>
+                <p className="meta-label">你的身份</p>
+                <h3>{activeIdentityName}</h3>
+              </div>
+              {selectedIdentity?.is_default && !customMode ? <span className="identity-default-badge">默认身份</span> : null}
+            </div>
+
+            <div className="identity-option-list">
+              {identityOptions.map((option) => {
+                const active = !customMode && option.identity_id === selectedIdentityId;
+                return (
+                  <button
+                    key={option.identity_id}
+                    type="button"
+                    className={active ? 'identity-option active' : 'identity-option'}
+                    onClick={() => {
+                      setSelectedIdentityId(option.identity_id);
+                      setCustomIdentityText('');
+                      setIdentityValidation(null);
+                      setIdentityError('');
+                    }}
+                    disabled={busy || identityBusy}
+                  >
+                    <span className="identity-option-title">
+                      <strong>{option.display_name}</strong>
+                      <em>{rankLabelMap[option.social_rank]}</em>
+                      {option.is_default ? <b>默认</b> : null}
+                    </span>
+                    <small>{option.description}</small>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="identity-custom-row">
+              <input
+                value={customIdentityText}
+                onChange={(event) => {
+                  setCustomIdentityText(event.target.value);
+                  setIdentityValidation(null);
+                  setIdentityError('');
+                }}
+                placeholder="也可以输入自定义身份"
+                disabled={busy || identityBusy}
+              />
+              <button type="button" className="secondary-button" onClick={handleValidateIdentity} disabled={busy || identityBusy}>
+                {identityBusy ? '校验中…' : '校验身份'}
+              </button>
+            </div>
+
+            {customMode && customIdentityValid ? <p className="identity-valid-hint">身份校验通过。</p> : null}
+            {identityError ? <div className="identity-error">{identityError}</div> : null}
+
+            <div className="identity-background-preview">
+              <span>身份背景预览</span>
+              <p>{customMode && !customIdentityValid ? '将以你填写的身份进入剧本，开局后由剧情系统接管人物立场。' : activeBackground}</p>
+            </div>
+          </section>
         </div>
-      </aside>
+
+        {errorText ? <div className="error-banner cover-error">{errorText}</div> : null}
+
+        <div className="generation-actions script-overview-actions">
+          <button type="button" className="primary-button" onClick={handleEnterEvent} disabled={enterDisabled}>
+            {enterButtonLabel}
+          </button>
+        </div>
+      </section>
     </main>
   );
 }
