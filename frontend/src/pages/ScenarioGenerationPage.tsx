@@ -16,7 +16,6 @@ type ScenarioGenerationPageProps = {
 };
 
 export function ScenarioGenerationPage({
-  health,
   backendReady,
   preview,
   busy,
@@ -52,6 +51,9 @@ export function ScenarioGenerationPage({
   }, [preview]);
 
   const generationDone = resolvedStepCount >= preview.generationSteps.length;
+  const copyClassName = generationDone
+    ? 'cover-copy generation-copy generation-copy-ready'
+    : 'cover-copy generation-copy generation-copy-pending';
   const identityOptions = preview.identityRecommendations.options;
   const selectedIdentity = identityOptions.find((option) => option.identity_id === selectedIdentityId) ?? identityOptions[0] ?? null;
   const customTrimmed = customIdentityText.trim();
@@ -149,7 +151,7 @@ export function ScenarioGenerationPage({
     >
       <div className="cover-rain" />
 
-      <section className="cover-copy generation-copy">
+      <section className={copyClassName} aria-hidden={!generationDone}>
         <p className="seal-kicker">剧本生成确认</p>
         <h1>史隙</h1>
         <h2>{statusTitle}</h2>
@@ -281,16 +283,6 @@ export function ScenarioGenerationPage({
                 </article>
               );
             })}
-          </div>
-        </div>
-
-        <div className="selector-block">
-          <p className="meta-label">生成说明</p>
-          <p className="selected-dynasty-copy">{preview.teaser}</p>
-          <div className="cover-meta-row compact-meta-row">
-            <span>朝代：{preview.dynastyName}</span>
-            <span>时期：{preview.dynastyPeriod}</span>
-            <span>后端：{health?.status === 'ok' ? '引擎已连通' : '离线预览中'}</span>
           </div>
         </div>
       </aside>
