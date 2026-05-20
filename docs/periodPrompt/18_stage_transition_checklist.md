@@ -120,6 +120,35 @@
 - 无 Key 泄露。
 - 有 3 分钟路演脚本。
 
+## 阶段 11 -> 阶段 12
+
+进入 Phaser 舞台 P0 前必须确认：
+
+- 明代主 Demo 已可进入游戏页。
+- 当前 `ScenePanel` 可显示背景、NPC 和基础舞台。
+- `/api/investigate` 可用，点击或调查能返回中文结果。
+- `DialoguePanel`、`ClueSidebar`、`EndingPanel` 当前功能可用。
+- 前端 `npm run build` 在接入前没有已知阻塞，或已记录现有阻塞。
+- 已接受 Phaser 只增强舞台层，不接管 AI、FastAPI、状态机、线索释放和结局判定。
+
+## 阶段 12 完成判定
+
+Phaser 舞台 P0 完成必须满足：
+
+- `phaser` 已加入 `frontend` 依赖。
+- 新增 `PhaserStage` 和最小 Phaser game / scene 结构。
+- 旧 `ScenePanel` 保留，并可通过开关回退。
+- Phaser 舞台可显示当前场景背景、NPC 和热点。
+- 点击 Phaser 热点仍走现有 `onInspect -> /api/investigate`。
+- `snapshot` 更新时刷新 Phaser 舞台，不重复创建 `Phaser.Game`。
+- 卸载时执行 `game.destroy(true)`，并清理 `game.events` 监听。
+- 至少有场景转场、热点点击反馈和线索高亮反馈。
+- `DialoguePanel`、`ClueSidebar`、`EndingPanel` 无功能回退。
+- 前端构建通过，或明确记录无法构建的阻塞。
+- 用户可见文本仍为中文。
+- 无 API Key 泄露。
+- 建议强模型审查。
+
 ## 阻塞问题反馈模板
 
 ```md

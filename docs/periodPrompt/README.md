@@ -17,6 +17,26 @@
 11. `10_stage_9_endings_and_history_echo_prompt.md`：完善多结局和历史回声。
 12. `11_stage_10_testing_deployment_roadshow_prompt.md`：最终测试、部署和路演。
 13. `19_story_volume_expansion_prompt.md`：可选增强阶段，在主 Demo 已跑通后扩写“明代 / 书坊学徒 / 书坊焚稿案”的章节级剧本体量。
+14. `20_stage_12_phaser_stage_p0_prompt.md`：新增 Phaser 可交互舞台 P0，把现有 `ScenePanel` 升级为 React + Phaser 混合叙事舞台。
+
+## Phaser 决策后的推荐开发流程
+
+当前 PRD 和 CODEBUDDY 已明确：Phaser 只增强舞台层，不接管剧情系统。因此接下来推荐按以下顺序推进：
+
+1. **阶段 12：Phaser 可交互舞台 P0**  
+   执行 `20_stage_12_phaser_stage_p0_prompt.md`。目标是安装 Phaser、新增 `PhaserStage`、保留 `ScenePanel` 回退、渲染背景/NPC/热点、点击热点仍走 `/api/investigate`。
+
+2. **阶段 12 完成审查**  
+   使用 `12_code_review_prompt.md` 做一次强模型审查，重点看 React + Phaser 生命周期、事件清理、回退开关、前端构建和主流程回归。
+
+3. **阶段 10 路演验收刷新**  
+   重新执行或局部执行 `11_stage_10_testing_deployment_roadshow_prompt.md`，把路演脚本更新为“React + Phaser + FastAPI”架构，并验证 3 分钟演示路径。
+
+4. **可选阶段：StageCue P1**  
+   在 Phaser P0 稳定后，再考虑新增后端 `stage_cue` 字段，让 FastAPI 明确下发视觉反馈指令。不要在 Phaser P0 中提前做。
+
+5. **可选阶段：章节体量或视觉打磨**  
+   若路演时间允许，再用 `19_story_volume_expansion_prompt.md` 扩写剧本体量，或继续打磨 Phaser 特效与视觉资产。
 
 ## 哪些 Prompt 给低级模型
 
@@ -50,6 +70,7 @@
 - `15_real_ai_integration_test_prompt.md`
 - `16_image_generation_test_prompt.md`
 - `19_story_volume_expansion_prompt.md`：用于章节级剧本结构、线索链、推理节点和结局条件扩写，建议强模型执行或审查。
+- `20_stage_12_phaser_stage_p0_prompt.md`：涉及 React + Phaser 生命周期、事件桥和主流程回归，建议强模型执行或审查。
 
 ## 每个阶段完成后如何汇报
 
@@ -161,5 +182,6 @@
 - `17_low_level_model_execution_template.md`
 - `18_stage_transition_checklist.md`
 - `19_story_volume_expansion_prompt.md`
+- `20_stage_12_phaser_stage_p0_prompt.md`
 - `README.md`
 

@@ -2,6 +2,7 @@ import { ClueSidebar } from '../components/clue/ClueSidebar';
 import { DialoguePanel } from '../components/dialogue/DialoguePanel';
 import { DemoEvidencePanel } from '../components/debug/DemoEvidencePanel';
 import { EndingPanel } from '../components/ending/EndingPanel';
+import { PhaserStage } from '../components/scene/PhaserStage';
 import { ScenePanel } from '../components/scene/ScenePanel';
 import type { SessionSnapshot } from '../types/game';
 
@@ -44,6 +45,8 @@ export function GamePage({
   onRestart,
   onToggleDebug,
 }: GamePageProps) {
+  const usePhaserStage = import.meta.env.VITE_USE_PHASER_STAGE !== '0';
+
   if (snapshot.ending) {
     return (
       <>
@@ -60,7 +63,17 @@ export function GamePage({
 
   return (
     <main className="visual-novel-stage">
-      <ScenePanel snapshot={snapshot} selectedNpcId={selectedNpcId} busy={busy} onSelectNpc={onSelectNpc} />
+      {usePhaserStage ? (
+        <PhaserStage
+          snapshot={snapshot}
+          selectedNpcId={selectedNpcId}
+          busy={busy}
+          onSelectNpc={onSelectNpc}
+          onInspect={onInspect}
+        />
+      ) : (
+        <ScenePanel snapshot={snapshot} selectedNpcId={selectedNpcId} busy={busy} onSelectNpc={onSelectNpc} />
+      )}
       {debugEnabled ? <DemoEvidencePanel snapshot={snapshot} /> : null}
       {onToggleDebug ? (
         <button type="button" className="debug-toggle-button" onClick={onToggleDebug}>

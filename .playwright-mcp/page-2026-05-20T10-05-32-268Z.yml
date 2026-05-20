@@ -1,0 +1,49 @@
+- main [ref=e4]:
+  - generic [ref=e5]:
+    - paragraph [ref=e6]: 朝代驱动 · 历史悬疑 · 事件生成
+    - heading "史隙" [level=1] [ref=e7]
+    - heading "选择一个朝代，生成属于你的历史事件。" [level=2] [ref=e8]
+    - paragraph [ref=e9]: 你先决定时代，系统再从朝代知识库、事件语法库与人物关系模板中，生成本局的身份、事件、人物、线索与多结局分支。
+    - generic [ref=e10]:
+      - generic [ref=e11]: 1 选择朝代
+      - generic [ref=e12]: 2 生成剧本
+      - generic [ref=e13]: 3 进入剧情
+    - article [ref=e14]:
+      - paragraph [ref=e15]: 系统说明
+      - paragraph [ref=e16]: 未选择朝代前，页面不会展示任何具体事件。只有在你确认时代后，系统才会生成对应的身份、事件骨架、关系网络与推理线索。
+    - generic [ref=e17]:
+      - generic [ref=e18]: 后端：服务运行中
+      - generic [ref=e19]: 图片：后端代理与本地缓存
+      - generic [ref=e20]: 入口：朝代选择后生成本局事件
+  - complementary [ref=e21]:
+    - generic [ref=e22]:
+      - paragraph [ref=e23]: 选择朝代
+      - generic [ref=e24]:
+        - button "明代 可生成 文祸、书坊、锦衣卫、暗线侦缉 适合展示“制度压迫 + 书坊案卷 + 人物证词冲突”的悬疑生成效果。" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]:
+            - strong [ref=e27]: 明代
+            - generic [ref=e28]: 可生成
+          - generic [ref=e29]: 文祸、书坊、锦衣卫、暗线侦缉
+          - generic [ref=e30]: 适合展示“制度压迫 + 书坊案卷 + 人物证词冲突”的悬疑生成效果。
+        - button "北宋 后续开放 驿站、军报、边患、市井疑云 当前作为朝代选择展示，完整可玩链路将于后续开放。" [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]:
+            - strong [ref=e33]: 北宋
+            - generic [ref=e34]: 后续开放
+          - generic [ref=e35]: 驿站、军报、边患、市井疑云
+          - generic [ref=e36]: 当前作为朝代选择展示，完整可玩链路将于后续开放。
+        - button "晚唐 后续开放 藩镇、流民、粮仓、乱世密信 当前作为朝代选择展示，完整可玩链路将于后续开放。" [ref=e37] [cursor=pointer]:
+          - generic [ref=e38]:
+            - strong [ref=e39]: 晚唐
+            - generic [ref=e40]: 后续开放
+          - generic [ref=e41]: 藩镇、流民、粮仓、乱世密信
+          - generic [ref=e42]: 当前作为朝代选择展示，完整可玩链路将于后续开放。
+    - generic [ref=e43]:
+      - paragraph [ref=e44]: 当前选中
+      - paragraph [ref=e45]: 先从右侧选择一个朝代，再进入本局事件生成流程。
+    - generic [ref=e46]:
+      - paragraph [ref=e47]: 当前演示边界
+      - list [ref=e48]:
+        - listitem [ref=e49]: 当前仅开放“明代”一条完整可玩生成链路，北宋与晚唐保留为朝代选择展示。
+        - listitem [ref=e50]: 玩家需先选择朝代，再进入“本局事件生成确认”，之后才进入正式剧情。
+        - listitem [ref=e51]: 正式剧情仍保留红色高亮调查、人物对话、线索展示、线索组合与结局判定闭环。
+        - listitem [ref=e52]: 前端页面强调朝代驱动生成，后端规则与状态机仍然负责真正的剧情推进。

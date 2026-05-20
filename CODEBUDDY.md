@@ -1,44 +1,248 @@
-# CODEBUDDY.md This file provides guidance to CodeBuddy when working with code in this repository.
+# CODEBUDDY.md
 
-## Current repository state
+This file provides guidance to CodeBuddy when working with code in this repository.
 
-This repository is currently a documentation-first project. No `README.md`, `AGENTS.md`, existing `CODEBUDDY.md`, `CLAUDE.md`, Cursor rules, Copilot instructions, package manifests, backend source, frontend source, or test files were found. The product and technical direction are defined mainly in `docs/PRD.md`; image-generation API reference notes are in `docs/help/Imagegenerate.md`.
+## Current Repository State
+
+This repository is no longer documentation-only. It contains a working Stage 1 mock implementation of 《史隙》:
+
+- `docs/PRD.md` defines the product, gameplay, AI/RAG/state-machine constraints, and the new Phaser stage target.
+- `frontend/` contains a Vite + React + TypeScript demo frontend.
+- `backend/` contains a FastAPI mock demo backend with game flow, clue rules, visual asset routes, dialogue orchestration, supervisor logic, and tests.
+- `assets/` contains generated or prepared visual assets.
+
+The current playable direction is still centered on the Ming dynasty bookshop manuscript-burning case. Northern Song and Late Tang should remain lightweight preview entries until the Ming loop is stable.
 
 ## Commands
 
-Active build/lint/test commands do not exist yet because the repository contains only docs. When implementation files are added, update this section with the exact scripts from the new manifests.
+Run commands from the repository root unless otherwise noted.
 
-- `Get-ChildItem -Force -Recurse -File` — Windows PowerShell command to inspect all repository files, including hidden rule/config files, before assuming project structure.
-- `python -m pytest backend/tests` — Planned backend test command once `backend/tests/` from the PRD exists; should cover AI connectivity, RAG retrieval, agents, supervisor, and visual prompts.
-- `python -m pytest backend/tests/test_deepseek_connection.py` — Planned single-test command for verifying the backend can call the configured DeepSeek model and parse a real response.
-- `python -m uvicorn app:app --reload` — Likely FastAPI development command after `backend/app.py` exists; run from `backend/` and adjust module path if implementation differs.
-- `npm run dev` — Planned frontend development command after React/Vite or equivalent tooling exists; confirm in `package.json` before use.
-- `npm run build` — Planned frontend production build command after `package.json` exists; confirm the actual script name before use.
+- `cd frontend; npm run dev` — start the Vite frontend.
+- `cd frontend; npm run build` — type-check and build the frontend.
+- `cd backend; python -m uvicorn app.main:app --reload` — start the FastAPI backend on the default development port.
+- `cd backend; python -m pytest` — run backend tests.
+- `rg <term>` or `rg --files` — preferred search commands for code and docs.
 
-## High-level architecture
+When Phaser is implemented, install it in `frontend/` with `npm install phaser` and confirm `frontend/package.json` before relying on the dependency.
 
-`docs/PRD.md` defines the product as 《史隙》, an AI-driven historical suspense branching narrative web game, not a plain history chatbot or RAG Q&A system. The MVP should deliver one complete playable demo: Ming dynasty / bookshop apprentice / bookshop manuscript-burning case. Northern Song and Late Tang are planned as lighter dynasty-entry demonstrations rather than equal-scope stories.
+## Product Direction
 
-The intended user loop is visual-novel-style investigation plus reasoning-game clue management: choose dynasty and identity, start a generated historical event world, read a scene with key visual/background, click red-highlighted clues, collect them in a side clue panel, question NPCs, present evidence, combine clues, make irreversible choices, and resolve into multiple endings. The UI direction is a full-screen visual novel stage with scene background, NPC silhouettes/portraits, a bottom dialogue box, top status overlay, action buttons, and a collapsible clue/person/goal panel.
+《史隙》 is an AI-driven historical suspense branching narrative web game, not a plain history chatbot or RAG Q&A system. The MVP should deliver one complete playable demo:
 
-The PRD’s technical stack recommendation is `React + TypeScript` frontend, `Tailwind CSS` styling, `Python FastAPI` backend, `DeepSeek API` for generation/dialogue/supervision, `ChromaDB` for vector retrieval, `SQLite` for structured game state/logs, and JSON/Markdown for editable seed content. Deployment is not implemented; PRD options include static frontend hosting and a backend on CloudBase, Cloud Studio, lightweight server, or similar.
+```text
+Ming dynasty / bookshop apprentice / bookshop manuscript-burning case
+```
 
-The backend is expected to be the authority for secrets, AI calls, game state, rules, and consistency checks. Planned API surface includes `POST /api/session/start`, `POST /api/player/action`, `POST /api/npc/dialogue`, `POST /api/clue/inspect`, `POST /api/clue/combine`, `POST /api/ending/resolve`, `POST /api/visual/prompt`, and `GET /api/session/{session_id}`.
+The user loop is:
 
-The core runtime pipeline should be rule-constrained rather than free-form AI storytelling: frontend action → FastAPI → `GameStateManager` → world/event/story services → `RAGRetriever` → AI agent output → `ConsistencySupervisor` → optional `RepairAgent` → state/clue/ending managers → frontend response. AI is responsible for world detail, NPC wording, emotional/action flavor, visual prompts, and history-echo prose; code and rules must control clue release, stage transitions, score changes, and ending eligibility.
+```text
+Choose dynasty and identity
+  -> start a generated historical event world
+  -> investigate the scene
+  -> click highlighted clues
+  -> collect clues in the side dossier
+  -> question NPCs
+  -> present evidence
+  -> combine clues or submit deductions
+  -> make an irreversible choice
+  -> resolve into one of several endings
+```
 
-The PRD’s planned backend module layout is `backend/app.py`, `backend/config.py`, and `backend/services/` modules for `deepseek_client`, `rag_retriever`, `world_builder`, `relationship_graph_agent`, `event_generator`, `story_director`, `npc_dialogue_agent`, `consistency_supervisor`, `repair_agent`, `clue_manager`, `ending_resolver`, `history_echo_generator`, and `visual_prompt_agent`. Planned data folders include `data/dynasties`, `rules`, `events`, `npcs`, `clues`, `relationships`, `visuals`, and `rag_sources`; runtime storage includes `db/game.sqlite`, `db/chroma`, and AI call logs under `logs/`.
+AI is responsible for world detail, NPC wording, emotional/action flavor, visual prompts, and history-echo prose. Code and rules must control clue release, stage transitions, score changes, NPC permissions, and ending eligibility.
 
-Content architecture centers on a structured case package. The main Ming case uses five stages: `stage_1_intro` (night fire), `stage_2_investigation` (conflicting statements), `stage_3_reversal` (burned material is not just banned writing but grain-ledger evidence), `stage_4_choice` (evidence versus survival), and `stage_5_ending` (historical echo). Key NPCs are the bookshop owner Xu, engraver A-Shen, failed scholar Gu Wen, low-ranking Jinyiwei officer Lu Zheng, plus an offscreen superior as pressure source. Endings include self-preservation, order, truth, tragedy, and hidden outcome.
+## Frontend Architecture
 
-The clue system is P0 and should be modeled as gameplay state, not display-only text. First appearances of discoverable clues use red highlight text; clicking adds or opens the clue. Clues have IDs, type, source scene/NPC, display text, detail, historical basis, reliability, unlock effects, related clues, ending effects, and discovered status. Clue combinations produce new flags and score/risk changes. NPC dialogue should depend on discovered clues, player action type, current stage, role, trust, relationship graph, and RAG context.
+Current important frontend files:
 
-The RAG/knowledge layer exists to keep generated content historically credible. PRD recommends `ChromaDB + SQLite + JSON`, with source metadata containing dynasty, source type, source level, title, note, topic, rule type, severity, and content. Use S/A-level materials for institutions, official posts, legal/military details, and documents; use B/C-level materials for atmosphere and daily-life details. RAG is an internal guardrail, not the main user-facing feature.
+- `frontend/src/App.tsx` owns the main session state, API calls, selected NPC, action notice, and routing between start/generation/game/ending views.
+- `frontend/src/pages/GamePage.tsx` lays out the game screen.
+- `frontend/src/components/scene/ScenePanel.tsx` is the current React-only visual novel stage.
+- `frontend/src/components/dialogue/DialoguePanel.tsx` owns long-form dialogue, suggested questions, free input, and evidence presentation.
+- `frontend/src/components/clue/ClueSidebar.tsx` owns dossier, clues, locations, people, investigation actions, and deduction submission.
+- `frontend/src/types/game.ts` defines the frontend contract for sessions, scenes, NPCs, clues, dialogue, choices, endings, and state.
+- `frontend/src/api/client.ts` wraps the existing FastAPI endpoints.
 
-`ConsistencySupervisor` is a central safety/control component. It should reject or repair AI output with wrong-dynasty artifacts, role-permission violations, spoilers, personality drift, clue conflicts, stage jumps, risky procedural detail, or invalid JSON. Supervisor output should be structured with `pass`, `issues`, and `repair_instruction`; failed output should go through `RepairAgent` or deterministic fallback text.
+Do not move the authoritative frontend session state out of `App.tsx` for the Phaser P0 work. A global store can be introduced later only if the UI complexity clearly requires it.
 
-AI logging is part of the demo proof. Each call should record call ID, timestamp, module, configured model, input summary, raw prompt path, raw response path, latency, success, and supervisor result. Logs are intended for route/demo evidence that AI is actually connected.
+## Phaser Stage Target
 
-Visual generation is P0. `VisualPromptAgent` should produce prompts for key visual, dynasty concept images, scene backgrounds, NPC silhouettes/portraits, clue images, and turning-point illustrations using a unified style: low-saturation Chinese historical suspense, dark visual-novel UI, rain/fire/smoke atmosphere, and no modern or wrong-dynasty elements. `docs/help/Imagegenerate.md` documents SiliconFlow image generation: `POST https://api.siliconflow.cn/v1/images/generations`, bearer auth, model-specific parameters, and image URLs expiring after one hour.
+The next frontend goal is:
 
-When implementing, prioritize the playable Ming demo path: project skeleton and AI connectivity, structured Ming data and RAG ingestion, world/relationship/event generation, intro scene, clue highlighting/sidebar, NPC dialogue with evidence presentation, clue combination, state transitions, supervisor/repair, endings, history echo, and visual prompts. Keep Northern Song and Late Tang as lightweight selectable previews until the Ming case loop is complete.
+> Upgrade the existing React visual novel stage into a React + Phaser hybrid narrative stage.
+
+Phaser should enhance or replace only the `ScenePanel` layer. It must not become a second game system.
+
+Recommended P0 files:
+
+```text
+frontend/src/components/scene/PhaserStage.tsx
+frontend/src/game/phaserGame.ts
+frontend/src/game/events.ts
+frontend/src/game/scenes/MainScene.ts
+frontend/src/game/objects/Hotspot.ts
+frontend/src/game/objects/NPCSprite.ts
+```
+
+Keep `ScenePanel.tsx` in place as a fallback while introducing `PhaserStage.tsx`. Add a feature flag or local switch so the old React stage can be restored quickly if Phaser causes regressions.
+
+### Phaser P0 Scope
+
+Phaser should handle:
+
+- scene background rendering from `snapshot.scene.visual_asset_url` or `snapshot.scene.visual_asset_id`;
+- NPC portrait/silhouette placement from `snapshot.scene_npcs`;
+- selected NPC highlighting;
+- clickable investigation hotspots from `snapshot.scene.hotspots`;
+- clue object highlighting;
+- rain, smoke, embers, fire glow, flash, camera push, light shake, and fade transitions;
+- scene refresh when `snapshot` changes.
+
+Phaser should not handle:
+
+- long Chinese dialogue text;
+- free text input;
+- evidence selection;
+- clue detail panels;
+- people/dossier panels;
+- markdown or rich text rendering;
+- AI calls;
+- FastAPI calls;
+- clue release logic;
+- stage transitions;
+- ending resolution;
+- global game state.
+
+## React + Phaser Communication
+
+Use React as the bridge between Phaser and FastAPI.
+
+Expected P0 flow:
+
+```text
+Player clicks a Phaser hotspot
+  -> Phaser emits hotspot:clicked
+  -> PhaserStage calls onInspect(sceneId, hotspotId, clueId)
+  -> App.tsx calls /api/investigate
+  -> backend updates rules/state and returns the result
+  -> App.tsx syncs the session snapshot
+  -> PhaserStage emits snapshot:update to MainScene
+  -> MainScene refreshes background, NPCs, hotspots, and effects
+```
+
+Lifecycle requirements:
+
+```text
+Create Phaser.Game once when PhaserStage mounts.
+Destroy it with game.destroy(true) when PhaserStage unmounts.
+Do not create a new Phaser.Game on every React render.
+On snapshot changes, emit snapshot:update rather than rebuilding the whole game.
+Remove game.events listeners in React cleanup functions.
+```
+
+P0 can infer stage feedback from existing data:
+
+- `new_clues.length > 0` -> clue highlight, flash, camera push.
+- `scene_id` changed -> fade transition.
+- `current_stage` changed -> darken, camera push, title cue.
+- NPC emotion changed -> shake, dim, or step animation.
+- ending reached -> fade before `EndingPanel`.
+
+P1 can add a backend-provided `stage_cue` field:
+
+```ts
+type StageCue = {
+  focusHotspotId?: string;
+  focusNpcId?: string;
+  effects?: Array<'rain' | 'smoke' | 'embers' | 'flash' | 'camera_push' | 'shake'>;
+  highlightedClueIds?: string[];
+  transition?: 'fade' | 'cut' | 'darken';
+};
+```
+
+Do not block P0 on `stage_cue`; use frontend inference first.
+
+## Backend Architecture
+
+Current important backend areas:
+
+- `backend/app/main.py` wires the FastAPI app.
+- `backend/app/routers/game.py` exposes health, dynasty, identity, session, dialogue, investigate, deduction, choice, ending, and RAG preview routes.
+- `backend/app/routers/visual.py` exposes visual asset status, generation, bootstrap, and asset routes.
+- `backend/app/services/game_engine.py` is the main rule/state engine.
+- `backend/app/services/dialogue_orchestrator.py`, `script_bound_chat.py`, `supervisor.py`, `repair_agent.py`, `rag_retriever.py`, `visual_prompt_agent.py`, and `history_echo_generator.py` support the controlled AI narrative pipeline.
+- `backend/data/` contains structured dynasty, event, NPC, clue, relationship, visual, rule, and RAG source data.
+
+The backend remains the authority for secrets, AI calls, game state, rules, clue release, NPC permissions, consistency supervision, repair, and ending resolution.
+
+Actual frontend-facing routes currently include:
+
+```text
+GET  /api/health
+GET  /api/dynasties
+GET  /api/roles
+GET  /api/player-identities
+POST /api/player-identity/validate
+POST /api/session/start
+GET  /api/session/{session_id}
+POST /api/investigate
+POST /api/dialogue
+POST /api/deduction/submit
+POST /api/choice
+POST /api/ending/resolve
+GET  /api/visual/status
+POST /api/visual/generate
+GET  /api/visual/assets/{asset_id}
+```
+
+## Core Gameplay Rules
+
+The clue system is P0 and must remain gameplay state, not display-only text. First appearances of discoverable clues use red highlight text; clicking or investigating adds or opens the clue. Clues should affect state through flags, trust, scores, deductions, stage transitions, and ending eligibility.
+
+The main Ming case uses stages equivalent to:
+
+```text
+intro -> investigation -> reversal -> choice -> ending
+```
+
+Key NPCs are the bookshop owner Xu, engraver A-Shen, failed scholar Gu Wen, low-ranking Jinyiwei officer Lu Zheng, plus an offscreen superior as pressure source. Endings include self-preservation, order, truth, tragedy, and hidden outcome.
+
+`ConsistencySupervisor` is a central safety/control component. It should reject or repair AI output with wrong-dynasty artifacts, role-permission violations, spoilers, personality drift, clue conflicts, stage jumps, risky procedural detail, invalid JSON, or visible non-Chinese player-facing text.
+
+## Visual Direction
+
+Visual generation is P0. The visual style is low-saturation Chinese historical suspense, dark visual-novel UI, rain/fire/smoke atmosphere, and no modern or wrong-dynasty elements.
+
+Phaser should make those visual assets feel like a game stage:
+
+- backgrounds fill the main stage;
+- NPCs stand in readable positions;
+- hotspots are discoverable but not noisy;
+- important clue feedback is visible immediately;
+- scene transitions make state changes legible;
+- React dialogue and dossier UI remain readable above or beside the stage.
+
+## Implementation Priority
+
+Prioritize the playable Ming demo path:
+
+```text
+backend running
+frontend running
+session start
+PhaserStage P0
+hotspot click -> /api/investigate
+dialogue and evidence presentation unchanged
+clue sidebar unchanged
+stage progression unchanged
+ending unchanged
+build and tests passing
+```
+
+For Phaser work, verify with:
+
+- `cd frontend; npm run build`;
+- a browser smoke test that starts a session and clicks at least one Phaser hotspot;
+- no regression in `DialoguePanel`, `ClueSidebar`, or `EndingPanel`;
+- `cd backend; python -m pytest` if backend contracts or data are touched.
+
+Keep the change small. Do not combine Phaser integration with unrelated UI redesign, state-management migration, backend AI changes, or content rewrites.
