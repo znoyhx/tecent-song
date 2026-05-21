@@ -1,6 +1,7 @@
+import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { api, visualAssetUrl } from '../api/client';
+import { api } from '../api/client';
 import type { GeneratedScenarioPreview } from '../mock/entryFlow';
 import type { PlayerIdentityValidationResult } from '../types/game';
 
@@ -12,6 +13,39 @@ type ScenarioGenerationPageProps = {
   onBack: () => void;
   onEnterEvent: (identityPayload?: { identity_id?: string; custom_identity_text?: string }) => void;
 };
+
+const entryBackground = '/generated-ui/concept-entry-bg.png';
+const identityPortraitSheet = '/generated-ui/identity-portraits-sheet.png';
+
+const identityVisuals: Record<string, { x: string; y: string }> = {
+  bookshop_apprentice: { x: '0%', y: '0%' },
+  wandering_detective: { x: '50%', y: '0%' },
+  lodging_scholar: { x: '100%', y: '0%' },
+  woodcutter: { x: '0%', y: '100%' },
+  wandering_physician: { x: '50%', y: '100%' },
+  retired_official: { x: '100%', y: '100%' },
+};
+
+const coreCast = [
+  { name: '人物一', x: '0%', y: '0%' },
+  { name: '人物二', x: '50%', y: '0%' },
+  { name: '人物三', x: '100%', y: '0%' },
+  { name: '人物四', x: '0%', y: '100%' },
+];
+
+function conceptStyle(extra?: Record<string, string>): CSSProperties {
+  return {
+    '--concept-bg': `url(${entryBackground})`,
+    ...extra,
+  } as CSSProperties;
+}
+
+function identityStyle(position?: { x: string; y: string }): CSSProperties {
+  return {
+    '--identity-sheet': `url(${identityPortraitSheet})`,
+    '--identity-position': position ? `${position.x} ${position.y}` : '50% 50%',
+  } as CSSProperties;
+}
 
 export function ScenarioGenerationPage({
   backendReady,
@@ -59,6 +93,7 @@ export function ScenarioGenerationPage({
   const activeIdentityName = customMode
     ? customTrimmed
     : selectedIdentity?.display_name ?? '书坊学徒';
+  const progressPercent = Math.min(99, Math.max(12, Math.round((resolvedStepCount / preview.generationSteps.length) * 100)));
   const rankLabelMap = {
     low: '低身份',
     middle: '中身份',
@@ -78,9 +113,9 @@ export function ScenarioGenerationPage({
   );
 
   const enterButtonLabel = busy
-    ? '正在载入剧情…'
+    ? '正在载入剧情...'
     : identityBusy
-      ? '正在校验身份…'
+      ? '正在校验身份...'
       : '开始游戏';
   const enterDisabled = busy || identityBusy || !generationDone;
 
@@ -126,14 +161,26 @@ export function ScenarioGenerationPage({
   if (!generationDone) {
     return (
       <main
-        className="script-loading-stage"
-        style={{ backgroundImage: `linear-gradient(90deg, rgba(7, 8, 10, .9), rgba(7, 8, 10, .58)), url(${visualAssetUrl(preview.coverAssetId)})` }}
+        className="script-loading-stage concept-entry-page concept-loading-page"
+        style={conceptStyle({
+          '--progress-deg': `${Math.round(progressPercent * 3.6)}deg`,
+        })}
       >
-        <div className="cover-rain" />
-        <section className="script-progress-card" aria-live="polite">
-          <p className="seal-kicker">剧本生成</p>
-          <h1>正在构建本局事件</h1>
-          <div className="generation-step-list script-step-list">
+        <div className="concept-atmosphere" />
+
+        <section className="concept-generation-modal gilded-panel" aria-live="polite">
+          <button type="button" className="modal-close" aria-label="返回" onClick={onBack} disabled={busy}>
+            ×
+          </button>
+          <p className="concept-step-label">步骤 2/3</p>
+          <h1>剧本生成中</h1>
+
+          <div className="progress-orb" aria-label={`生成进度 ${progressPercent}%`}>
+            <div className="progress-orb-scene" />
+            <strong>{progressPercent}%</strong>
+          </div>
+
+          <div className="generation-step-list script-step-list concept-progress-list">
             {preview.generationSteps.map((step, index) => {
               const state = index + 1 < resolvedStepCount ? 'done' : index + 1 === resolvedStepCount ? 'active' : 'pending';
               return (
@@ -147,6 +194,8 @@ export function ScenarioGenerationPage({
               );
             })}
           </div>
+
+          <p className="generation-whisper">AI 生成中，请稍候...</p>
         </section>
       </main>
     );
@@ -154,56 +203,42 @@ export function ScenarioGenerationPage({
 
   return (
     <main
-      className="script-overview-page"
-      style={{ backgroundImage: `linear-gradient(90deg, rgba(7, 8, 10, .86), rgba(7, 8, 10, .48)), url(${visualAssetUrl(preview.coverAssetId)})` }}
+      className="script-overview-page concept-entry-page concept-overview-page"
+      style={conceptStyle()}
     >
-      <div className="cover-rain" />
+      <div className="concept-atmosphere" />
 
-      <section className="script-overview-shell" aria-label="剧本概览">
-        <header className="script-overview-header">
-          <div>
-            <p className="seal-kicker">剧本概览</p>
-            <h1>{preview.eventName}</h1>
-          </div>
-          <button type="button" className="secondary-button" onClick={onBack} disabled={busy}>
+      <section className="concept-overview-board gilded-panel" aria-label="身份选择与剧本概览">
+        <header className="concept-overview-header">
+          <button type="button" className="secondary-button concept-back-button" onClick={onBack} disabled={busy}>
             重新选择
           </button>
+          <div className="ornate-heading">
+            <span />
+            <p>步骤 3/3</p>
+            <span />
+          </div>
+          <h1>{preview.eventName}</h1>
         </header>
 
-        <div className="script-overview-grid">
-          <section className="script-case-panel" aria-label="事件概览">
-            <p className="script-summary-text">{preview.eventSummary}</p>
-            <div className="generation-summary-grid script-summary-grid">
-              {summaryPairs.map(([label, value]) => (
-                <article key={label} className="generation-stat-card">
-                  <span>{label}</span>
-                  <strong>{value}</strong>
-                </article>
-              ))}
-            </div>
-            <article className="scenario-brief-card script-role-brief">
-              <p className="meta-label">初始立场</p>
-              <p>{preview.roleSummary}</p>
-            </article>
-          </section>
-
-          <section className="identity-panel script-identity-panel" aria-label="你的身份">
-            <div className="identity-panel-header">
-              <div>
-                <p className="meta-label">你的身份</p>
-                <h3>{activeIdentityName}</h3>
-              </div>
-              {selectedIdentity?.is_default && !customMode ? <span className="identity-default-badge">默认身份</span> : null}
+        <div className="concept-overview-layout">
+          <section className="concept-identity-column" aria-label="身份选择">
+            <div className="ornate-heading mini">
+              <span />
+              <h2>身份选择</h2>
+              <span />
             </div>
 
-            <div className="identity-option-list">
+            <div className="concept-identity-grid">
               {identityOptions.map((option) => {
                 const active = !customMode && option.identity_id === selectedIdentityId;
+                const portraitPosition = identityVisuals[option.identity_id];
                 return (
                   <button
                     key={option.identity_id}
                     type="button"
-                    className={active ? 'identity-option active' : 'identity-option'}
+                    className={active ? 'concept-identity-card active' : 'concept-identity-card'}
+                    style={identityStyle(portraitPosition)}
                     onClick={() => {
                       setSelectedIdentityId(option.identity_id);
                       setCustomIdentityText('');
@@ -212,18 +247,17 @@ export function ScenarioGenerationPage({
                     }}
                     disabled={busy || identityBusy}
                   >
-                    <span className="identity-option-title">
-                      <strong>{option.display_name}</strong>
-                      <em>{rankLabelMap[option.social_rank]}</em>
-                      {option.is_default ? <b>默认</b> : null}
-                    </span>
+                    <span className="identity-portrait" aria-hidden="true" />
+                    <span className="identity-check" aria-hidden="true">✓</span>
+                    <strong>{option.display_name}</strong>
                     <small>{option.description}</small>
+                    <em>{rankLabelMap[option.social_rank]}</em>
                   </button>
                 );
               })}
             </div>
 
-            <div className="identity-custom-row">
+            <div className="concept-custom-identity">
               <input
                 value={customIdentityText}
                 onChange={(event) => {
@@ -231,29 +265,74 @@ export function ScenarioGenerationPage({
                   setIdentityValidation(null);
                   setIdentityError('');
                 }}
-                placeholder="也可以输入自定义身份"
+                placeholder="输入自定义身份"
                 disabled={busy || identityBusy}
               />
               <button type="button" className="secondary-button" onClick={handleValidateIdentity} disabled={busy || identityBusy}>
-                {identityBusy ? '校验中…' : '校验身份'}
+                {identityBusy ? '校验中...' : '校验'}
               </button>
             </div>
 
             {customMode && customIdentityValid ? <p className="identity-valid-hint">身份校验通过。</p> : null}
             {identityError ? <div className="identity-error">{identityError}</div> : null}
-
-            <div className="identity-background-preview">
-              <span>身份背景预览</span>
-              <p>{customMode && !customIdentityValid ? '将以你填写的身份进入剧本，开局后由剧情系统接管人物立场。' : activeBackground}</p>
-            </div>
           </section>
+
+          <aside className="concept-brief-column" aria-label="剧本概览">
+            <div className="ornate-heading mini">
+              <span />
+              <h2>剧本概览</h2>
+              <span />
+            </div>
+
+            <article className="brief-scroll">
+              <section className="brief-section">
+                <h3>事件背景</h3>
+                <p>{preview.eventSummary}</p>
+              </section>
+
+              <section className="brief-section">
+                <h3>核心人物</h3>
+                <div className="core-cast-row">
+                  {coreCast.map((member) => (
+                    <span
+                      key={member.name}
+                      className="core-avatar generated"
+                      style={identityStyle({ x: member.x, y: member.y })}
+                      title={member.name}
+                    />
+                  ))}
+                  <span className="core-avatar more">...</span>
+                </div>
+              </section>
+
+              <section className="brief-section">
+                <h3>调查目标</h3>
+                <p>{preview.coreConflict}</p>
+              </section>
+
+              <section className="brief-section identity-background-preview concept-background-preview">
+                <span>当前身份</span>
+                <h3>{activeIdentityName}</h3>
+                <p>{customMode && !customIdentityValid ? '将以你填写的身份进入剧本，开局后由剧情系统接管人物立场。' : activeBackground}</p>
+              </section>
+
+              <div className="concept-summary-grid">
+                {summaryPairs.map(([label, value]) => (
+                  <article key={label} className="generation-stat-card">
+                    <span>{label}</span>
+                    <strong>{value}</strong>
+                  </article>
+                ))}
+              </div>
+            </article>
+          </aside>
         </div>
 
         {errorText ? <div className="error-banner cover-error">{errorText}</div> : null}
 
-        <div className="generation-actions script-overview-actions">
-          <button type="button" className="primary-button" onClick={handleEnterEvent} disabled={enterDisabled}>
-            {enterButtonLabel}
+        <div className="script-overview-actions concept-overview-actions">
+          <button type="button" className="imperial-button" onClick={handleEnterEvent} disabled={enterDisabled}>
+            <span>{enterButtonLabel}</span>
           </button>
         </div>
       </section>
