@@ -90,7 +90,7 @@ Keep `ScenePanel.tsx` in place as a fallback while introducing `PhaserStage.tsx`
 Phaser should handle:
 
 - scene background rendering from `snapshot.scene.visual_asset_url` or `snapshot.scene.visual_asset_id`;
-- NPC portrait/silhouette placement from `snapshot.scene_npcs`;
+- subtle NPC hit targets / focus feedback from `snapshot.scene_npcs`, assuming the NPC bodies are already baked into the scene image;
 - selected NPC highlighting;
 - clickable investigation hotspots from `snapshot.scene.hotspots`;
 - clue object highlighting;
@@ -212,10 +212,12 @@ Key NPCs are the bookshop owner Xu, engraver A-Shen, failed scholar Gu Wen, low-
 
 Visual generation is P0. The visual style is low-saturation Chinese historical suspense, dark visual-novel UI, rain/fire/smoke atmosphere, and no modern or wrong-dynasty elements.
 
+Current visual decision: the main game scene should be generated as one integrated image per location, with the active NPC(s), historical place, and clue-bearing objects in the same prompt and the same rendered perspective. Do not treat the main stage as a background with large NPC cutouts pasted on top. Example intent: "generate Xu the bookshop owner in the Ming bookshop front hall, with bookcases, shelves, the ledger desk, old book box, red seal paper corner, and doorpost watch mark visible as clue-bearing scene elements." The clickable game layer should sit over this integrated image as hotspot/NPC hit targets.
+
 Phaser should make those visual assets feel like a game stage:
 
 - backgrounds fill the main stage;
-- NPCs stand in readable positions;
+- NPCs are already part of the generated scene image; Phaser may add subtle hit targets or focus brackets, but should not duplicate them as large pasted portraits on the main stage;
 - hotspots are discoverable but not noisy;
 - important clue feedback is visible immediately;
 - scene transitions make state changes legible;

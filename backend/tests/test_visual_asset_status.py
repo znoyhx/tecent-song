@@ -143,3 +143,31 @@ def test_clue_visual_prompts_ban_text_and_question_marks() -> None:
         assert "no question marks" in prompt_text
         assert "fake text" in negative_text
         assert "???" in negative_text
+
+
+def test_scene_visual_prompt_integrates_character_place_and_clues() -> None:
+    prompt = visual_prompt_agent.get_asset("scene_bookshop_front_hall")
+
+    assert prompt is not None
+    assert prompt.category == "scenes"
+    assert "人物必须和地点一起生成" in prompt.prompt
+    assert "许掌柜" in prompt.prompt
+    assert "书柜" in prompt.prompt
+    assert "架子" in prompt.prompt
+    assert "旧书箱" in prompt.prompt
+    assert "缺失稿单" in prompt.prompt
+    assert "半枚朱红纸角" in prompt.prompt
+    assert "不能像后期贴上去的半身立绘" in prompt.prompt
+    assert "consistent cast bible" in prompt.prompt
+
+
+def test_ashen_visual_prompt_uses_character_consistency_lock() -> None:
+    prompt = visual_prompt_agent.get_asset("npc_worker_ashen")
+    scene_prompt = visual_prompt_agent.get_asset("scene_bookshop_engraving_room")
+
+    assert prompt is not None
+    assert scene_prompt is not None
+    assert "Character identity lock for A-Shen" in prompt.prompt
+    assert "same 22-26 year old Han Chinese Ming dynasty woodblock engraver" in prompt.prompt
+    assert "not a pretty anime idol" in prompt.prompt
+    assert "Character identity lock for A-Shen" in scene_prompt.prompt

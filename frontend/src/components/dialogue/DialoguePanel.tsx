@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { getTrustLabel } from '../../store/gameStore';
 import type { Clue, DialogueHighlight, DialogueTurn, NPCProfile, SessionSnapshot } from '../../types/game';
 
 type DialoguePanelProps = {
@@ -11,7 +12,6 @@ type DialoguePanelProps = {
   highlightClues: DialogueHighlight[];
   redTexts: string[];
   actionNotice: string;
-  presentationFeedback: string[];
   busy: boolean;
   onSendDialogue: (npcId: string, message: string, presentedClueIds: string[]) => void;
 };
@@ -61,7 +61,6 @@ export function DialoguePanel({
   highlightClues,
   redTexts,
   actionNotice,
-  presentationFeedback,
   busy,
   onSendDialogue,
 }: DialoguePanelProps) {
@@ -85,6 +84,7 @@ export function DialoguePanel({
   }, [currentNpc, dialogueTurns]);
 
   const currentLine = parseLine(actionNotice, currentNpc);
+  const currentTrust = currentNpc ? snapshot.state.npc_trust[currentNpc.npc_id] ?? currentNpc.initial_trust : 0;
   const highlightTerms = useMemo(() => {
     const terms: HighlightTerm[] = [];
     highlightClues.forEach((item) => {
@@ -176,21 +176,20 @@ export function DialoguePanel({
   };
 
   return (
-    <section className="dialogue-box" aria-label="当前对话">
+    <section className={evidenceOpen ? 'dialogue-box evidence-open' : 'dialogue-box'} aria-label="当前对话">
       <div className="dialogue-line-head">
         <div className="speaker-nameplate">{currentLine.speaker}</div>
-        {currentNpc ? <span className="dialogue-role-hint">{currentNpc.public_identity}</span> : null}
+        {currentNpc ? (
+          <div className="dialogue-speaker-meta">
+            <span>{currentNpc.public_identity}</span>
+            <span>信任：{getTrustLabel(currentTrust)}（{currentTrust}）</span>
+          </div>
+        ) : null}
       </div>
 
       <div className="dialogue-main-text">
         <p>{renderHighlightedText(currentLine.body, highlightTerms)}</p>
       </div>
-
-      {presentationFeedback.length > 0 ? (
-        <div className="presentation-feedback" aria-label="出示线索反馈">
-          {presentationFeedback.map((item) => <span key={item}>{item}</span>)}
-        </div>
-      ) : null}
 
       <div className="evidence-presenter" ref={evidencePresenterRef}>
         <div className="evidence-summary-row">
@@ -200,14 +199,14 @@ export function DialoguePanel({
             onClick={() => setEvidenceOpen((open) => !open)}
             disabled={busy || !currentNpc || snapshot.clues.length === 0}
           >
-            出示证据
+            出示线索
           </button>
           <div className="selected-evidence-strip" aria-label="当前选择的证据">
             {selectedEvidence.length > 0 ? selectedEvidence.map((clue) => (
               <button key={clue.clue_id} type="button" className="selected-evidence-chip" onClick={() => toggleEvidence(clue.clue_id)} disabled={busy}>
                 {clue.title} ×
               </button>
-            )) : <span>未选择证据</span>}
+            )) : <span>未选择线索</span>}
           </div>
         </div>
 

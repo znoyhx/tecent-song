@@ -464,7 +464,6 @@ function App() {
             highlightClues={dialogueHighlights}
             redTexts={dialogueRedTexts}
             actionNotice={actionNotice}
-            presentationFeedback={presentationFeedback}
             debugEnabled={debugUiAllowed && debugEnabled}
             busy={busy}
             onEnterScene={handleEnterScene}

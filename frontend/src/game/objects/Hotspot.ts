@@ -9,15 +9,21 @@ type HotspotOptions = {
   disabled: boolean;
 };
 
+const hotspotTextResolution = typeof window === 'undefined'
+  ? 1.5
+  : Math.min(Math.max(window.devicePixelRatio || 1, 1.5), 2);
+
 export class Hotspot extends Phaser.GameObjects.Container {
   readonly hotspotId: string;
   readonly clueIds: string[];
 
   private readonly halo: Phaser.GameObjects.Graphics;
   private readonly ring: Phaser.GameObjects.Graphics;
+  private readonly hitZone: Phaser.GameObjects.Zone;
   private readonly labelPlate: Phaser.GameObjects.Rectangle;
   private readonly labelText: Phaser.GameObjects.Text;
   private disabled: boolean;
+  private hovered = false;
   private destroyed = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, options: HotspotOptions) {
@@ -29,35 +35,40 @@ export class Hotspot extends Phaser.GameObjects.Container {
 
     this.halo = scene.add.graphics();
     this.ring = scene.add.graphics();
-    this.labelPlate = scene.add.rectangle(0, 34, 138, 34, 0x140d0b, 0.72);
-    this.labelText = scene.add.text(0, 34, options.hotspot.label, {
+    this.labelText = scene.add.text(0, -38, options.hotspot.label, {
       color: '#f5dfbd',
-      fontFamily: '"LXGW WenKai", "STKaiti", "KaiTi", serif',
+      fontFamily: '"KaiTi", "STKaiti", "KaiTi SC", "LXGW WenKai", "FangSong", "Songti SC", serif',
       fontSize: '17px',
+      fontStyle: 'bold',
       align: 'center',
+      stroke: '#2b160f',
+      strokeThickness: 3,
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 0, stroke: true, fill: true },
+      resolution: hotspotTextResolution,
       wordWrap: { width: 126 },
     }).setOrigin(0.5);
 
-    this.labelPlate.setStrokeStyle(1, 0xd2a05f, 0.32);
-    this.add([this.halo, this.ring, this.labelPlate, this.labelText]);
-    this.setSize(150, 86);
-    this.setDepth(30);
-    this.setInteractive(
-      new Phaser.Geom.Rectangle(-75, -34, 150, 86),
-      Phaser.Geom.Rectangle.Contains,
-    );
+    const labelWidth = Math.max(142, this.labelText.width + 28);
+    const labelHeight = Math.max(34, this.labelText.height + 12);
+    this.labelPlate = scene.add.rectangle(0, -38, labelWidth, labelHeight, 0x140d0b, 0.78);
+    this.labelPlate.setStrokeStyle(1, 0xd2a05f, 0.46);
+    const hitRadius = 28;
+    const hitPadding = 10;
+    const hitTop = Math.min(-hitRadius, this.labelPlate.y - labelHeight / 2) - hitPadding;
+    const hitBottom = Math.max(hitRadius, this.labelPlate.y + labelHeight / 2) + hitPadding;
+    const hitWidth = Math.max(labelWidth, hitRadius * 2) + hitPadding * 2;
+    const hitHeight = hitBottom - hitTop;
+    const hitY = (hitTop + hitBottom) / 2;
+    this.hitZone = scene.add.zone(0, hitY, hitWidth, hitHeight).setOrigin(0.5);
+    this.hitZone.setInteractive({ useHandCursor: true });
 
-    this.on('pointerover', () => {
-      if (!this.disabled) {
-        this.scene.tweens.add({ targets: this, scale: 1.06, duration: 140, ease: 'Sine.easeOut' });
-      }
-    });
-    this.on('pointerout', () => {
-      if (!this.disabled) {
-        this.scene.tweens.add({ targets: this, scale: 1, duration: 160, ease: 'Sine.easeOut' });
-      }
-    });
-    this.on('pointerdown', () => {
+    this.add([this.halo, this.ring, this.labelPlate, this.labelText, this.hitZone]);
+    this.setSize(hitWidth, hitHeight);
+    this.setDepth(30);
+
+    this.hitZone.on('pointerover', () => this.setHoverState(true));
+    this.hitZone.on('pointerout', () => this.setHoverState(false));
+    this.hitZone.on('pointerdown', () => {
       if (this.disabled) {
         return;
       }
@@ -80,6 +91,15 @@ export class Hotspot extends Phaser.GameObjects.Container {
 
   setDisabled(disabled: boolean): void {
     this.disabled = disabled;
+    if (disabled) {
+      this.hovered = false;
+      this.scene.tweens.killTweensOf(this);
+      this.setScale(1);
+      this.redraw(false);
+      this.hitZone.disableInteractive();
+    } else if (!this.hitZone.input?.enabled) {
+      this.hitZone.setInteractive({ useHandCursor: true });
+    }
     this.setAlpha(disabled ? 0.58 : 1);
     this.labelText.setAlpha(disabled ? 0.7 : 1);
   }
@@ -94,7 +114,22 @@ export class Hotspot extends Phaser.GameObjects.Container {
       scale: { from: 1.08, to: 1 },
       duration: 360,
       ease: 'Back.easeOut',
-      onComplete: () => this.redrawIfAlive(false),
+      onComplete: () => this.redrawIfAlive(this.hovered),
+    });
+  }
+
+  private setHoverState(hovered: boolean): void {
+    if (this.disabled || this.destroyed || this.hovered === hovered) {
+      return;
+    }
+    this.hovered = hovered;
+    this.redraw(hovered);
+    this.scene.tweens.killTweensOf(this);
+    this.scene.tweens.add({
+      targets: this,
+      scale: hovered ? 1.06 : 1,
+      duration: hovered ? 140 : 160,
+      ease: 'Sine.easeOut',
     });
   }
 
@@ -110,13 +145,13 @@ export class Hotspot extends Phaser.GameObjects.Container {
       return;
     }
     this.halo.clear();
-    this.halo.fillStyle(active ? 0xe07163 : 0xc9a063, active ? 0.26 : 0.12);
-    this.halo.fillCircle(0, 0, active ? 28 : 22);
+    this.halo.fillStyle(active ? 0xe07163 : 0xc9a063, active ? 0.22 : 0.1);
+    this.halo.fillCircle(0, 0, active ? 24 : 18);
 
     this.ring.clear();
-    this.ring.lineStyle(active ? 3 : 2, active ? 0xffd1a0 : 0xd2a05f, active ? 0.9 : 0.66);
-    this.ring.strokeCircle(0, 0, active ? 22 : 17);
+    this.ring.lineStyle(active ? 3 : 2, active ? 0xffd1a0 : 0xd2a05f, active ? 0.88 : 0.62);
+    this.ring.strokeCircle(0, 0, active ? 19 : 14);
     this.ring.lineStyle(1, 0x7c2b25, 0.86);
-    this.ring.strokeCircle(0, 0, 6);
+    this.ring.strokeCircle(0, 0, 5);
   }
 }

@@ -1,0 +1,33 @@
+- main [ref=e67]:
+  - generic [ref=e68]:
+    - button "返回" [ref=e69] [cursor=pointer]: ×
+    - paragraph [ref=e70]: 步骤 2/3
+    - heading "剧本生成中" [level=1] [ref=e71]
+    - generic "生成进度 83%" [ref=e72]:
+      - strong [ref=e74]: 83%
+    - generic [ref=e75]:
+      - article [ref=e76]:
+        - generic [ref=e78]:
+          - strong [ref=e79]: 检索朝代知识库
+          - paragraph [ref=e80]: 读取制度、风物、风险词与视觉语义，锁定当前时代的叙事边界。
+      - article [ref=e81]:
+        - generic [ref=e83]:
+          - strong [ref=e84]: 生成玩家身份
+          - paragraph [ref=e85]: 根据朝代社会结构抽取可行动身份，为推理与风险尺度定下立场。
+      - article [ref=e86]:
+        - generic [ref=e88]:
+          - strong [ref=e89]: 构建事件骨架
+          - paragraph [ref=e90]: 把地点、火种、传闻与禁忌组织成一条可调查的开局事件链。
+      - article [ref=e91]:
+        - generic [ref=e93]:
+          - strong [ref=e94]: 生成 NPC 关系
+          - paragraph [ref=e95]: 分配立场、隐情与关系张力，让证词冲突能够持续推进。
+      - article [ref=e96]:
+        - generic [ref=e98]:
+          - strong [ref=e99]: 分配关键线索
+          - paragraph [ref=e100]: 将物证、口供、误导信息与可组合线索投放到各阶段场景。
+      - article [ref=e101]:
+        - generic [ref=e103]:
+          - strong [ref=e104]: 准备多结局分支
+          - paragraph [ref=e105]: 根据真相、秩序、求生与牺牲权重生成不同收束出口。
+    - paragraph [ref=e106]: AI 生成中，请稍候...

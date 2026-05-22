@@ -1,6 +1,6 @@
 import { resolveApiUrl } from '../../api/client';
 import type { Scene, SessionSnapshot } from '../../types/game';
-import { CharacterPortrait } from './CharacterPortrait';
+import type { CSSProperties } from 'react';
 
 
 type ScenePanelProps = {
@@ -14,46 +14,51 @@ function getSceneImage(scene: Scene): string {
   return resolveApiUrl(scene.visual_asset_url, scene.visual_asset_id ? `/api/visual/assets/${scene.visual_asset_id}` : '/api/visual/assets/scene_bookshop_front_hall');
 }
 
+const integratedNpcPositions: Record<string, Record<string, { left: string; top: string }>> = {
+  scene_front_hall: { npc_owner: { left: '58%', top: '76%' } },
+  scene_account_room: { npc_owner: { left: '58%', top: '78%' } },
+  scene_engraving_room: { npc_worker: { left: '52%', top: '76%' } },
+  scene_back_gate: { npc_worker: { left: '50%', top: '74%' } },
+  scene_rain_alley: { npc_scholar: { left: '50%', top: '76%' } },
+  scene_city_gate: { npc_scholar: { left: '70%', top: '76%' } },
+  scene_interrogation_room: { npc_jinyiwei: { left: '50%', top: '78%' } },
+};
+
+function getNpcMarkerStyle(sceneId: string, npcId: string, index: number, count: number): CSSProperties {
+  const mapped = integratedNpcPositions[sceneId]?.[npcId];
+  if (mapped) {
+    return mapped;
+  }
+  const span = count <= 1 ? 0 : 34;
+  const left = count <= 1 ? 58 : 42 + (span * index) / Math.max(count - 1, 1);
+  return { left: `${left}%`, top: '68%' };
+}
+
 
 
 export function ScenePanel({ snapshot, selectedNpcId, busy, onSelectNpc }: ScenePanelProps) {
   const scene = snapshot.scene;
-  const stageTags = [
-    ['朝代', snapshot.dynasty?.name ?? '明代'],
-    ['身份', snapshot.player_identity?.display_name ?? snapshot.player_role?.name ?? '书坊学徒'],
-    ['地点', scene.name],
-    ['阶段', snapshot.stage_label],
-  ];
 
   return (
     <section
       className="vn-backdrop"
-      style={{ backgroundImage: `linear-gradient(180deg, rgba(8, 7, 9, .22), rgba(8, 7, 9, .88)), url(${getSceneImage(scene)})` }}
+      style={{ backgroundImage: `linear-gradient(180deg, rgba(8, 7, 9, .08), rgba(8, 7, 9, .42)), url(${getSceneImage(scene)})` }}
     >
       <div className="vn-rain" />
       <div className="vn-smoke" />
 
-      <header className="top-hud">
-        {stageTags.map(([label, value]) => (
-          <div key={label} className="hud-chip">
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </div>
-        ))}
-        <div className="hud-goal">目标：{snapshot.current_goal}</div>
-      </header>
-
-      <div className="npc-portrait-layer">
+      <div className="integrated-npc-layer">
         {snapshot.scene_npcs.length > 0 ? (
           snapshot.scene_npcs.map((npc, index) => (
             <button
               key={npc.npc_id}
               type="button"
-              className={npc.npc_id === selectedNpcId ? `npc-portrait-button active pos-${index}` : `npc-portrait-button pos-${index}`}
+              className={npc.npc_id === selectedNpcId ? 'integrated-npc-button active' : 'integrated-npc-button'}
+              style={getNpcMarkerStyle(scene.scene_id, npc.npc_id, index, snapshot.scene_npcs.length)}
               onClick={() => onSelectNpc(npc.npc_id)}
               disabled={busy}
             >
-              <CharacterPortrait character={npc} active={npc.npc_id === selectedNpcId} />
+              <span>{npc.name}</span>
             </button>
           ))
 
@@ -64,11 +69,6 @@ export function ScenePanel({ snapshot, selectedNpcId, busy, onSelectNpc }: Scene
         )}
       </div>
 
-      <div className="scene-corner-caption">
-        <strong>{scene.name}</strong>
-        <span>{scene.visual_status === 'generated' ? '已生成场景' : '视觉占位场景'}</span>
-
-      </div>
     </section>
   );
 }

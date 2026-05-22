@@ -124,6 +124,12 @@ export const api = {
       body: JSON.stringify({ asset_id: assetId }),
     });
   },
+  askAssistant(payload: { session_id: string; question: string }) {
+    return request<{ answer: string; suggested_focus: string[]; safety_note: string; ai_mode: string; log?: Record<string, unknown> }>('/api/assistant/hint', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
 };
 
 export type { ChoiceCard };

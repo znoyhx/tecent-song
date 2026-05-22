@@ -1,0 +1,39 @@
+- main [ref=e4]:
+  - generic "选择朝代标题" [ref=e23]:
+    - generic [ref=e6]:
+      - paragraph [ref=e24]: 步骤 1/3
+      - heading "选择朝代" [level=1] [ref=e25]
+  - region "开局设置" [ref=e26]:
+    - generic [ref=e10]:
+      - heading "选择朝代" [level=2] [ref=e28]
+      - generic [ref=e30]:
+        - button "历史语境待生成 明 可生成剧本 正篇开放" [ref=e31] [cursor=pointer]:
+          - generic [ref=e34]: 历史语境待生成
+          - strong [ref=e35]: 明
+          - generic [ref=e36]: 可生成剧本
+          - emphasis [ref=e37]: 正篇开放
+        - button "后续时代预览 宋 后续开放 预览" [ref=e38] [cursor=pointer]:
+          - generic [ref=e41]: 后续时代预览
+          - strong [ref=e42]: 宋
+          - generic [ref=e43]: 后续开放
+          - emphasis [ref=e44]: 预览
+        - button "后续时代预览 唐 后续开放 预览" [ref=e45] [cursor=pointer]:
+          - generic [ref=e48]: 后续时代预览
+          - strong [ref=e49]: 唐
+          - generic [ref=e50]: 后续开放
+          - emphasis [ref=e51]: 预览
+    - complementary "关键词" [ref=e52]:
+      - generic [ref=e54]:
+        - paragraph [ref=e55]: 朝代
+        - heading "明代" [level=2] [ref=e56]
+      - paragraph [ref=e57]: 先选择故事发生的时代。具体事件、人物关系、关键词与开局目标会在下一步生成。
+      - generic "推荐关键词" [ref=e58]:
+        - generic [ref=e59]: 时代制度
+        - generic [ref=e60]: 地点氛围
+        - generic [ref=e61]: 人物关系
+        - generic [ref=e62]: 核心冲突
+      - generic [ref=e63]:
+        - generic [ref=e64]: 输入故事关键词（可选）
+        - textbox "输入故事关键词（可选）" [ref=e65]:
+          - /placeholder: 可选：输入你想要的主题词。不填写则使用默认生成策略。
+      - button "下一步" [ref=e66] [cursor=pointer]

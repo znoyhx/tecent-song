@@ -14,6 +14,7 @@ import httpx
 from app.services.visual_prompt_agent import VisualAssetPrompt, visual_prompt_agent
 
 CLUE_PROMPT_VERSION = "clue_no_text_v3"
+SCENE_PROMPT_VERSION = "scene_integrated_npc_clues_v1"
 
 
 GAME_VISUAL_ASSET_MAP = {
@@ -26,10 +27,10 @@ GAME_VISUAL_ASSET_MAP = {
     "scene_rain_alley": "scene_rain_alley",
     "scene_city_gate": "scene_city_gate",
     "scene_interrogation_room": "scene_interrogation_room",
-    "npc_owner": "npc_owner_xu",
-    "npc_worker": "npc_worker_ashen",
-    "npc_scholar": "npc_scholar_guwen",
-    "npc_jinyiwei": "npc_jinyiwei_lu",
+    "npc_owner": "npc_xu_owner_cutout",
+    "npc_worker": "npc_ashen_worker_cutout",
+    "npc_scholar": "npc_guwen_scholar_cutout",
+    "npc_jinyiwei": "npc_luzheng_jinyiwei_cutout",
     "clue_burned_page": "clue_burned_page",
     "clue_red_seal": "clue_red_seal",
     "clue_missing_manuscript_list": "clue_missing_manuscript_list",
@@ -81,6 +82,10 @@ ASSET_DESCRIPTIONS = {
     "npc_worker_ashen": "阿沈，年轻刻工，袖口有旧墨，神情胆怯，总避开三更后的问题。",
     "npc_scholar_guwen": "顾闻，落第士子，清瘦焦急，怀里似乎藏着受潮旧稿。",
     "npc_jinyiwei_lu": "陆峥，低阶锦衣卫军官，冷峻克制，奉命封锁却并不掌握完整真相。",
+    "npc_xu_owner_cutout": "许掌柜透明抠图立绘，用于主舞台人物背景融合。",
+    "npc_ashen_worker_cutout": "阿沈透明抠图立绘，用于主舞台人物背景融合。",
+    "npc_guwen_scholar_cutout": "顾闻透明抠图立绘，用于主舞台人物背景融合。",
+    "npc_luzheng_jinyiwei_cutout": "陆峥透明抠图立绘，用于主舞台人物背景融合。",
     "clue_burned_page": "灰烬中残留的烧焦纸页，隐约可辨粮册相关字样。",
     "clue_red_seal": "半枚红印纸角，像是从官府文书或封缄处撕下。",
     "clue_missing_manuscript_list": "缺口整齐的稿单，暗示有人提前取走某批文稿。",
@@ -128,8 +133,15 @@ class ImageGenerationService:
             raise ValueError("未知视觉资产。")
 
         existing = self._find_existing_file(prompt, asset_id)
-        if existing and not force:
-            self._update_manifest(asset_id, prompt, existing, status="generated", cached=True)
+        current_existing = self._find_existing_file(prompt, asset_id, require_current_prompt=True)
+        if asset_id.endswith("_cutout"):
+            if existing:
+                self._update_manifest(asset_id, prompt, existing, status="generated", cached=True)
+                return self._asset_status(asset_id, cached=True, message="已复用本地透明抠图人物资产。")
+            self._update_manifest(asset_id, prompt, None, status="blocked", error="missing_local_cutout")
+            return self._asset_status(asset_id, message="透明抠图人物资产缺失，未使用非透明图片冒充。")
+        if current_existing and not force:
+            self._update_manifest(asset_id, prompt, current_existing, status="generated", cached=True)
             return self._asset_status(asset_id, cached=True, message="已复用本地生成图片。")
 
         provider = self._image_provider()
@@ -190,7 +202,11 @@ class ImageGenerationService:
         prompt = visual_prompt_agent.get_asset(asset_id)
         if prompt is None:
             return None
-        return self._find_existing_file(prompt, asset_id)
+        return self._find_existing_file(
+            prompt,
+            asset_id,
+            require_current_prompt=prompt.category == "scenes",
+        )
 
     def asset_media_type(self, asset_id: str) -> str:
         file_path = self.asset_file_path(asset_id)
@@ -348,7 +364,11 @@ class ImageGenerationService:
                 "message": "未找到对应视觉资产。",
             }
 
-        file_path = self._find_existing_file(prompt, asset_id)
+        file_path = self._find_existing_file(
+            prompt,
+            asset_id,
+            require_current_prompt=prompt.category == "scenes",
+        )
         manifest_item = self._manifest.get("assets", {}).get(asset_id, {})
         file_is_generated_png = file_path is not None and file_path.suffix.lower() == ".png"
         generation_status = "generated" if file_is_generated_png else manifest_item.get("status", "fallback")
@@ -435,11 +455,28 @@ class ImageGenerationService:
     def _target_file(self, prompt: VisualAssetPrompt) -> Path:
         return self.assets_root / prompt.category / f"{prompt.asset_id}.png"
 
-    def _find_existing_file(self, prompt: VisualAssetPrompt, requested_asset_id: str | None = None) -> Path | None:
+    def _find_existing_file(
+        self,
+        prompt: VisualAssetPrompt,
+        requested_asset_id: str | None = None,
+        *,
+        require_current_prompt: bool = False,
+    ) -> Path | None:
+        requested_id = requested_asset_id or prompt.asset_id
         if prompt.category == "clues":
-            manifest_item = self._manifest.get("assets", {}).get(requested_asset_id or prompt.asset_id, {})
+            manifest_item = self._manifest.get("assets", {}).get(requested_id, {})
             png_path = self._target_file(prompt)
             if manifest_item.get("prompt_version") == CLUE_PROMPT_VERSION and png_path.exists():
+                return png_path
+            return None
+        if prompt.category == "scenes" and require_current_prompt:
+            manifest_item = self._manifest.get("assets", {}).get(requested_id, {})
+            png_path = self._target_file(prompt)
+            if (
+                manifest_item.get("status") == "generated"
+                and manifest_item.get("prompt_version") == SCENE_PROMPT_VERSION
+                and png_path.exists()
+            ):
                 return png_path
             return None
         for file_path in (self._target_file(prompt), self.assets_root / prompt.category / f"{prompt.asset_id}.svg"):
@@ -484,6 +521,8 @@ class ImageGenerationService:
         }
         if prompt.category == "clues":
             item["prompt_version"] = CLUE_PROMPT_VERSION
+        if prompt.category == "scenes":
+            item["prompt_version"] = SCENE_PROMPT_VERSION
         if error:
             item["error"] = error
         self._manifest.setdefault("assets", {})[requested_asset_id] = item

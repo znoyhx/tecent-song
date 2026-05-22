@@ -1,0 +1,59 @@
+- main [ref=e198]:
+  - region "可交互叙事舞台" [ref=e199]
+  - generic "顶部状态栏" [ref=e202]:
+    - generic [ref=e203]:
+      - strong [ref=e204]: 明代 · 晚明书坊雨夜
+      - generic [ref=e205]: / 书坊前厅
+      - generic [ref=e206]: 身份：书坊学徒
+      - generic [ref=e207]: 当前目标：先查明火从哪里起，洗清守夜学徒的嫌疑。
+    - generic "调查进度" [ref=e208]:
+      - generic [ref=e209]: 调查进度
+      - strong [ref=e210]: 0%
+    - button "设置" [ref=e211] [cursor=pointer]
+  - navigation "左侧功能栏" [ref=e212]:
+    - button "展开左侧栏" [ref=e213] [cursor=pointer]: 展
+    - button "场景" [ref=e214] [cursor=pointer]:
+      - img [ref=e216]
+      - strong [ref=e221]: 场景
+    - button "人物" [ref=e222] [cursor=pointer]:
+      - img [ref=e224]
+      - strong [ref=e227]: 人物
+    - button "任务" [ref=e228] [cursor=pointer]:
+      - img [ref=e230]
+      - strong [ref=e233]: 任务
+    - button "智能助手" [ref=e234] [cursor=pointer]:
+      - img [ref=e236]
+      - strong [ref=e238]: 智能助手
+  - region "当前对话" [ref=e239]:
+    - generic [ref=e240]:
+      - generic [ref=e241]: 许掌柜
+      - generic [ref=e242]:
+        - generic [ref=e243]: 书坊掌柜
+        - generic [ref=e244]: 信任：防备（-1）
+    - paragraph [ref=e246]: 你是书坊里打杂守夜的学徒，熟悉纸张、刻版和前后院动线。雨夜火起后，掌柜与差役都把目光投向你，你必须先在疑影中自证清白。
+    - generic [ref=e247]:
+      - generic [ref=e248]:
+        - button "出示线索" [disabled] [ref=e249]
+        - generic "当前选择的证据" [ref=e250]:
+          - generic [ref=e251]: 未选择线索
+      - generic "推荐回复" [ref=e252]:
+        - button "昨夜第一眼看见什么？" [ref=e253] [cursor=pointer]
+        - button "谁最先靠近过旧书箱？" [ref=e254] [cursor=pointer]
+        - button "火场最不对劲的痕迹在哪里？" [ref=e255] [cursor=pointer]
+      - generic [ref=e256]:
+        - textbox "低声追问，例如：昨夜是谁先到火场？" [ref=e257]
+        - button "继续追问" [ref=e258] [cursor=pointer]
+  - complementary "右侧调查栏" [ref=e259]:
+    - generic [ref=e260]:
+      - generic [ref=e261]: 案卷调查
+      - button "收起" [ref=e262] [cursor=pointer]
+    - navigation "调查栏分页" [ref=e263]:
+      - button "线索" [ref=e264] [cursor=pointer]
+      - button "推理" [ref=e265] [cursor=pointer]
+      - button "笔记" [ref=e266] [cursor=pointer]
+      - button "助手" [ref=e267] [cursor=pointer]
+    - generic [ref=e269]:
+      - generic [ref=e270]:
+        - paragraph [ref=e271]: 已发现线索
+        - heading "0 条" [level=3] [ref=e272]
+      - generic [ref=e274]: 线索尚空，先调查当前场景的可疑物件。

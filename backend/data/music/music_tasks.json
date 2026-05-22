@@ -45,6 +45,50 @@
       "created_at": "2026-05-19T16:37:17",
       "updated_at": "2026-05-19T16:37:18",
       "audio_url_present": false
+    },
+    {
+      "task_id": "t2m_zPnZlX-aGseLJXVo8",
+      "item_id": "t2m_zPnZlX-aGseLJXVo8",
+      "bgm_id": "pre_game_entry",
+      "status": "running",
+      "api": "instrumental.generate",
+      "request_id": "6ce48012-a838-4105-83ee-d5b512eb9c13",
+      "created_at": "2026-05-21T13:33:37",
+      "updated_at": "2026-05-21T13:33:39",
+      "audio_url_present": false
+    },
+    {
+      "task_id": "t2m_fP7ZvXIaYXZXNXRDC",
+      "item_id": "t2m_fP7ZvXIaYXZXNXRDC",
+      "bgm_id": "pre_game_entry",
+      "status": "running",
+      "api": "instrumental.generate",
+      "request_id": "16a37166-ad76-4d32-8017-2dec9cd6d6fa",
+      "created_at": "2026-05-21T13:43:45",
+      "updated_at": "2026-05-21T13:43:47",
+      "audio_url_present": false
+    },
+    {
+      "task_id": "t2m_rPGZnXOav0a4g3kH7",
+      "item_id": "t2m_rPGZnXOav0a4g3kH7",
+      "bgm_id": "pre_game_entry",
+      "status": "running",
+      "api": "instrumental.generate",
+      "request_id": "47e12104-04d4-49e9-8f2b-7fec3bad7f41",
+      "created_at": "2026-05-21T13:47:45",
+      "updated_at": "2026-05-21T13:47:46",
+      "audio_url_present": false
+    },
+    {
+      "task_id": "t2m_UPrZ-XIBnHBToDwiW",
+      "item_id": "t2m_UPrZ-XIBnHBToDwiW",
+      "bgm_id": "pre_game_entry",
+      "status": "running",
+      "api": "instrumental.generate",
+      "request_id": "64f862cd-9541-40ce-8fdd-ae04e5e8404d",
+      "created_at": "2026-05-21T14:11:03",
+      "updated_at": "2026-05-21T14:11:04",
+      "audio_url_present": false
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type * as Phaser from 'phaser';
 
 import { createPhaserGame } from '../../game/phaserGame';
@@ -18,16 +18,6 @@ export function PhaserStage({ snapshot, selectedNpcId, busy, onSelectNpc, onInsp
   const gameRef = useRef<Phaser.Game | null>(null);
   const latestBridgeRef = useRef({ busy, onInspect, onSelectNpc });
   latestBridgeRef.current = { busy, onInspect, onSelectNpc };
-
-  const stageTags = useMemo(
-    () => [
-      ['朝代', snapshot.dynasty?.name ?? '明代'],
-      ['身份', snapshot.player_identity?.display_name ?? snapshot.player_role?.name ?? '书坊学徒'],
-      ['地点', snapshot.scene.name],
-      ['阶段', snapshot.stage_label],
-    ],
-    [snapshot.dynasty?.name, snapshot.player_identity?.display_name, snapshot.player_role?.name, snapshot.scene.name, snapshot.stage_label],
-  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -72,19 +62,6 @@ export function PhaserStage({ snapshot, selectedNpcId, busy, onSelectNpc, onInsp
   return (
     <section className="phaser-stage-shell" aria-label="可交互叙事舞台">
       <div ref={containerRef} className="phaser-stage-canvas" />
-      <header className="top-hud phaser-stage-hud">
-        {stageTags.map(([label, value]) => (
-          <div key={label} className="hud-chip">
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </div>
-        ))}
-        <div className="hud-goal">目标：{snapshot.current_goal}</div>
-      </header>
-      <div className="scene-corner-caption phaser-stage-caption">
-        <strong>{snapshot.scene.name}</strong>
-        <span>{snapshot.scene.visual_status === 'generated' ? '已生成场景' : '视觉占位场景'}</span>
-      </div>
     </section>
   );
 }
