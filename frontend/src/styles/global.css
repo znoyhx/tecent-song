@@ -18,6 +18,331 @@
   --font-small: 15px;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.stage15-home,
+.stage15-setup,
+.stage15-keyword,
+.stage15-progress,
+.stage15-overview {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background:
+    linear-gradient(180deg, rgba(18, 16, 13, 0.58), rgba(18, 14, 12, 0.88)),
+    url("/generated-ui/concept-entry-bg.png") center / cover no-repeat,
+    #12100d;
+}
+
+.stage15-hero,
+.stage15-panel {
+  width: min(1040px, 100%);
+  border: 1px solid rgba(226, 184, 117, 0.28);
+  border-radius: 8px;
+  background: rgba(24, 19, 15, 0.86);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+  color: #f6ead2;
+}
+
+.stage15-hero {
+  padding: clamp(28px, 5vw, 72px);
+}
+
+.stage15-hero p,
+.stage15-panel header p {
+  color: #d7b06f;
+  letter-spacing: 0;
+  margin: 0 0 8px;
+}
+
+.stage15-hero h1,
+.stage15-panel h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 56px);
+  letter-spacing: 0;
+}
+
+.stage15-hero span,
+.stage15-panel header span {
+  display: block;
+  margin: 16px 0 28px;
+  color: #d8c8aa;
+  line-height: 1.8;
+}
+
+.stage15-panel {
+  padding: 28px;
+}
+
+.stage15-panel.narrow {
+  max-width: 760px;
+}
+
+.stage15-panel.wide {
+  max-width: 1180px;
+}
+
+.stage15-dynasty-grid,
+.stage15-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.stage15-dynasty-card,
+.stage15-identity-card {
+  border: 1px solid rgba(218, 177, 105, 0.26);
+  border-radius: 8px;
+  background: rgba(255, 248, 231, 0.06);
+  color: #f6ead2;
+  padding: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stage15-dynasty-card.active,
+.stage15-identity-card.active {
+  border-color: #f0c27b;
+  box-shadow: inset 0 0 0 1px rgba(240, 194, 123, 0.34);
+  background: rgba(240, 194, 123, 0.12);
+}
+
+.stage15-dynasty-card strong {
+  display: block;
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+
+.stage15-dynasty-card span,
+.stage15-identity-card strong {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.stage15-dynasty-card em,
+.stage15-identity-card span {
+  display: inline-block;
+  color: #f0c27b;
+  font-style: normal;
+  margin-bottom: 10px;
+}
+
+.stage15-dynasty-card small,
+.stage15-identity-card p,
+.stage15-identity-card em {
+  display: block;
+  color: #d8c8aa;
+  line-height: 1.7;
+  font-style: normal;
+}
+
+.stage15-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.stage15-keyword-box {
+  display: grid;
+  gap: 10px;
+}
+
+.stage15-keyword-box span {
+  color: #f0c27b;
+}
+
+.stage15-keyword-box textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid rgba(218, 177, 105, 0.3);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.24);
+  color: #fff7e8;
+  padding: 14px;
+  font: inherit;
+  line-height: 1.7;
+}
+
+.stage15-keyword-box small {
+  color: #cbb895;
+}
+
+.stage15-progress-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid rgba(218, 177, 105, 0.24);
+  border-radius: 8px;
+  padding: 16px;
+  overflow: hidden;
+  background: rgba(255, 248, 231, 0.05);
+}
+
+.stage15-progress-head i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: #e9b66f;
+}
+
+.stage15-step-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.stage15-step {
+  display: grid;
+  grid-template-columns: 86px 1fr;
+  gap: 14px;
+  border: 1px solid rgba(218, 177, 105, 0.2);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.stage15-step > span {
+  color: #d7b06f;
+}
+
+.stage15-step.running,
+.stage15-step.retrying {
+  border-color: rgba(240, 194, 123, 0.62);
+}
+
+.stage15-step.failed,
+.stage15-step.blocked {
+  border-color: rgba(225, 91, 91, 0.72);
+}
+
+.stage15-step.passed {
+  border-color: rgba(117, 181, 122, 0.58);
+}
+
+.stage15-step strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stage15-step p,
+.stage15-step em {
+  margin: 0;
+  color: #d8c8aa;
+  line-height: 1.6;
+  font-style: normal;
+}
+
+.stage15-quote,
+.stage15-issues {
+  margin: 18px 0 0;
+  border-left: 3px solid #d7b06f;
+  padding: 12px 16px;
+  background: rgba(255, 248, 231, 0.06);
+  color: #eadcc2;
+}
+
+.stage15-quote p,
+.stage15-issues p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.stage15-quote footer {
+  margin-top: 8px;
+  color: #d7b06f;
+}
+
+.stage15-overview-grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+}
+
+.stage15-overview-card,
+.stage15-identities {
+  border: 1px solid rgba(218, 177, 105, 0.22);
+  border-radius: 8px;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.stage15-overview-card img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.stage15-overview-card h2,
+.stage15-identities h2 {
+  margin: 0 0 12px;
+}
+
+.stage15-overview-card p,
+.stage15-overview-card dd {
+  color: #d8c8aa;
+  line-height: 1.7;
+}
+
+.stage15-overview-card dl {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 8px 14px;
+}
+
+.stage15-overview-card dt {
+  color: #d7b06f;
+}
+
+.stage15-overview-card dd {
+  margin: 0;
+}
+
+.stage15-identities {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+@media (max-width: 760px) {
+  .stage15-home,
+  .stage15-setup,
+  .stage15-keyword,
+  .stage15-progress,
+  .stage15-overview {
+    padding: 18px;
+  }
+
+  .stage15-dynasty-grid,
+  .stage15-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stage15-step {
+    grid-template-columns: 1fr;
+  }
+
+  .stage15-actions {
+    flex-direction: column-reverse;
+  }
+}
+
 * { box-sizing: border-box; }
 html, body, #root { min-height: 100%; }
 body {
@@ -2882,6 +3207,28 @@ textarea::placeholder { color: #907e67; }
 
 .main-ui-rework .dialogue-main-text p {
   line-height: 1.66;
+}
+
+.dialogue-typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.12em;
+  background: #f1d6a8;
+  box-shadow: 0 0 10px rgba(241, 214, 168, .55);
+  animation: dialogue-cursor-blink .85s steps(2, start) infinite;
+}
+
+@keyframes dialogue-cursor-blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: .18; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialogue-typewriter-cursor {
+    animation: none;
+  }
 }
 
 .main-ui-rework .presentation-feedback {

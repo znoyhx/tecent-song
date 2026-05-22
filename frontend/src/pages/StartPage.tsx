@@ -1,5 +1,3 @@
-import type { CSSProperties } from 'react';
-
 import type { Dynasty } from '../types/game';
 
 type StartPageProps = {
@@ -15,192 +13,75 @@ type StartPageProps = {
   onPrepareScenario: () => void;
 };
 
-type DynastyVisualMeta = {
-  shortName: string;
-  sheetPosition: string;
-  accent: string;
+const dynastyLabels: Record<string, { mark: string; route: string; hint: string }> = {
+  ming: { mark: '明', route: '固定 Demo', hint: '直接进入书坊焚稿案。' },
+  song: { mark: '宋', route: 'AI 生成', hint: '填写关键词后生成北宋剧本。' },
+  tang: { mark: '唐', route: 'AI 生成', hint: '填写关键词后生成晚唐剧本。' },
+  late_tang: { mark: '唐', route: 'AI 生成', hint: '填写关键词后生成晚唐剧本。' },
 };
-
-const entryBackground = '/generated-ui/concept-entry-bg.png';
-const dynastyCardsSheet = '/generated-ui/dynasty-cards-sheet.png';
-
-const dynastyVisuals: Record<string, DynastyVisualMeta> = {
-  ming: {
-    shortName: '明',
-    sheetPosition: '100% 50%',
-    accent: '#d8a45f',
-  },
-  song: {
-    shortName: '宋',
-    sheetPosition: '50% 50%',
-    accent: '#b9c49e',
-  },
-  tang: {
-    shortName: '唐',
-    sheetPosition: '0% 50%',
-    accent: '#c18a56',
-  },
-};
-
-const fallbackDynastyVisual: DynastyVisualMeta = {
-  shortName: '疑',
-  sheetPosition: '0% 50%',
-  accent: '#c9a063',
-};
-
-function conceptStyle(extra?: Record<string, string>): CSSProperties {
-  return {
-    '--concept-bg': `url(${entryBackground})`,
-    ...extra,
-  } as CSSProperties;
-}
-
-function getDynastyVisual(dynasty: Dynasty): DynastyVisualMeta {
-  return dynastyVisuals[dynasty.dynasty_id] ?? fallbackDynastyVisual;
-}
 
 export function StartPage({
   mode,
   dynasties,
   selectedDynastyId,
-  keywordText,
   busy,
   errorText,
   onStart,
   onSelectDynasty,
-  onKeywordTextChange,
   onPrepareScenario,
 }: StartPageProps) {
   if (mode === 'home') {
     return (
-      <main className="entry-page concept-entry-page concept-home-page" style={conceptStyle()}>
-        <div className="concept-atmosphere" />
-
-        <header className="concept-page-title" aria-label="游戏标题">
-          <span className="title-rule" />
-          <div>
-            <h1>历史悬疑 · AI 剧本游戏</h1>
-            <p>选择时代，生成你的悬疑剧本</p>
-          </div>
-          <span className="title-rule" />
-        </header>
-
-        <section className="concept-home-stage" aria-label="登录页">
-          <div className="concept-home-card gilded-panel">
-            <div className="home-content">
-              <h2>探古寻真</h2>
-              <p>穿越时空 · 破解迷局 · 寻找真相</p>
-              <button type="button" className="imperial-button entry-start-button" onClick={onStart}>
-                <span>开始游戏</span>
-              </button>
-            </div>
-          </div>
+      <main className="entry-page stage15-home">
+        <section className="stage15-hero">
+          <p>史隙</p>
+          <h1>历史悬疑剧本游戏</h1>
+          <span>明代固定 Demo 稳定可玩；北宋与晚唐进入真实 AI 剧本生成。</span>
+          <button type="button" className="imperial-button" onClick={onStart}>
+            <span>开始游戏</span>
+          </button>
         </section>
-
-        <nav className="concept-flow-strip" aria-label="主流程">
-          <span className="flow-node active">开始游戏</span>
-          <i />
-          <span className="flow-node">选择朝代</span>
-          <i />
-          <span className="flow-node">剧本生成</span>
-          <i />
-          <span className="flow-node">身份选择</span>
-        </nav>
       </main>
     );
   }
 
-  const selectedDynasty = dynasties.find((dynasty) => dynasty.dynasty_id === selectedDynastyId) ?? null;
-  const displayDynasty = selectedDynasty ?? dynasties.find((dynasty) => dynasty.enabled) ?? dynasties[0] ?? null;
-  const displayVisual = displayDynasty ? getDynastyVisual(displayDynasty) : fallbackDynastyVisual;
-
   return (
-    <main
-      className="entry-page concept-entry-page concept-setup-page"
-      style={conceptStyle()}
-    >
-      <div className="concept-atmosphere" />
+    <main className="entry-page stage15-setup">
+      <section className="stage15-panel">
+        <header>
+          <p>步骤 1/4</p>
+          <h1>选择朝代入口</h1>
+          <span>明代直达固定 Demo；北宋与晚唐需要先填写关键词。</span>
+        </header>
 
-      <header className="concept-page-title compact" aria-label="选择朝代标题">
-        <span className="title-rule" />
-        <div>
-          <p>步骤 1/3</p>
-          <h1>选择朝代</h1>
-        </div>
-        <span className="title-rule" />
-      </header>
-
-      <section className="concept-setup-board" aria-label="开局设置">
-        <div className="concept-phone-panel gilded-panel dynasty-selector-panel">
-          <div className="ornate-heading">
-            <span />
-            <h2>选择朝代</h2>
-            <span />
-          </div>
-
-          <div className="concept-dynasty-rail">
-            {dynasties.map((dynasty) => {
-              const visual = getDynastyVisual(dynasty);
-              const isActive = dynasty.dynasty_id === selectedDynastyId;
-
-                return (
-                  <button
-                    key={dynasty.dynasty_id}
-                    type="button"
-                    className={isActive ? 'concept-dynasty-card active' : 'concept-dynasty-card'}
-                    style={conceptStyle({
-                      '--dynasty-sheet': `url(${dynastyCardsSheet})`,
-                      '--dynasty-position': visual.sheetPosition,
-                      '--dynasty-accent': visual.accent,
-                    })}
-                    onClick={() => onSelectDynasty(dynasty.dynasty_id)}
-                    disabled={busy}
-                  >
-                  <span className="dynasty-card-image" aria-hidden="true" />
-                  <span className="dynasty-card-glow" aria-hidden="true" />
-                  <span className="dynasty-card-era">{dynasty.enabled ? '历史语境待生成' : '后续时代预览'}</span>
-                  <strong>{visual.shortName}</strong>
-                  <small>{dynasty.enabled ? '可生成剧本' : '后续开放'}</small>
-                  <em>{dynasty.enabled ? '正篇开放' : '预览'}</em>
-                </button>
-              );
-            })}
-          </div>
+        <div className="stage15-dynasty-grid">
+          {dynasties.map((dynasty) => {
+            const meta = dynastyLabels[dynasty.dynasty_id] ?? { mark: dynasty.name.slice(0, 1), route: '入口', hint: dynasty.core_mood };
+            const active = selectedDynastyId === dynasty.dynasty_id;
+            return (
+              <button
+                key={dynasty.dynasty_id}
+                type="button"
+                className={active ? 'stage15-dynasty-card active' : 'stage15-dynasty-card'}
+                onClick={() => onSelectDynasty(dynasty.dynasty_id)}
+                disabled={busy}
+              >
+                <strong>{meta.mark}</strong>
+                <span>{dynasty.name}</span>
+                <em>{meta.route}</em>
+                <small>{meta.hint}</small>
+              </button>
+            );
+          })}
         </div>
 
-        <aside className="concept-phone-panel gilded-panel keyword-scroll-panel" aria-label="关键词">
-          <div className="selected-dynasty-emblem" style={{ '--dynasty-accent': displayVisual.accent } as CSSProperties}>
-            <div>
-              <p>朝代</p>
-              <h2>{displayDynasty ? displayDynasty.name : '未选择朝代'}</h2>
-            </div>
-          </div>
+        {errorText ? <div className="error-banner cover-error">{errorText}</div> : null}
 
-          <p className="setup-teaser">先选择故事发生的时代。具体事件、人物关系、关键词与开局目标会在下一步生成。</p>
-
-          <div className="keyword-token-row" aria-label="推荐关键词">
-            {['时代制度', '地点氛围', '人物关系', '核心冲突'].map((keyword) => (
-              <span key={keyword}>{keyword}</span>
-            ))}
-          </div>
-
-          <label className="concept-textarea-shell">
-            <span>输入故事关键词（可选）</span>
-            <textarea
-              value={keywordText}
-              onChange={(event) => onKeywordTextChange(event.target.value)}
-              placeholder={`可选：输入你想要的主题词。不填写则使用默认生成策略。`}
-              disabled={busy}
-              rows={4}
-            />
-          </label>
-
-          {errorText ? <div className="error-banner cover-error">{errorText}</div> : null}
-
-          <button type="button" className="imperial-button setup-generate-button" onClick={onPrepareScenario} disabled={busy}>
-            <span>{busy ? '正在生成剧本...' : '下一步'}</span>
+        <div className="stage15-actions">
+          <button type="button" className="imperial-button" onClick={onPrepareScenario} disabled={busy}>
+            <span>{busy ? '处理中...' : '继续'}</span>
           </button>
-        </aside>
+        </div>
       </section>
     </main>
   );

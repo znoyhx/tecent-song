@@ -1,0 +1,1499 @@
+{
+  "script_id": "p0_song_detective_001_ba2958",
+  "job_id": "job_1125f4ba2958",
+  "dynasty_id": "song",
+  "keywords": [
+    "断案"
+  ],
+  "generation_source": "deepseek",
+  "generated_at": "2026-05-22T17:37:40",
+  "script_overview": {
+    "title": "太学书库疑云",
+    "logline": "北宋汴京太学书库，学子离奇坠楼，残缺《史记》竹简暗藏惊天秘密。",
+    "case_summary": "太学生赵明远深夜坠楼身亡，现场散落《史记》竹简碎片。表面是意外，但死者生前行为异常，书库中多人行为可疑。玩家需调查真相，揭露隐藏的阴谋。",
+    "opening_location": "太学书库一楼",
+    "public_objective": "查明赵明远死因，找出真凶。",
+    "major_locations": [
+      "太学书库一楼",
+      "太学书库二楼",
+      "太学庭院",
+      "汴京医馆",
+      "太学斋舍"
+    ],
+    "major_npcs": [
+      "赵明远",
+      "陈夫子",
+      "李书吏",
+      "王医官"
+    ],
+    "player_briefing": "你作为开封府推官，奉命调查太学书库坠楼案。现场有可疑竹简，多名相关人员有待询问。"
+  },
+  "playable_identities": [
+    {
+      "identity_id": "kaifeng_tuiguan",
+      "display_name": "开封府推官",
+      "description": "开封府负责刑狱的官员，公正严明。",
+      "social_rank": "high",
+      "relation_to_case": "奉命调查此案",
+      "motive": "查明真相，维护法纪",
+      "permissions": [
+        "审问嫌疑人",
+        "搜查现场",
+        "调阅档案"
+      ],
+      "limitations": [
+        "不得滥用私刑",
+        "需遵循程序"
+      ],
+      "background": "进士出身，在开封府任职三年，断案如神。",
+      "tags": [
+        "官员",
+        "断案"
+      ],
+      "is_default": true
+    }
+  ],
+  "world": {
+    "dynasty_id": "song",
+    "dynasty_name": "北宋",
+    "era_name": "元祐",
+    "year_hint": "元祐三年",
+    "location_region": "汴京",
+    "rules": [
+      "不得使用现代科技",
+      "尊重儒家礼法"
+    ],
+    "forbidden_terms": [
+      "书坊",
+      "印刷术",
+      "明代"
+    ]
+  },
+  "story": {
+    "surface_event": "太学生赵明远深夜坠楼身亡，现场有《史记》竹简碎片。",
+    "hidden_truth": "赵明远发现《史记》中失传的《今上本纪》竹简，内容涉及当朝隐秘，被灭口。凶手是陈夫子，他受命销毁竹简。",
+    "themes": [
+      "真相与权力",
+      "学术与阴谋"
+    ],
+    "culprit_boundary": "凶手是陈夫子，动机是保护某种秩序。",
+    "truth_chain_clue_ids": [
+      "clue_001",
+      "clue_002",
+      "clue_003",
+      "clue_004",
+      "clue_005",
+      "clue_006"
+    ]
+  },
+  "stages": [
+    {
+      "stage_id": "intro",
+      "name": "案发初探",
+      "order": 0,
+      "goal": "到达现场，初步了解情况",
+      "entry_location_id": "loc_library_floor1",
+      "unlock_conditions": [],
+      "available_location_ids": [
+        "loc_library_floor1",
+        "loc_library_floor2",
+        "loc_courtyard"
+      ],
+      "key_clue_ids": [
+        "clue_001"
+      ]
+    },
+    {
+      "stage_id": "investigation",
+      "name": "深入调查",
+      "order": 1,
+      "goal": "收集线索，询问相关人员",
+      "entry_location_id": "loc_library_floor1",
+      "unlock_conditions": [
+        "{'type': 'stage_complete', 'stage_id': 'intro'}",
+        "{'type': 'clue_collected', 'clue_ids': ['clue_001', 'clue_003']}"
+      ],
+      "available_location_ids": [
+        "loc_library_floor1",
+        "loc_library_floor2",
+        "loc_courtyard",
+        "loc_medical",
+        "loc_dormitory"
+      ],
+      "key_clue_ids": [
+        "clue_002",
+        "clue_003",
+        "clue_004"
+      ]
+    },
+    {
+      "stage_id": "reversal",
+      "name": "真相浮现",
+      "order": 2,
+      "goal": "发现关键证据，锁定凶手",
+      "entry_location_id": "loc_library_floor2",
+      "unlock_conditions": [
+        "{'type': 'stage_complete', 'stage_id': 'investigation'}"
+      ],
+      "available_location_ids": [
+        "loc_library_floor1",
+        "loc_library_floor2",
+        "loc_courtyard",
+        "loc_medical",
+        "loc_dormitory"
+      ],
+      "key_clue_ids": [
+        "clue_005",
+        "clue_006"
+      ]
+    },
+    {
+      "stage_id": "choice",
+      "name": "最终抉择",
+      "order": 3,
+      "goal": "决定如何处置真相",
+      "entry_location_id": "loc_library_floor2",
+      "unlock_conditions": [
+        "{'type': 'stage_complete', 'stage_id': 'reversal'}"
+      ],
+      "available_location_ids": [
+        "loc_library_floor2"
+      ],
+      "key_clue_ids": []
+    },
+    {
+      "stage_id": "ending",
+      "name": "尘埃落定",
+      "order": 4,
+      "goal": "见证结局",
+      "entry_location_id": "loc_library_floor1",
+      "unlock_conditions": [
+        "{'type': 'stage_complete', 'stage_id': 'choice'}"
+      ],
+      "available_location_ids": [
+        "loc_library_floor1"
+      ],
+      "key_clue_ids": []
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "loc_library_floor1",
+      "name": "太学书库一楼",
+      "description": "宽敞的书库，书架林立，中央有书案。",
+      "scene_text": "书库一楼，烛火摇曳，书架间散落竹简。",
+      "stage_ids": [
+        "intro",
+        "investigation",
+        "reversal",
+        "choice",
+        "ending"
+      ],
+      "npc_ids": [
+        "npc_chen",
+        "npc_li"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_0",
+          "label": "书案上《史记》卷末有撕页痕迹",
+          "description": "与“书案上的《史记》”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_001"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“书案上的《史记》”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.4,
+            "width": 0.2,
+            "height": 0.2
+          }
+        },
+        {
+          "hotspot_id": "hotspot_1",
+          "label": "标签写着《史记·今上本纪》",
+          "description": "与“书架空位标签”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_002"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“书架空位标签”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.3,
+            "y": 0.3
+          },
+          "bbox": {
+            "x": 0.2,
+            "y": 0.2,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_library_floor1"
+    },
+    {
+      "location_id": "loc_library_floor2",
+      "name": "太学书库二楼",
+      "description": "二楼存放珍本，有窗户通向庭院。",
+      "scene_text": "二楼书库，窗户敞开，地上有血迹。",
+      "stage_ids": [
+        "intro",
+        "investigation",
+        "reversal"
+      ],
+      "npc_ids": [
+        "npc_chen"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_2",
+          "label": "窗台有脚印，与陈夫子鞋印吻合",
+          "description": "与“窗台脚印”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_003"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“窗台脚印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.7,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.6,
+            "y": 0.4,
+            "width": 0.2,
+            "height": 0.2
+          }
+        },
+        {
+          "hotspot_id": "hotspot_3",
+          "label": "竹简刻有'今上'二字",
+          "description": "与“竹简碎片”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_004"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“竹简碎片”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.8
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.7,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_library_floor2"
+    },
+    {
+      "location_id": "loc_courtyard",
+      "name": "太学庭院",
+      "description": "书库外的庭院，有石凳和树木。",
+      "scene_text": "庭院寂静，月光洒落。",
+      "stage_ids": [
+        "intro",
+        "investigation"
+      ],
+      "npc_ids": [
+        "npc_li"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_4",
+          "label": "脚印与窗台脚印一致",
+          "description": "与“树下脚印”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_005"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“树下脚印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.4,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_courtyard"
+    },
+    {
+      "location_id": "loc_medical",
+      "name": "汴京医馆",
+      "description": "城中的医馆，王医官坐诊。",
+      "scene_text": "医馆内药香弥漫。",
+      "stage_ids": [
+        "investigation"
+      ],
+      "npc_ids": [
+        "npc_wang"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_5",
+          "label": "药包上写有'陈'字",
+          "description": "与“蒙汗药”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_006"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“蒙汗药”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.4,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_medical"
+    },
+    {
+      "location_id": "loc_dormitory",
+      "name": "太学斋舍",
+      "description": "学生宿舍，赵明远的房间。",
+      "scene_text": "简陋的宿舍，书桌上堆满书籍。",
+      "stage_ids": [
+        "investigation"
+      ],
+      "npc_ids": [
+        "npc_zhao"
+      ],
+      "hotspots": [],
+      "visual_asset_id": "asset_scene_dormitory"
+    }
+  ],
+  "npcs": [
+    {
+      "npc_id": "npc_zhao",
+      "name": "赵明远",
+      "public_identity": "太学生",
+      "appearance": "年轻书生，身着白色襕衫。",
+      "personality": "勤奋好学，性格孤僻。",
+      "background_suspicion": "死者，无嫌疑。",
+      "case_connection": "死者，发现失传竹简。",
+      "event_behavior": "深夜在书库二楼查阅竹简。",
+      "public_goal": "无",
+      "hidden_motive": "想公开失传的《史记》篇目。",
+      "known_info": [
+        "他发现了《今上本纪》竹简",
+        "他约了陈夫子见面"
+      ],
+      "unknown_info": [
+        "竹简内容涉及当朝隐秘",
+        "陈夫子是灭口者"
+      ],
+      "forbidden_disclosure": [
+        "竹简的具体内容",
+        "与陈夫子的约定"
+      ],
+      "speaking_style": "文雅但谨慎",
+      "initial_trust": 0,
+      "emotion_state": "dead",
+      "releasable_clue_ids": [],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "asset_npc_zhao"
+    },
+    {
+      "npc_id": "npc_chen",
+      "name": "陈夫子",
+      "public_identity": "太学博士",
+      "appearance": "中年儒生，蓄须，神色严肃。",
+      "personality": "严谨，城府深。",
+      "background_suspicion": "与赵明远有学术争执。",
+      "case_connection": "赵明远曾向他展示竹简，他奉命销毁。",
+      "event_behavior": "案发当晚在书库附近出现。",
+      "public_goal": "维护太学秩序",
+      "hidden_motive": "保护某种秩序，掩盖朝廷秘密。",
+      "known_info": [
+        "赵明远发现了竹简",
+        "竹简内容敏感"
+      ],
+      "unknown_info": [
+        "竹简具体藏匿地点",
+        "赵明远是否留有副本"
+      ],
+      "forbidden_disclosure": [
+        "他受命销毁竹简",
+        "他与朝中官员的关系"
+      ],
+      "speaking_style": "引经据典，滴水不漏",
+      "initial_trust": 30,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_001"
+      ],
+      "stage_limits": {
+        "intro": "releasable_clue_ids: clue_001"
+      },
+      "visual_asset_id": "asset_npc_chen"
+    },
+    {
+      "npc_id": "npc_li",
+      "name": "李书吏",
+      "public_identity": "太学书吏",
+      "appearance": "瘦小，眼神闪烁。",
+      "personality": "胆小，贪财。",
+      "background_suspicion": "负责管理书库，有钥匙。",
+      "case_connection": "案发当晚他值班，但声称睡着了。",
+      "event_behavior": "案发后神色慌张。",
+      "public_goal": "保住差事",
+      "hidden_motive": "他偷了竹简碎片卖给陈夫子。",
+      "known_info": [
+        "赵明远常深夜在书库",
+        "陈夫子曾打听竹简"
+      ],
+      "unknown_info": [
+        "竹简的真实内容",
+        "陈夫子的真实目的"
+      ],
+      "forbidden_disclosure": [
+        "他偷窃竹简碎片",
+        "他与陈夫子的交易"
+      ],
+      "speaking_style": "结巴，回避问题",
+      "initial_trust": 20,
+      "emotion_state": "fearful",
+      "releasable_clue_ids": [
+        "clue_002"
+      ],
+      "stage_limits": {
+        "investigation": "releasable_clue_ids: clue_002"
+      },
+      "visual_asset_id": "asset_npc_li"
+    },
+    {
+      "npc_id": "npc_wang",
+      "name": "王医官",
+      "public_identity": "汴京医官",
+      "appearance": "和蔼老者，背着药箱。",
+      "personality": "热心，但守口如瓶。",
+      "background_suspicion": "曾给赵明远看过病。",
+      "case_connection": "赵明远曾向他咨询过毒药。",
+      "event_behavior": "案发后主动提供信息。",
+      "public_goal": "治病救人",
+      "hidden_motive": "他受陈夫子之托配制蒙汗药，但不知用途。",
+      "known_info": [
+        "赵明远曾问过蒙汗药",
+        "陈夫子也来取过药"
+      ],
+      "unknown_info": [
+        "蒙汗药用于谋杀",
+        "陈夫子的真实身份"
+      ],
+      "forbidden_disclosure": [
+        "他给陈夫子配药",
+        "他与陈夫子的私下往来"
+      ],
+      "speaking_style": "温和，但谨慎",
+      "initial_trust": 40,
+      "emotion_state": "neutral",
+      "releasable_clue_ids": [
+        "clue_006"
+      ],
+      "stage_limits": {
+        "investigation": "releasable_clue_ids: clue_006"
+      },
+      "visual_asset_id": "asset_npc_wang"
+    }
+  ],
+  "relationships": [
+    {
+      "source_id": "npc_zhao",
+      "target_id": "npc_chen",
+      "relation": "师生",
+      "public_state": "正常",
+      "hidden_state": "赵明远曾向陈夫子展示竹简，陈夫子心生杀意"
+    },
+    {
+      "source_id": "npc_zhao",
+      "target_id": "npc_li",
+      "relation": "相识",
+      "public_state": "普通",
+      "hidden_state": "李书吏曾偷窃赵明远的竹简碎片"
+    },
+    {
+      "source_id": "npc_zhao",
+      "target_id": "npc_wang",
+      "relation": "医患",
+      "public_state": "普通",
+      "hidden_state": "赵明远曾咨询蒙汗药，王医官后来告知陈夫子"
+    },
+    {
+      "source_id": "npc_chen",
+      "target_id": "npc_li",
+      "relation": "上下级",
+      "public_state": "正常",
+      "hidden_state": "陈夫子指使李书吏偷竹简"
+    },
+    {
+      "source_id": "npc_chen",
+      "target_id": "npc_wang",
+      "relation": "旧识",
+      "public_state": "普通",
+      "hidden_state": "陈夫子从王医官处取得蒙汗药"
+    }
+  ],
+  "clues": [
+    {
+      "clue_id": "clue_001",
+      "title": "书案上的《史记》",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_library_floor1",
+      "source_npc_id": null,
+      "highlight_text": "书案上《史记》卷末有撕页痕迹",
+      "display_text": "一本《史记》，最后一页被撕去。",
+      "detail": "《史记》卷末缺失，对应《今上本纪》。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "reveal": "clue_002"
+      },
+      "related_clue_ids": [
+        "clue_002"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_shiji"
+    },
+    {
+      "clue_id": "clue_002",
+      "title": "书架空位标签",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_library_floor1",
+      "source_npc_id": null,
+      "highlight_text": "标签写着《史记·今上本纪》",
+      "display_text": "书架上有一个空位，标签显示为《史记·今上本纪》。",
+      "detail": "该卷竹简已失踪。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {
+        "required_clue_ids": [
+          "clue_001"
+        ]
+      },
+      "effects": {
+        "reveal": "clue_004"
+      },
+      "related_clue_ids": [
+        "clue_004"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_label"
+    },
+    {
+      "clue_id": "clue_003",
+      "title": "窗台脚印",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_library_floor2",
+      "source_npc_id": null,
+      "highlight_text": "窗台有脚印，与陈夫子鞋印吻合",
+      "display_text": "窗台上有半个脚印，鞋纹清晰。",
+      "detail": "脚印尺寸与陈夫子的鞋一致。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "reveal": "clue_005"
+      },
+      "related_clue_ids": [
+        "clue_005"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_footprint"
+    },
+    {
+      "clue_id": "clue_004",
+      "title": "竹简碎片",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_library_floor2",
+      "source_npc_id": null,
+      "highlight_text": "竹简刻有'今上'二字",
+      "display_text": "几片断裂的竹简，上有'今上'字样。",
+      "detail": "竹简材质与《史记》相符。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {
+        "required_clue_ids": [
+          "clue_003"
+        ]
+      },
+      "effects": {
+        "reveal": "clue_006"
+      },
+      "related_clue_ids": [
+        "clue_006"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_bamboo"
+    },
+    {
+      "clue_id": "clue_005",
+      "title": "树下脚印",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_courtyard",
+      "source_npc_id": null,
+      "highlight_text": "脚印与窗台脚印一致",
+      "display_text": "老槐树下有杂乱的脚印，与二楼窗台脚印吻合。",
+      "detail": "表明有人从窗户跳下后在此停留。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {
+        "required_clue_ids": [
+          "clue_003"
+        ]
+      },
+      "effects": {},
+      "related_clue_ids": [],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_footprint2"
+    },
+    {
+      "clue_id": "clue_006",
+      "title": "蒙汗药",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_medical",
+      "source_npc_id": null,
+      "highlight_text": "药包上写有'陈'字",
+      "display_text": "一包蒙汗药，药包上写有'陈'字。",
+      "detail": "王医官承认是陈夫子所取。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {
+        "required_clue_ids": [
+          "clue_002"
+        ]
+      },
+      "effects": {},
+      "related_clue_ids": [],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_medicine"
+    }
+  ],
+  "clue_graph": [
+    {
+      "rule_id": "rule_001",
+      "required_clue_ids": [
+        "clue_001",
+        "clue_002"
+      ],
+      "result_title": "失窃的《今上本纪》",
+      "result_text": "赵明远发现的《今上本纪》竹简已被盗走。",
+      "effects": {
+        "unlock_location": "loc_library_floor2"
+      }
+    },
+    {
+      "rule_id": "rule_002",
+      "required_clue_ids": [
+        "clue_003",
+        "clue_005"
+      ],
+      "result_title": "凶手路径",
+      "result_text": "凶手从二楼窗户跳下，在槐树下停留后离开。",
+      "effects": {
+        "increase_suspicion": "npc_chen"
+      }
+    },
+    {
+      "rule_id": "rule_003",
+      "required_clue_ids": [
+        "clue_004",
+        "clue_006"
+      ],
+      "result_title": "毒药与竹简",
+      "result_text": "凶手用蒙汗药迷晕赵明远，然后将其推下楼，并折断竹简。",
+      "effects": {
+        "identify_culprit": "npc_chen"
+      }
+    }
+  ],
+  "dialogue_rules": [
+    {
+      "dialogue_id": "dialogue_chen_intro",
+      "npc_id": "npc_chen",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "赵明远",
+        "死因"
+      ],
+      "presented_clue_ids": [
+        "clue_001"
+      ],
+      "response": "赵明远昨夜在书库读书，不慎坠楼，可惜了。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "他最近有什么异常？",
+        "你昨晚在哪里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_li_intro",
+      "npc_id": "npc_li",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "昨晚",
+        "书库"
+      ],
+      "presented_clue_ids": [],
+      "response": "我……我昨晚睡着了，什么都不知道。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "你听到什么声音吗？",
+        "赵明远经常深夜来书库吗？"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "choice_id": "choice_reveal_truth",
+      "title": "公开真相",
+      "description": "将竹简内容和陈夫子的罪行公之于众。",
+      "effects": {
+        "ending": "ending_truth"
+      }
+    },
+    {
+      "choice_id": "choice_cover_up",
+      "title": "掩盖真相",
+      "description": "以意外结案，保护朝廷颜面。",
+      "effects": {
+        "ending": "ending_cover"
+      }
+    }
+  ],
+  "endings": [
+    {
+      "ending_id": "ending_truth",
+      "title": "真相大白",
+      "priority": 0,
+      "conditions": {
+        "choice_id": "choice_reveal_truth"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "陈夫子被捕，竹简上交朝廷，赵明远沉冤得雪。",
+      "ending_text": "开封府将陈夫子收监，竹简呈送中书省。太学恢复平静，但暗流涌动。",
+      "history_echo": "此案成为汴京谈资，但竹简内容最终被禁。",
+      "related_clue_ids": [
+        "clue_001",
+        "clue_002",
+        "clue_003",
+        "clue_004",
+        "clue_005",
+        "clue_006"
+      ],
+      "related_choice_ids": [
+        "choice_reveal_truth"
+      ],
+      "npc_fates": {
+        "npc_chen": "流放",
+        "npc_li": "革职",
+        "npc_wang": "无罪"
+      },
+      "visual_asset_id": null
+    },
+    {
+      "ending_id": "ending_cover",
+      "title": "暗流涌动",
+      "priority": 0,
+      "conditions": {
+        "choice_id": "choice_cover_up"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "以意外结案，陈夫子继续任教，但竹简被销毁。",
+      "ending_text": "开封府以意外结案，赵明远家属得到抚恤。陈夫子依旧在太学教书，但无人知晓真相。",
+      "history_echo": "多年后，有人声称见过失传的《今上本纪》抄本，但已无从考证。",
+      "related_clue_ids": [
+        "clue_001",
+        "clue_002",
+        "clue_003",
+        "clue_004",
+        "clue_005",
+        "clue_006"
+      ],
+      "related_choice_ids": [
+        "choice_cover_up"
+      ],
+      "npc_fates": {
+        "npc_chen": "继续任教",
+        "npc_li": "留任",
+        "npc_wang": "无罪"
+      },
+      "visual_asset_id": null
+    }
+  ],
+  "visual_assets": [
+    {
+      "asset_id": "asset_scene_library_floor1",
+      "asset_type": "scene",
+      "owner_id": "loc_library_floor1",
+      "title": "书库一楼",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋太学书库，木质书架，烛台，竹简散落，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代物品，印刷书籍",
+      "required_subjects": [
+        "书架",
+        "竹简",
+        "烛台"
+      ],
+      "era_feature_checklist": [
+        "木质结构",
+        "竹简",
+        "油灯"
+      ],
+      "prompt_hash": "3be0aa44a0cc38d7",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor1.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_scene_library_floor1",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:37:47",
+        "attempts": 1,
+        "prompt_hash": "3be0aa44a0cc38d7",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor1.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_library_floor2",
+      "asset_type": "scene",
+      "owner_id": "loc_library_floor2",
+      "title": "书库二楼",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，二楼书库，窗户敞开，地上有血迹和竹简，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代窗户",
+      "required_subjects": [
+        "窗户",
+        "血迹",
+        "竹简"
+      ],
+      "era_feature_checklist": [
+        "木窗",
+        "纸糊"
+      ],
+      "prompt_hash": "8255d70b2c272dec",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor2.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_scene_library_floor2",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:37:56",
+        "attempts": 1,
+        "prompt_hash": "8255d70b2c272dec",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor2.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_courtyard",
+      "asset_type": "scene",
+      "owner_id": "loc_courtyard",
+      "title": "太学庭院",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋庭院，老槐树，石凳，月光，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代建筑",
+      "required_subjects": [
+        "槐树",
+        "石凳"
+      ],
+      "era_feature_checklist": [
+        "青砖地面",
+        "古树"
+      ],
+      "prompt_hash": "49a72f1a39f99948",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_courtyard.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_scene_courtyard",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:38:07",
+        "attempts": 1,
+        "prompt_hash": "49a72f1a39f99948",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_courtyard.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_medical",
+      "asset_type": "scene",
+      "owner_id": "loc_medical",
+      "title": "汴京医馆",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋医馆，药柜，柜台，药香，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代医疗器械",
+      "required_subjects": [
+        "药柜",
+        "柜台"
+      ],
+      "era_feature_checklist": [
+        "木质药柜",
+        "瓷瓶"
+      ],
+      "prompt_hash": "99ff05d5af4c430e",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_medical.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_scene_medical",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:38:16",
+        "attempts": 1,
+        "prompt_hash": "99ff05d5af4c430e",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_medical.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_dormitory",
+      "asset_type": "scene",
+      "owner_id": "loc_dormitory",
+      "title": "太学斋舍",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，简陋宿舍，书桌，床铺，书籍，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代家具",
+      "required_subjects": [
+        "书桌",
+        "床铺"
+      ],
+      "era_feature_checklist": [
+        "木床",
+        "油灯"
+      ],
+      "prompt_hash": "1f95646c03079fd8",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_dormitory.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_scene_dormitory",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:38:27",
+        "attempts": 1,
+        "prompt_hash": "1f95646c03079fd8",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_dormitory.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_zhao",
+      "asset_type": "npc",
+      "owner_id": "npc_zhao",
+      "title": "赵明远",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，年轻书生，白色襕衫，面容清秀，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代服饰",
+      "required_subjects": [
+        "襕衫",
+        "书生"
+      ],
+      "era_feature_checklist": [
+        "宋代服饰",
+        "发髻"
+      ],
+      "prompt_hash": "d729568346d5fbca",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_zhao.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_npc_zhao",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:38:38",
+        "attempts": 1,
+        "prompt_hash": "d729568346d5fbca",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_zhao.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_chen",
+      "asset_type": "npc",
+      "owner_id": "npc_chen",
+      "title": "陈夫子",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，中年儒生，蓄须，深色袍服，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代服饰",
+      "required_subjects": [
+        "儒袍",
+        "胡须"
+      ],
+      "era_feature_checklist": [
+        "宋代官服",
+        "幞头"
+      ],
+      "prompt_hash": "0f85ece570abd788",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_chen.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_npc_chen",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:38:49",
+        "attempts": 1,
+        "prompt_hash": "0f85ece570abd788",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_chen.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_li",
+      "asset_type": "npc",
+      "owner_id": "npc_li",
+      "title": "李书吏",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，瘦小男子，灰色短衣，神色慌张，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代服饰",
+      "required_subjects": [
+        "短衣",
+        "小帽"
+      ],
+      "era_feature_checklist": [
+        "宋代百姓服饰"
+      ],
+      "prompt_hash": "9a9bff51712362da",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_li.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_npc_li",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:39:02",
+        "attempts": 1,
+        "prompt_hash": "9a9bff51712362da",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_li.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_wang",
+      "asset_type": "npc",
+      "owner_id": "npc_wang",
+      "title": "王医官",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，和蔼老者，背着药箱，布衣，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代服饰",
+      "required_subjects": [
+        "药箱",
+        "布衣"
+      ],
+      "era_feature_checklist": [
+        "宋代医者服饰"
+      ],
+      "prompt_hash": "22a2961275550df3",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_wang.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_npc_wang",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:39:47",
+        "attempts": 2,
+        "prompt_hash": "22a2961275550df3",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_npc_wang.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_shiji",
+      "asset_type": "clue",
+      "owner_id": "clue_001",
+      "title": "《史记》书卷",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一卷打开的竹简《史记》，有撕页痕迹，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "纸质书",
+      "required_subjects": [
+        "竹简",
+        "文字"
+      ],
+      "era_feature_checklist": [
+        "竹简",
+        "篆书"
+      ],
+      "prompt_hash": "dc21496aa55dd9ab",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_shiji.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_clue_shiji",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:39:58",
+        "attempts": 1,
+        "prompt_hash": "dc21496aa55dd9ab",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_shiji.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_label",
+      "asset_type": "clue",
+      "owner_id": "clue_002",
+      "title": "书架标签",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，木质标签，写着《史记·今上本纪》，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代标签",
+      "required_subjects": [
+        "标签",
+        "文字"
+      ],
+      "era_feature_checklist": [
+        "木牌",
+        "墨书"
+      ],
+      "prompt_hash": "a886396992993600",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_label.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_clue_label",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:40:45",
+        "attempts": 2,
+        "prompt_hash": "a886396992993600",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_label.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_footprint",
+      "asset_type": "clue",
+      "owner_id": "clue_003",
+      "title": "窗台脚印",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，窗台上的半个脚印，鞋纹清晰，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代鞋印",
+      "required_subjects": [
+        "脚印",
+        "窗台"
+      ],
+      "era_feature_checklist": [
+        "布鞋印"
+      ],
+      "prompt_hash": "cc69324aca198d0a",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_footprint.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_clue_footprint",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:40:55",
+        "attempts": 1,
+        "prompt_hash": "cc69324aca198d0a",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_footprint.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_bamboo",
+      "asset_type": "clue",
+      "owner_id": "clue_004",
+      "title": "竹简碎片",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，断裂的竹简，上有'今上'二字，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "完整竹简",
+      "required_subjects": [
+        "竹简",
+        "文字"
+      ],
+      "era_feature_checklist": [
+        "竹简",
+        "刻字"
+      ],
+      "prompt_hash": "af1babf66cf7b746",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_bamboo.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_clue_bamboo",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:41:40",
+        "attempts": 2,
+        "prompt_hash": "af1babf66cf7b746",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_bamboo.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_footprint2",
+      "asset_type": "clue",
+      "owner_id": "clue_005",
+      "title": "树下脚印",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，老槐树下的杂乱脚印，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代鞋印",
+      "required_subjects": [
+        "脚印",
+        "树根"
+      ],
+      "era_feature_checklist": [
+        "布鞋印"
+      ],
+      "prompt_hash": "f36e5759cbb2fea1",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_footprint2.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_clue_footprint2",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:41:51",
+        "attempts": 1,
+        "prompt_hash": "f36e5759cbb2fea1",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_footprint2.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_medicine",
+      "asset_type": "clue",
+      "owner_id": "clue_006",
+      "title": "蒙汗药包",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，纸包，上写'陈'字，内装白色粉末，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代包装",
+      "required_subjects": [
+        "纸包",
+        "粉末"
+      ],
+      "era_feature_checklist": [
+        "草纸",
+        "中药"
+      ],
+      "prompt_hash": "652d8cb4ae3543d1",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_medicine.png",
+      "url": "/api/scripts/p0_song_detective_001_ba2958/assets/asset_clue_medicine",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:42:40",
+        "attempts": 2,
+        "prompt_hash": "652d8cb4ae3543d1",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_clue_medicine.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    }
+  ],
+  "visual_style_guide": {
+    "style_keywords": [
+      "北宋",
+      "写实",
+      "古风"
+    ],
+    "forbidden_visuals": [
+      "现代物品",
+      "明代服饰"
+    ],
+    "color_script": "暖色调，木质棕色，烛光黄色",
+    "camera": "固定视角，俯视",
+    "era_feature_checklist": [
+      "竹简",
+      "木质建筑",
+      "宋代服饰"
+    ],
+    "appearance_lock": {}
+  },
+  "hotspot_positioning": [
+    {
+      "location_id": "loc_library_floor1",
+      "hotspot_id": "hotspot_0",
+      "visual_asset_id": "asset_scene_library_floor1",
+      "clue_id": "clue_001",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.4,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor1.png"
+    },
+    {
+      "location_id": "loc_library_floor1",
+      "hotspot_id": "hotspot_1",
+      "visual_asset_id": "asset_scene_library_floor1",
+      "clue_id": "clue_002",
+      "anchor_point": {
+        "x": 0.3,
+        "y": 0.3
+      },
+      "bbox": {
+        "x": 0.2,
+        "y": 0.2,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor1.png"
+    },
+    {
+      "location_id": "loc_library_floor2",
+      "hotspot_id": "hotspot_2",
+      "visual_asset_id": "asset_scene_library_floor2",
+      "clue_id": "clue_003",
+      "anchor_point": {
+        "x": 0.7,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.6,
+        "y": 0.4,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor2.png"
+    },
+    {
+      "location_id": "loc_library_floor2",
+      "hotspot_id": "hotspot_3",
+      "visual_asset_id": "asset_scene_library_floor2",
+      "clue_id": "clue_004",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.7,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_library_floor2.png"
+    },
+    {
+      "location_id": "loc_courtyard",
+      "hotspot_id": "hotspot_4",
+      "visual_asset_id": "asset_scene_courtyard",
+      "clue_id": "clue_005",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.4,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_courtyard.png"
+    },
+    {
+      "location_id": "loc_medical",
+      "hotspot_id": "hotspot_5",
+      "visual_asset_id": "asset_scene_medical",
+      "clue_id": "clue_006",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.4,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_detective_001_ba2958/asset_scene_medical.png"
+    }
+  ],
+  "quality_gate": {
+    "required_scene_count": 5,
+    "required_npc_count": 4,
+    "required_clue_count": 6,
+    "scene_approved": 5,
+    "npc_approved": 4,
+    "clue_approved": 6,
+    "rejected": 4,
+    "regenerated": 4,
+    "blocked": 0
+  }
+}

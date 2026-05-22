@@ -1,0 +1,231 @@
+{
+  "job_id": "job_1125f4ba2958",
+  "dynasty_id": "song",
+  "keywords": [
+    "断案"
+  ],
+  "status": "completed",
+  "progress": 100,
+  "current_step": "completed",
+  "steps": [
+    {
+      "step_id": "pitch_generation",
+      "title": "生成案件构想",
+      "description": "DeepSeek 根据朝代与关键词生成案件骨架。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:34:34",
+      "completed_at": "2026-05-22T17:34:41",
+      "metadata": {
+        "call_id": "call_d480ec0286"
+      }
+    },
+    {
+      "step_id": "script_package_generation",
+      "title": "生成结构化剧本",
+      "description": "DeepSeek 输出完整 ScriptPackage JSON 初稿。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:34:41",
+      "completed_at": "2026-05-22T17:36:09",
+      "metadata": {
+        "call_id": "call_ef6240d63f"
+      }
+    },
+    {
+      "step_id": "script_doctor_review",
+      "title": "编剧审稿",
+      "description": "DeepSeek 审核人物动机、可玩性与信息边界。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:36:09",
+      "completed_at": "2026-05-22T17:36:16",
+      "metadata": {
+        "call_id": "call_68e1d30d13"
+      }
+    },
+    {
+      "step_id": "logic_qa_review",
+      "title": "逻辑 QA",
+      "description": "DeepSeek 检查线索链、阶段推进与结局可达。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:36:16",
+      "completed_at": "2026-05-22T17:36:33",
+      "metadata": {
+        "call_id": "call_d024bd7c83"
+      }
+    },
+    {
+      "step_id": "refinement_repair",
+      "title": "修复合并",
+      "description": "DeepSeek 按审稿意见修复并合并最终剧本。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:36:33",
+      "completed_at": "2026-05-22T17:37:40",
+      "metadata": {
+        "call_id": "call_a5ef554623"
+      }
+    },
+    {
+      "step_id": "script_supervisor",
+      "title": "剧本监管",
+      "description": "后端校验 schema、朝代、线索链、剧透与可达性。",
+      "status": "passed",
+      "message": "剧本监管通过。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:37:40",
+      "completed_at": "2026-05-22T17:37:40",
+      "metadata": {
+        "passed": true,
+        "issues": [],
+        "blocking_issues": []
+      }
+    },
+    {
+      "step_id": "visual_generation",
+      "title": "生成视觉资产",
+      "description": "后端生成场景图、人物图和核心线索图。",
+      "status": "passed",
+      "message": "图片请求已完成，进入质量门禁。",
+      "attempts": 5,
+      "started_at": "2026-05-22T17:37:40",
+      "completed_at": "2026-05-22T17:42:43",
+      "metadata": {}
+    },
+    {
+      "step_id": "image_quality_gate",
+      "title": "图片质量门禁",
+      "description": "拒绝占位、空白、错风格、错朝代或缺核心物件的图片。",
+      "status": "passed",
+      "message": "必需图片已全部 approved。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:42:43",
+      "completed_at": "2026-05-22T17:42:43",
+      "metadata": {}
+    },
+    {
+      "step_id": "hotspot_calibration",
+      "title": "热点坐标校准",
+      "description": "基于 approved 图片生成 0-1 归一化坐标。",
+      "status": "passed",
+      "message": "热点坐标已校准。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:42:43",
+      "completed_at": "2026-05-22T17:42:43",
+      "metadata": {}
+    },
+    {
+      "step_id": "script_import",
+      "title": "导入游戏引擎",
+      "description": "把生成剧本导入现有调查、对话、线索和结局系统。",
+      "status": "passed",
+      "message": "生成剧本已准备进入现有游戏引擎。",
+      "attempts": 1,
+      "started_at": "2026-05-22T17:42:43",
+      "completed_at": "2026-05-22T17:42:43",
+      "metadata": {}
+    }
+  ],
+  "blocking_issues": [],
+  "transitional_quote": {
+    "text": "疑则勿用，用则勿疑；然疑案之中，先问证据。",
+    "author": "司马光",
+    "source": "仿史论语气"
+  },
+  "visual_quality": {
+    "scene": {
+      "required": 5,
+      "approved": 5,
+      "rejected": 0,
+      "regenerated": 0,
+      "blocked": 0
+    },
+    "npc": {
+      "required": 4,
+      "approved": 4,
+      "rejected": 1,
+      "regenerated": 1,
+      "blocked": 0
+    },
+    "clue": {
+      "required": 6,
+      "approved": 6,
+      "rejected": 3,
+      "regenerated": 3,
+      "blocked": 0
+    }
+  },
+  "ready_for_overview": true,
+  "script_id": "p0_song_detective_001_ba2958",
+  "created_at": "2026-05-22T17:34:34",
+  "updated_at": "2026-05-22T17:42:43",
+  "ai_calls": [
+    {
+      "module": "DeepSeekScriptPitch",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/断案",
+      "latency": 7650,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_d480ec0286.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_d480ec0286.json"
+    },
+    {
+      "module": "DeepSeekScriptPackage",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/断案",
+      "latency": 87726,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_ef6240d63f.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_ef6240d63f.json"
+    },
+    {
+      "module": "DeepSeekScriptDoctor",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/断案",
+      "latency": 7136,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_68e1d30d13.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_68e1d30d13.json"
+    },
+    {
+      "module": "DeepSeekLogicQA",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/断案",
+      "latency": 16806,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_d024bd7c83.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_d024bd7c83.json"
+    },
+    {
+      "module": "DeepSeekScriptRepair",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/断案",
+      "latency": 66982,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_a5ef554623.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_a5ef554623.json"
+    }
+  ]
+}

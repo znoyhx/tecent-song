@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import base64
+import hashlib
 import json
 import os
 
@@ -12,6 +13,7 @@ from uuid import uuid4
 import httpx
 
 from app.services.visual_prompt_agent import VisualAssetPrompt, visual_prompt_agent
+from app.models.script_models import VisualAsset
 
 CLUE_PROMPT_VERSION = "clue_no_text_v3"
 SCENE_PROMPT_VERSION = "scene_integrated_npc_clues_v1"
@@ -197,6 +199,67 @@ class ImageGenerationService:
             "fallback_count": sum(1 for asset in results if asset["status"] == "fallback"),
             "blocked_count": sum(1 for asset in results if asset.get("blocked")),
         }
+
+    def generate_script_asset(self, *, script_id: str, asset: VisualAsset, attempt: int) -> VisualAsset:
+        asset.prompt_hash = hashlib.sha256(asset.prompt.encode("utf-8")).hexdigest()[:16]
+        asset.provider = self._image_provider()
+        asset.model = self.model
+        asset.quality_gate.attempts = attempt
+        asset.quality_gate.issues = []
+        asset.quality_gate.rejected_paths = []
+
+        if asset.provider != "siliconflow":
+            asset.generation_status = "blocked"
+            asset.quality_gate.status = "blocked"
+            asset.quality_gate.issues.append("图片生成服务未启用")
+            return asset
+
+        api_key = self._load_api_key()
+        if not api_key:
+            asset.generation_status = "blocked"
+            asset.quality_gate.status = "blocked"
+            asset.quality_gate.issues.append("未检测到图片生成 Key")
+            return asset
+
+        payload: dict[str, Any] = {
+            "model": self.model,
+            "prompt": asset.prompt,
+            "negative_prompt": asset.negative_prompt,
+            "image_size": "1024x1024",
+            "batch_size": 1,
+            "num_inference_steps": 20,
+            "guidance_scale": 7.5,
+        }
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        target_file = self.generated_script_asset_path(script_id=script_id, asset_id=asset.asset_id)
+        try:
+            with httpx.Client(timeout=self._timeout_seconds(), follow_redirects=True) as client:
+                response = client.post(self.endpoint, headers=headers, json=payload)
+                response.raise_for_status()
+                data = response.json()
+                image_bytes = self._extract_image_bytes(data, client)
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                target_file.write_bytes(image_bytes)
+        except httpx.HTTPStatusError as exc:
+            status_code = exc.response.status_code if exc.response is not None else "unknown"
+            asset.generation_status = "blocked"
+            asset.quality_gate.status = "blocked"
+            asset.quality_gate.issues.append(f"图片生成接口返回 {status_code}")
+            return asset
+        except Exception as exc:  # noqa: BLE001
+            asset.generation_status = "blocked"
+            asset.quality_gate.status = "blocked"
+            asset.quality_gate.issues.append(f"图片生成失败：{self._safe_error_code(exc)}")
+            return asset
+
+        asset.generated_path = str(target_file.relative_to(self.workspace_dir)).replace("\\", "/")
+        asset.url = f"/api/scripts/{script_id}/assets/{asset.asset_id}"
+        asset.generation_status = "generated"
+        asset.quality_gate.status = "generated"
+        return asset
+
+    def generated_script_asset_path(self, *, script_id: str, asset_id: str) -> Path:
+        return self.assets_root / "generated" / script_id / f"{asset_id}.png"
 
     def asset_file_path(self, asset_id: str) -> Path | None:
         prompt = visual_prompt_agent.get_asset(asset_id)

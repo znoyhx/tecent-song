@@ -225,6 +225,23 @@ class VisualPromptAgent:
     def get_asset(self, asset_id: str) -> VisualAssetPrompt | None:
         return self.assets.get(self.normalize_asset_id(asset_id))
 
+    def build_generated_script_prompt(
+        self,
+        *,
+        asset_title: str,
+        asset_type: str,
+        dynasty_name: str,
+        style_keywords: list[str],
+        required_subjects: list[str],
+        era_feature_checklist: list[str],
+    ) -> str:
+        return (
+            f"{dynasty_name}历史悬疑游戏视觉资产，类型：{asset_type}，主题：{asset_title}。\n"
+            f"画面必须清楚呈现：{'、'.join(required_subjects)}。\n"
+            f"时代特征检查：{'、'.join(era_feature_checklist)}。\n"
+            f"整体风格：{'、'.join(style_keywords)}。无现代物件、无文字水印、无占位构图。"
+        )
+
 
     def list_assets(self) -> list[VisualAssetPrompt]:
         return list(self.assets.values())

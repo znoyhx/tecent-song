@@ -29,6 +29,7 @@ from app.models.game_models import (
     Scene,
     SessionStartRequest,
 )
+from app.models.script_models import PlayableIdentity, ScriptPackage
 from app.services.dialogue_orchestrator import DialogueOrchestrator
 from app.services.history_echo_generator import HistoryEchoGenerator
 from app.services.image_generation_service import image_generation_service
@@ -138,6 +139,32 @@ class GameEngine:
         path = self.data_dir / relative_path
         return json.loads(path.read_text(encoding="utf-8"))
 
+    def _static_catalog(self) -> dict:
+        return {
+            "generated": False,
+            "dynasty": self.dynasties["ming"],
+            "roles": self.roles,
+            "event": self.event,
+            "scenes": self.scenes,
+            "npcs": self.npcs,
+            "clues": self.clues,
+            "combos": self.combos,
+            "deductions": self.deductions,
+            "choices": self.choices,
+            "endings": self.endings,
+            "dialogue_rules": self.dialogue_rules,
+            "scene_responses": self.scene_responses,
+        }
+
+    def _record_catalog(self, record: dict) -> dict:
+        return record.get("catalog") or self._static_catalog()
+
+    def _state_catalog(self, state: GameState) -> dict:
+        record = self.sessions.get(state.session_id)
+        if record is None:
+            return self._static_catalog()
+        return self._record_catalog(record)
+
     def health(self) -> dict:
         return {
             "status": "ok",
@@ -233,35 +260,75 @@ class GameEngine:
         self.sessions[session_id] = record
         return self.get_session(session_id)
 
+    def start_generated_session(self, *, catalog: dict, package: ScriptPackage, identity: PlayableIdentity) -> dict:
+        role = catalog["roles"][identity.identity_id]
+        player_identity = catalog["player_identity"]
+        event: EventTemplate = catalog["event"]
+        first_stage = next((stage for stage in package.stages if stage.stage_id == "intro"), package.stages[0])
+        current_scene_id = first_stage.entry_location_id if first_stage.entry_location_id in catalog["scenes"] else event.scene_ids[0]
+        session_id = f"s_{uuid4().hex[:8]}"
+        state = GameState(
+            session_id=session_id,
+            event_id=event.event_id,
+            dynasty_id=package.dynasty_id,
+            player_role_id=role.role_id,
+            player_identity=player_identity,
+            current_stage="intro",
+            current_scene_id=current_scene_id,
+            discovered_clue_ids=[],
+            completed_combo_ids=[],
+            completed_deduction_ids=[],
+            npc_trust={npc_id: npc.initial_trust for npc_id, npc in catalog["npcs"].items()},
+            flags=[f"generated_script:{package.script_id}"],
+            scores=GameScores(),
+            risk_level=0,
+            available_scene_ids=[],
+            available_choice_ids=[],
+            turn_count=0,
+            status="active",
+        )
+        record = {
+            "state": state,
+            "dialogue_turns": [],
+            "logs": [],
+            "ending": None,
+            "last_supervisor": None,
+            "catalog": catalog | {"generated": True},
+        }
+        self.sessions[session_id] = record
+        self._refresh_state_metadata(state, catalog=record["catalog"])
+        return self.get_session(session_id)
+
     def get_session(self, session_id: str) -> dict:
         record = self._require_session(session_id)
         state: GameState = record["state"]
-        current_scene = self.scenes[state.current_scene_id]
-        scene_npcs = [self._npc_payload(npc_id) for npc_id in current_scene.npc_ids]
-        discovered_clues = [self._clue_payload(clue_id) for clue_id in state.discovered_clue_ids]
-        combo_summaries = [self._combo_payload(combo_id) for combo_id in state.completed_combo_ids]
-        deduction_summaries = [self._deduction_payload(deduction_id) for deduction_id in state.completed_deduction_ids]
-        available_deductions = [self._deduction_prompt_payload(deduction_id) for deduction_id in self._available_deductions(state)]
+        catalog = self._record_catalog(record)
+        current_scene = catalog["scenes"][state.current_scene_id]
+        scene_npcs = [self._npc_payload(npc_id, catalog) for npc_id in current_scene.npc_ids]
+        discovered_clues = [self._clue_payload(clue_id, catalog) for clue_id in state.discovered_clue_ids]
+        combo_summaries = [self._combo_payload(combo_id, catalog) for combo_id in state.completed_combo_ids]
+        deduction_summaries = [self._deduction_payload(deduction_id, catalog) for deduction_id in state.completed_deduction_ids]
+        available_deductions = [self._deduction_prompt_payload(deduction_id, catalog) for deduction_id in self._available_deductions(state, catalog)]
         available_choices = [
-            self.choices[choice_id].model_dump()
+            catalog["choices"][choice_id].model_dump()
             for choice_id in state.available_choice_ids
-            if choice_id in self.choices
+            if choice_id in catalog["choices"]
         ]
 
         ending_catalog = [
             {"ending_id": ending.ending_id, "title": ending.title}
-            for ending in sorted(self.endings.values(), key=lambda item: item.priority)
+            for ending in sorted(catalog["endings"].values(), key=lambda item: item.priority)
         ]
         return {
             "session_id": session_id,
             "state": state.model_dump(),
-            "dynasty": self.dynasties[state.dynasty_id].model_dump(),
-            "player_role": self.roles[state.player_role_id].model_dump(),
+            "dynasty": catalog["dynasty"].model_dump(),
+            "player_role": catalog["roles"][state.player_role_id].model_dump(),
             "player_identity": state.player_identity.model_dump() if state.player_identity else None,
-            "stage_label": self.STAGE_LABELS[state.current_stage],
-            "scene": self._scene_payload(state.current_scene_id),
+            "stage_label": self.STAGE_LABELS.get(state.current_stage, state.current_stage),
+            "scene": self._scene_payload(state.current_scene_id, catalog),
             "scene_npcs": scene_npcs,
-            "available_scenes": [self._scene_payload(scene_id) for scene_id in state.available_scene_ids],
+            "available_scenes": [self._scene_payload(scene_id, catalog) for scene_id in state.available_scene_ids],
 
             "available_actions": ["调查", "对话", "出示线索"],
             "clues": discovered_clues,
@@ -269,7 +336,7 @@ class GameEngine:
             "deduction_summaries": deduction_summaries,
             "available_deductions": available_deductions,
             "dialogue_turns": [turn.model_dump() for turn in record["dialogue_turns"]],
-            "current_goal": self._current_goal(state.current_stage),
+            "current_goal": self._current_goal(state.current_stage, catalog),
             "available_choices": available_choices,
             "ending": record["ending"],
             "ending_catalog": ending_catalog,
@@ -284,11 +351,12 @@ class GameEngine:
     def investigate(self, request: InvestigateRequest) -> dict:
         record = self._require_session(request.session_id)
         state: GameState = record["state"]
+        catalog = self._record_catalog(record)
         if request.scene_id not in state.available_scene_ids:
             raise GameError(code="INVALID_STAGE_ACTION", message="当前阶段还不能前往这个场景。", status_code=400)
 
         state.current_scene_id = request.scene_id
-        current_scene = self.scenes[request.scene_id]
+        current_scene = catalog["scenes"][request.scene_id]
         text = current_scene.description
         new_clues: list[dict] = []
         new_combos: list[dict] = []
@@ -305,15 +373,15 @@ class GameEngine:
             if missing_clues:
                 raise GameError(code="INVALID_STAGE_ACTION", message="还缺少前置线索，暂时看不出这里的问题。", status_code=400)
             key = f"{request.scene_id}:{request.hotspot_id}"
-            hotspot_response = self.scene_responses.get(key)
+            hotspot_response = catalog["scene_responses"].get(key)
             if hotspot_response is None:
                 raise GameError(code="BAD_REQUEST", message="未找到对应调查点。", status_code=400)
             if all(clue_id in state.discovered_clue_ids for clue_id in hotspot_response.get("clue_ids", [])):
                 text = hotspot_response.get("repeat_text") or hotspot.repeat_text or hotspot_response["text"]
             else:
                 text = hotspot_response["text"]
-            new_clues = self._discover_clues(state, hotspot_response.get("clue_ids", []))
-            new_combos = self._evaluate_combos(state)
+            new_clues = self._discover_clues(state, hotspot_response.get("clue_ids", []), catalog)
+            new_combos = self._evaluate_combos(state, catalog)
             new_deductions = []
             self._evaluate_transitions(state)
             state.turn_count += 1
@@ -332,18 +400,19 @@ class GameEngine:
             "new_combos": new_combos,
             "new_deductions": new_deductions,
             "state": state.model_dump(),
-            "scene": self._scene_payload(state.current_scene_id),
-            "current_goal": self._current_goal(state.current_stage),
+            "scene": self._scene_payload(state.current_scene_id, catalog),
+            "current_goal": self._current_goal(state.current_stage, catalog),
 
         }
 
     def dialogue(self, request: DialogueRequest) -> dict:
         record = self._require_session(request.session_id)
         state: GameState = record["state"]
-        npc = self.npcs.get(request.npc_id)
+        catalog = self._record_catalog(record)
+        npc = catalog["npcs"].get(request.npc_id)
         if npc is None:
             raise GameError(code="BAD_REQUEST", message="未找到对应人物。", status_code=400)
-        if request.npc_id not in self.scenes[state.current_scene_id].npc_ids:
+        if request.npc_id not in catalog["scenes"][state.current_scene_id].npc_ids:
             raise GameError(code="INVALID_STAGE_ACTION", message="当前场景无法与该人物对话。", status_code=400)
         for clue_id in request.presented_clue_ids:
             if clue_id not in state.discovered_clue_ids:
@@ -353,7 +422,7 @@ class GameEngine:
             state=state,
             npc=npc,
             player_message=request.message,
-            clue_map=self.clues,
+            clue_map=catalog["clues"],
             dialogue_turns=record["dialogue_turns"],
             presented_clue_ids=request.presented_clue_ids,
             player_identity=state.player_identity,
@@ -364,16 +433,16 @@ class GameEngine:
             base_response=base_mock_response,
             context=script_context,
             npc=npc,
-            clue_map=self.clues,
+            clue_map=catalog["clues"],
             rule_matched=rule is not None,
         )
-        player_role = self.roles[state.player_role_id]
-        current_scene = self.scenes[state.current_scene_id]
-        discovered_clues = [self.clues[clue_id] for clue_id in state.discovered_clue_ids if clue_id in self.clues]
-        presented_clues = [self.clues[clue_id] for clue_id in request.presented_clue_ids if clue_id in self.clues]
+        player_role = catalog["roles"][state.player_role_id]
+        current_scene = catalog["scenes"][state.current_scene_id]
+        discovered_clues = [catalog["clues"][clue_id] for clue_id in state.discovered_clue_ids if clue_id in catalog["clues"]]
+        presented_clues = [catalog["clues"][clue_id] for clue_id in request.presented_clue_ids if clue_id in catalog["clues"]]
         orchestrated = self.dialogue_orchestrator.handle_dialogue(
             state=state,
-            dynasty=self.dynasties[state.dynasty_id],
+            dynasty=catalog["dynasty"],
             player_role=player_role,
             player_identity=state.player_identity,
             current_scene=current_scene,
@@ -381,7 +450,7 @@ class GameEngine:
             request=request,
             discovered_clues=discovered_clues,
             presented_clues=presented_clues,
-            clue_map=self.clues,
+            clue_map=catalog["clues"],
             mock_response=mock_response,
             supervisor=self.supervisor,
             script_context=script_context,
@@ -390,7 +459,7 @@ class GameEngine:
             response = self.script_bound_chat.finalize_response(
                 response=orchestrated.response,
                 context=script_context,
-                clue_map=self.clues,
+                clue_map=catalog["clues"],
             )
             supervisor_result = orchestrated.supervisor_result
             fallback_used = orchestrated.fallback_used
@@ -400,10 +469,10 @@ class GameEngine:
             response = mock_response
             supervisor_result = self.supervisor.review_dialogue(
                 stage=state.current_stage,
-                dynasty=self.dynasties[state.dynasty_id],
+                dynasty=catalog["dynasty"],
                 npc=npc,
                 response=response,
-                clue_map=self.clues,
+                clue_map=catalog["clues"],
                 player_message=request.message,
                 player_role=player_role,
                 player_identity=state.player_identity,
@@ -419,7 +488,7 @@ class GameEngine:
                     base_response=self._fallback_response_for_npc(npc.name),
                     context=script_context,
                     npc=npc,
-                    clue_map=self.clues,
+                    clue_map=catalog["clues"],
                     rule_matched=False,
                 )
                 fallback_used = True
@@ -427,12 +496,12 @@ class GameEngine:
         response = self.script_bound_chat.finalize_response(
             response=response,
             context=script_context,
-            clue_map=self.clues,
+            clue_map=catalog["clues"],
         )
         self._apply_dialogue_effects(state, npc.npc_id, response)
 
-        new_clues = self._discover_clues(state, response.released_clue_ids)
-        new_combos = self._evaluate_combos(state)
+        new_clues = self._discover_clues(state, response.released_clue_ids, catalog)
+        new_combos = self._evaluate_combos(state, catalog)
         new_deductions = []
         self._evaluate_transitions(state)
         state.turn_count += 1
@@ -493,16 +562,17 @@ class GameEngine:
             "state": state.model_dump(),
             "supervisor": supervisor_result.model_dump(by_alias=True),
             "fallback_used": fallback_used,
-            "current_goal": self._current_goal(state.current_stage),
+            "current_goal": self._current_goal(state.current_stage, catalog),
         }
 
     def submit_deduction(self, request: DeductionSubmitRequest) -> dict:
         record = self._require_session(request.session_id)
         state: GameState = record["state"]
+        catalog = self._record_catalog(record)
         if state.current_stage == "ending" or state.status not in {"active", "ending_ready"}:
             raise GameError(code="INVALID_STAGE_ACTION", message="结局已定，不能再提交推理。", status_code=400)
 
-        deduction = self.deductions.get(request.deduction_id)
+        deduction = catalog["deductions"].get(request.deduction_id)
         if deduction is None:
             raise GameError(code="BAD_REQUEST", message="未找到对应思维疑团。", status_code=400)
 
@@ -520,10 +590,10 @@ class GameEngine:
             return {
                 "correct": True,
                 "feedback": "这个疑团已经完成。",
-                "deduction": self._deduction_payload(deduction.deduction_id),
+                "deduction": self._deduction_payload(deduction.deduction_id, catalog),
                 "state": state.model_dump(),
-                "available_deductions": [self._deduction_prompt_payload(item) for item in self._available_deductions(state)],
-                "current_goal": self._current_goal(state.current_stage),
+                "available_deductions": [self._deduction_prompt_payload(item, catalog) for item in self._available_deductions(state, catalog)],
+            "current_goal": self._current_goal(state.current_stage, catalog),
             }
 
         correct = set(deduction.correct_clue_ids).issubset(selected)
@@ -540,10 +610,10 @@ class GameEngine:
             return {
                 "correct": False,
                 "feedback": deduction.wrong_feedback,
-                "deduction": self._deduction_prompt_payload(deduction.deduction_id),
+                "deduction": self._deduction_prompt_payload(deduction.deduction_id, catalog),
                 "state": state.model_dump(),
-                "available_deductions": [self._deduction_prompt_payload(item) for item in self._available_deductions(state)],
-                "current_goal": self._current_goal(state.current_stage),
+                "available_deductions": [self._deduction_prompt_payload(item, catalog) for item in self._available_deductions(state, catalog)],
+                "current_goal": self._current_goal(state.current_stage, catalog),
             }
 
         state.completed_deduction_ids.append(deduction.deduction_id)
@@ -561,18 +631,19 @@ class GameEngine:
         return {
             "correct": True,
             "feedback": deduction.success_text,
-            "deduction": self._deduction_payload(deduction.deduction_id),
+            "deduction": self._deduction_payload(deduction.deduction_id, catalog),
             "state": state.model_dump(),
-            "available_deductions": [self._deduction_prompt_payload(item) for item in self._available_deductions(state)],
-            "current_goal": self._current_goal(state.current_stage),
+            "available_deductions": [self._deduction_prompt_payload(item, catalog) for item in self._available_deductions(state, catalog)],
+            "current_goal": self._current_goal(state.current_stage, catalog),
         }
 
     def submit_choice(self, session_id: str, choice_id: str) -> dict:
         record = self._require_session(session_id)
         state: GameState = record["state"]
+        catalog = self._record_catalog(record)
         if state.current_stage != "choice":
             raise GameError(code="INVALID_STAGE_ACTION", message="当前还不能做最终抉择。", status_code=400)
-        choice = self.choices.get(choice_id)
+        choice = catalog["choices"].get(choice_id)
         if choice is None:
             raise GameError(code="BAD_REQUEST", message="未找到对应选择。", status_code=400)
 
@@ -597,6 +668,7 @@ class GameEngine:
     def resolve_ending(self, session_id: str) -> dict:
         record = self._require_session(session_id)
         state: GameState = record["state"]
+        catalog = self._record_catalog(record)
         if state.current_stage != "ending":
             raise GameError(code="INVALID_STAGE_ACTION", message="尚未进入结局判定阶段。", status_code=400)
         if record["ending"] is None:
@@ -605,9 +677,9 @@ class GameEngine:
             echo_result = self.history_echo_generator.generate(
                 ending=ending,
                 state=state,
-                choices=self.choices,
-                clues=self.clues,
-                npcs=self.npcs,
+                choices=catalog["choices"],
+                clues=catalog["clues"],
+                npcs=catalog["npcs"],
                 template_echo=history_echo.text if history_echo else ending.history_echo,
             )
             ending_payload = {
@@ -623,7 +695,7 @@ class GameEngine:
                 "related_clue_ids": ending.related_clue_ids,
                 "related_choice_ids": ending.related_choice_ids,
             }
-            record["ending"] = image_generation_service.attach_visual(ending_payload, "scene_interrogation_room")
+            record["ending"] = ending_payload if catalog.get("generated") else image_generation_service.attach_visual(ending_payload, "scene_interrogation_room")
 
             state.status = "finished"
             self._log_call(
@@ -651,7 +723,19 @@ class GameEngine:
             raise GameError(code="SESSION_NOT_FOUND", message="未找到这局演示，请重新开始。", status_code=404)
         return record
 
-    def _refresh_state_metadata(self, state: GameState) -> None:
+    def _refresh_state_metadata(self, state: GameState, catalog: dict | None = None) -> None:
+        catalog = catalog or self._state_catalog(state)
+        if catalog.get("generated"):
+            scene_ids = [
+                scene_id
+                for scene_id, scene in catalog["scenes"].items()
+                if state.current_stage in scene.available_stage
+            ]
+            state.available_scene_ids = scene_ids or [state.current_scene_id]
+            state.available_choice_ids = [
+                choice.choice_id for choice in catalog["choices"].values()
+            ] if state.current_stage == "choice" else []
+            return
         stage_to_scenes = {
             "intro": ["scene_front_hall", "scene_fire_yard"],
             "investigation": [
@@ -687,10 +771,11 @@ class GameEngine:
             "ending": [state.current_scene_id],
         }
         state.available_scene_ids = stage_to_scenes[state.current_stage]
-        state.available_choice_ids = [choice.choice_id for choice in self.event.choices] if state.current_stage == "choice" else []
+        state.available_choice_ids = [choice.choice_id for choice in catalog["event"].choices] if state.current_stage == "choice" else []
 
-    def _current_goal(self, stage: str) -> str:
-        scripted_goal = self.event.stage_goals.get(stage)
+    def _current_goal(self, stage: str, catalog: dict | None = None) -> str:
+        catalog = catalog or self._static_catalog()
+        scripted_goal = catalog["event"].stage_goals.get(stage)
         if scripted_goal:
             return scripted_goal
         fallback_goals = {
@@ -702,41 +787,54 @@ class GameEngine:
         }
         return fallback_goals.get(stage, "继续调查案情，寻找下一条可靠线索。")
 
-    def _scene_payload(self, scene_id: str) -> dict:
-        payload = self.scenes[scene_id].model_dump()
+    def _scene_payload(self, scene_id: str, catalog: dict | None = None) -> dict:
+        catalog = catalog or self._static_catalog()
+        payload = catalog["scenes"][scene_id].model_dump()
+        if catalog.get("generated"):
+            return payload
         return image_generation_service.attach_visual(payload, scene_id)
 
-    def _npc_payload(self, npc_id: str) -> dict:
-        payload = self.npcs[npc_id].model_dump()
+    def _npc_payload(self, npc_id: str, catalog: dict | None = None) -> dict:
+        catalog = catalog or self._static_catalog()
+        payload = catalog["npcs"][npc_id].model_dump()
+        if catalog.get("generated"):
+            return payload
         return image_generation_service.attach_visual(payload, npc_id)
 
-    def _clue_payload(self, clue_id: str) -> dict:
-        payload = self.clues[clue_id].model_dump()
+    def _clue_payload(self, clue_id: str, catalog: dict | None = None) -> dict:
+        catalog = catalog or self._static_catalog()
+        payload = catalog["clues"][clue_id].model_dump()
         payload["discovered"] = True
+        if catalog.get("generated"):
+            return payload
         return image_generation_service.attach_visual(payload, clue_id)
 
-    def _combo_payload(self, combo_id: str) -> dict:
+    def _combo_payload(self, combo_id: str, catalog: dict | None = None) -> dict:
 
-        combo: ComboRule = self.combos[combo_id]
+        catalog = catalog or self._static_catalog()
+        combo: ComboRule = catalog["combos"][combo_id]
         return combo.model_dump()
 
-    def _deduction_payload(self, deduction_id: str) -> dict:
-        deduction: DeductionRule = self.deductions[deduction_id]
+    def _deduction_payload(self, deduction_id: str, catalog: dict | None = None) -> dict:
+        catalog = catalog or self._static_catalog()
+        deduction: DeductionRule = catalog["deductions"][deduction_id]
         return deduction.model_dump()
 
-    def _deduction_prompt_payload(self, deduction_id: str) -> dict:
-        deduction: DeductionRule = self.deductions[deduction_id]
+    def _deduction_prompt_payload(self, deduction_id: str, catalog: dict | None = None) -> dict:
+        catalog = catalog or self._static_catalog()
+        deduction: DeductionRule = catalog["deductions"][deduction_id]
         return {
             "deduction_id": deduction.deduction_id,
             "question": deduction.question,
         }
 
-    def _available_deductions(self, state: GameState) -> list[str]:
+    def _available_deductions(self, state: GameState, catalog: dict | None = None) -> list[str]:
+        catalog = catalog or self._state_catalog(state)
         if state.current_stage == "ending":
             return []
         discovered = set(state.discovered_clue_ids)
         available: list[str] = []
-        for deduction in self.deductions.values():
+        for deduction in catalog["deductions"].values():
             if deduction.deduction_id in state.completed_deduction_ids:
                 continue
             required = set(deduction.required_clue_ids or deduction.correct_clue_ids)
@@ -744,10 +842,11 @@ class GameEngine:
                 available.append(deduction.deduction_id)
         return available
 
-    def _discover_clues(self, state: GameState, clue_ids: list[str]) -> list[dict]:
+    def _discover_clues(self, state: GameState, clue_ids: list[str], catalog: dict | None = None) -> list[dict]:
+        catalog = catalog or self._state_catalog(state)
         discovered: list[dict] = []
         for clue_id in clue_ids:
-            clue = self.clues.get(clue_id)
+            clue = catalog["clues"].get(clue_id)
             if clue is None:
                 continue
             if clue_id in state.discovered_clue_ids:
@@ -758,7 +857,7 @@ class GameEngine:
             self._apply_effect_bundle(state, clue.effects)
             if clue.after_unlock_flags:
                 self._apply_effect_bundle(state, {"flags": clue.after_unlock_flags})
-            discovered.append(self._clue_payload(clue_id))
+            discovered.append(self._clue_payload(clue_id, catalog))
         return discovered
 
     def _can_release_clue(self, state: GameState, clue: Clue) -> bool:
@@ -795,10 +894,11 @@ class GameEngine:
 
         return True
 
-    def _evaluate_combos(self, state: GameState) -> list[dict]:
+    def _evaluate_combos(self, state: GameState, catalog: dict | None = None) -> list[dict]:
+        catalog = catalog or self._state_catalog(state)
         new_combos: list[dict] = []
         discovered = set(state.discovered_clue_ids)
-        for combo in self.combos.values():
+        for combo in catalog["combos"].values():
             if combo.combo_id in state.completed_combo_ids:
                 continue
             if set(combo.required_clue_ids).issubset(discovered):
@@ -811,9 +911,26 @@ class GameEngine:
         return []
 
     def _evaluate_transitions(self, state: GameState) -> None:
+        catalog = self._state_catalog(state)
         discovered = set(state.discovered_clue_ids)
         flags = set(state.flags)
-        key_count = sum(1 for clue_id in state.discovered_clue_ids if self.clues[clue_id].is_key)
+        key_count = sum(1 for clue_id in state.discovered_clue_ids if clue_id in catalog["clues"] and catalog["clues"][clue_id].is_key)
+
+        if catalog.get("generated"):
+            total_key_count = max(1, sum(1 for clue in catalog["clues"].values() if clue.is_key))
+            if state.current_stage == "intro" and key_count >= 1:
+                state.current_stage = "investigation"
+                self._refresh_state_metadata(state, catalog=catalog)
+            if state.current_stage == "investigation" and key_count >= min(3, total_key_count):
+                state.current_stage = "reversal"
+                self._refresh_state_metadata(state, catalog=catalog)
+            if state.current_stage == "reversal" and (
+                key_count >= min(5, total_key_count)
+                or any(combo_id in state.completed_combo_ids for combo_id in catalog["combos"])
+            ):
+                state.current_stage = "choice"
+                self._refresh_state_metadata(state, catalog=catalog)
+            return
 
         if state.current_stage == "intro":
             intro_anomalies = {
@@ -900,7 +1017,8 @@ class GameEngine:
         state.npc_trust[npc_id] = max(-2, min(3, current + delta))
 
     def _pick_dialogue_rule(self, *, state: GameState, request: DialogueRequest) -> DialogueRule | None:
-        candidate_rules = self.dialogue_rules.get(request.npc_id, [])
+        catalog = self._state_catalog(state)
+        candidate_rules = catalog["dialogue_rules"].get(request.npc_id, [])
         message = request.message.strip()
         presented = set(request.presented_clue_ids)
         matched: list[DialogueRule] = []
@@ -934,6 +1052,20 @@ class GameEngine:
         )
 
     def _pick_ending(self, state: GameState) -> EndingRule:
+        catalog = self._state_catalog(state)
+        if catalog.get("generated"):
+            flags = set(state.flags)
+            endings = sorted(catalog["endings"].values(), key=lambda item: item.priority)
+            for ending in endings:
+                if set(ending.blocked_flags).intersection(flags):
+                    continue
+                if not set(ending.required_flags).issubset(flags):
+                    continue
+                required_choice = ending.conditions.get("final_choice_id") if isinstance(ending.conditions, dict) else None
+                if required_choice and required_choice != state.final_choice_id:
+                    continue
+                return ending
+            return endings[0]
         flags = set(state.flags)
         discovered = set(state.discovered_clue_ids)
         trust = state.npc_trust

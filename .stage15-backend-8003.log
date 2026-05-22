@@ -1,0 +1,6 @@
+INFO:     127.0.0.1:62079 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62079 - "POST /api/scripts/p0_001_08121a/visuals/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62110 - "GET /api/scripts/jobs/job_5b69c108121a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58422 - "GET /api/scripts/p0_001_08121a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58422 - "POST /api/session/start-generated HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58422 - "POST /api/investigate HTTP/1.1" 200 OK

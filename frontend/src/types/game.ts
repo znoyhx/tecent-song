@@ -94,6 +94,9 @@ export type SceneHotspot = {
   required_stage?: string | null;
   required_clue_ids?: string[];
   repeat_text?: string;
+  anchor_point?: { x: number; y: number } | null;
+  bbox?: { x: number; y: number; width: number; height: number } | null;
+  calibration_status?: string | null;
 };
 
 export type Scene = VisualFields & {
@@ -353,4 +356,86 @@ export type DeductionSubmitResult = {
   state: GameState;
   available_deductions: DeductionPrompt[];
   current_goal: string;
+};
+
+export type ScriptJobStepStatus = 'pending' | 'running' | 'passed' | 'failed' | 'blocked' | 'retrying';
+
+export type ScriptJobStep = {
+  step_id: string;
+  title: string;
+  description: string;
+  status: ScriptJobStepStatus;
+  message: string;
+  attempts: number;
+  started_at?: string | null;
+  completed_at?: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type ScriptJob = {
+  job_id: string;
+  dynasty_id: 'song' | 'late_tang';
+  keywords: string[];
+  status: 'queued' | 'running' | 'completed' | 'failed' | 'visual_blocked';
+  progress: number;
+  current_step: string;
+  steps: ScriptJobStep[];
+  blocking_issues: Array<{ code?: string; message?: string; [key: string]: unknown }>;
+  transitional_quote?: { text: string; author: string; source?: string } | null;
+  visual_quality: {
+    scene: Record<string, number>;
+    npc: Record<string, number>;
+    clue: Record<string, number>;
+  };
+  ready_for_overview: boolean;
+  script_id?: string | null;
+};
+
+export type PlayableIdentity = {
+  identity_id: string;
+  display_name: string;
+  description: string;
+  social_rank: 'low' | 'middle' | 'high';
+  relation_to_case: string;
+  motive: string;
+  permissions: string[];
+  limitations: string[];
+  background: string;
+  tags: string[];
+  is_default: boolean;
+};
+
+export type ScriptOverview = {
+  title: string;
+  logline: string;
+  case_summary: string;
+  opening_location: string;
+  public_objective: string;
+  major_locations: string[];
+  major_npcs: string[];
+  player_briefing: string;
+};
+
+export type VisualAsset = {
+  asset_id: string;
+  asset_type: 'scene' | 'npc' | 'clue' | 'ending';
+  owner_id: string;
+  title: string;
+  url?: string | null;
+  generated_path?: string | null;
+  generation_status: string;
+  quality_gate: {
+    status: string;
+    approved_path?: string | null;
+    issues: string[];
+  };
+};
+
+export type ScriptPackage = {
+  script_id: string;
+  dynasty_id: 'song' | 'late_tang';
+  keywords: string[];
+  script_overview: ScriptOverview;
+  playable_identities: PlayableIdentity[];
+  visual_assets: VisualAsset[];
 };

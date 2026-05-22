@@ -142,6 +142,17 @@ function resolveNpcImage(npc: NPCProfile): string {
   return '';
 }
 
+function calibratedHotspotPoint(hotspot: Scene['hotspots'][number]): StagePoint | null {
+  const point = hotspot.anchor_point;
+  if (!point || hotspot.calibration_status !== 'approved') {
+    return null;
+  }
+  if (point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) {
+    return null;
+  }
+  return { x: point.x, y: point.y };
+}
+
 export class MainScene extends Phaser.Scene {
   private payload?: PhaserStageUpdate;
   private backgroundLayer?: Phaser.GameObjects.Container;
@@ -340,7 +351,7 @@ export class MainScene extends Phaser.Scene {
     const height = this.scale.height;
     const scenePositions = hotspotPositionMap[snapshot.scene.scene_id] ?? {};
     snapshot.scene.hotspots.forEach((hotspot, index) => {
-      const slot = scenePositions[hotspot.hotspot_id] ?? hotspotSlots[index % hotspotSlots.length];
+      const slot = calibratedHotspotPoint(hotspot) ?? scenePositions[hotspot.hotspot_id] ?? hotspotSlots[index % hotspotSlots.length];
       const rowOffset = Math.floor(index / hotspotSlots.length) * 28;
       const point = imagePointToCanvas(slot, width, height, this.backgroundImageSize);
       const x = Phaser.Math.Clamp(point.x, 42, width - 42);

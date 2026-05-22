@@ -2,38 +2,69 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api } from './api/client';
 import { AudioDirector } from './components/audio/AudioDirector';
-import {
-  buildScenarioPreview,
-  getFallbackDynasties,
-  getFallbackIdentityRecommendations,
-  getFallbackRoleForDynasty,
-  normalizeScenarioKeywordText,
-  type GeneratedScenarioPreview,
-} from './mock/entryFlow';
+import { ScriptKeywordPage, ScriptOverviewPage, ScriptProgressPage } from './components/script-generation/ScriptGenerationFlow';
 import { GamePage } from './pages/GamePage';
-import { ScenarioGenerationPage } from './pages/ScenarioGenerationPage';
 import { StartPage } from './pages/StartPage';
-import { buildActionNotice } from './store/gameStore';
-import type { DialogueActionResult, DialogueHighlight, Dynasty, GameState, HealthResponse, PlayerRole, SessionSnapshot } from './types/game';
+import type {
+  DialogueHighlight,
+  Dynasty,
+  HealthResponse,
+  ScriptJob,
+  ScriptPackage,
+  SessionSnapshot,
+} from './types/game';
 
 const debugStorageKey = 'historyGameDebug';
 const debugUiAllowed = import.meta.env.DEV && import.meta.env.VITE_SHOW_DEBUG_PANEL === '1';
-const demoRuntimePayload = {
+const mingRuntimePayload = {
   dynasty_id: 'ming',
   role_id: 'role_ming_bookshop_apprentice',
   event_id: 'ming_bookshop_fire',
 };
 
+type EntryMode = 'home' | 'setup' | 'keywords' | 'progress' | 'overview';
+
+const fallbackDynasties: Dynasty[] = [
+  {
+    dynasty_id: 'ming',
+    name: '明代',
+    enabled: true,
+    period_label: '书坊焚稿案',
+    core_mood: '固定 Demo',
+    allowed_roles: ['书坊学徒'],
+    forbidden_terms: [],
+    visual_keywords: [],
+  },
+  {
+    dynasty_id: 'song',
+    name: '北宋',
+    enabled: true,
+    period_label: 'AI 剧本生成',
+    core_mood: '关键词生成案件',
+    allowed_roles: [],
+    forbidden_terms: [],
+    visual_keywords: [],
+  },
+  {
+    dynasty_id: 'tang',
+    name: '晚唐',
+    enabled: true,
+    period_label: 'AI 剧本生成',
+    core_mood: '关键词生成案件',
+    allowed_roles: [],
+    forbidden_terms: [],
+    visual_keywords: [],
+  },
+];
+
 function getInitialDebugEnabled(): boolean {
   if (!debugUiAllowed || typeof window === 'undefined') {
     return false;
   }
-
   const params = new URLSearchParams(window.location.search);
   if (params.get('debug') === '1') {
     return true;
   }
-
   try {
     return window.localStorage.getItem(debugStorageKey) === '1';
   } catch {
@@ -41,127 +72,88 @@ function getInitialDebugEnabled(): boolean {
   }
 }
 
-function diffNumber(current: number, next: number): number {
-  return next - current;
-}
-
-function buildScoreFeedback(before: GameState, after: GameState): string[] {
-  const scoreLabels: Record<keyof GameState['scores'], string> = {
-    truth: '真相',
-    order: '秩序',
-    survival: '自保',
-    sacrifice: '牺牲',
-  };
-
-  return (Object.keys(scoreLabels) as Array<keyof GameState['scores']>)
-    .map((scoreKey) => {
-      const delta = diffNumber(before.scores[scoreKey], after.scores[scoreKey]);
-      return delta === 0 ? '' : `${scoreLabels[scoreKey]}${delta > 0 ? '+' : ''}${delta}`;
-    })
+function parseKeywords(value: string): string[] {
+  return value
+    .replace(/\n/g, '、')
+    .replace(/,/g, '、')
+    .replace(/，/g, '、')
+    .split('、')
+    .map((item) => item.trim())
     .filter(Boolean);
 }
 
-function buildPresentationFeedback(
-  beforeSnapshot: SessionSnapshot,
-  result: DialogueActionResult,
-  npcId: string,
-  presentedClueIds: string[],
-): string[] {
-  if (presentedClueIds.length === 0) {
-    return [];
-  }
+function hasVagueKeyword(keywords: string[]): boolean {
+  const vague = new Set(['好玩', '刺激', '随便', '有趣', '悬疑', '故事']);
+  return keywords.some((keyword) => vague.has(keyword));
+}
 
-  const clueTitleMap = new Map(beforeSnapshot.clues.map((clue) => [clue.clue_id, clue.title]));
-  const beforeState = beforeSnapshot.state;
-  const afterState = result.state;
-  const presentedTitles = presentedClueIds.map((clueId) => clueTitleMap.get(clueId) ?? clueId);
-  const feedback = [`已出示：${presentedTitles.join('、')}`];
-
-  const trustDelta = diffNumber(beforeState.npc_trust[npcId] ?? 0, afterState.npc_trust[npcId] ?? 0);
-  if (trustDelta !== 0) {
-    feedback.push(`${result.dialogue.npc_name}信任${trustDelta > 0 ? '+' : ''}${trustDelta}`);
-  }
-
-  const scoreFeedback = buildScoreFeedback(beforeState, afterState);
-  if (scoreFeedback.length > 0) {
-    feedback.push(scoreFeedback.join('，'));
-  }
-
-  const riskDelta = diffNumber(beforeState.risk_level, afterState.risk_level);
-  if (riskDelta !== 0) {
-    feedback.push(`风险${riskDelta > 0 ? '+' : ''}${riskDelta}`);
-  }
-
-  const newFlags = afterState.flags.filter((flag) => !beforeState.flags.includes(flag));
-  if (newFlags.length > 0) {
-    feedback.push('状态更新');
-  }
-
-  if (result.new_clues.length > 0) {
-    feedback.push(`案卷新增：${result.new_clues.map((clue) => clue.title).join('、')}`);
-  }
-  if (result.new_combos.length > 0) {
-    feedback.push(`线索组合：${result.new_combos.map((combo) => combo.result_title).join('、')}`);
-  }
-  if (result.new_deductions.length > 0) {
-    feedback.push(`新疑团：${result.new_deductions.map((deduction) => deduction.question).join('、')}`);
-  }
-
-  if (feedback.length === 1) {
-    feedback.push(`${result.dialogue.npc_name}对证据作出回应，但案卷状态暂未新增。`);
-  }
-
-  return feedback;
+function generatedDynastyId(dynastyId: string): 'song' | 'late_tang' | 'ming' | 'tang' {
+  return dynastyId === 'tang' ? 'late_tang' : (dynastyId as 'song' | 'late_tang' | 'ming' | 'tang');
 }
 
 function App() {
-  const [entryMode, setEntryMode] = useState<'home' | 'setup'>('home');
+  const [entryMode, setEntryMode] = useState<EntryMode>('home');
   const [health, setHealth] = useState<HealthResponse | null>(null);
-  const [dynasties, setDynasties] = useState<Dynasty[]>([]);
+  const [dynasties, setDynasties] = useState<Dynasty[]>(fallbackDynasties);
   const [selectedDynastyId, setSelectedDynastyId] = useState('');
-  const [scenarioKeywordText, setScenarioKeywordText] = useState('');
-  const [generatedScenario, setGeneratedScenario] = useState<GeneratedScenarioPreview | null>(null);
+  const [keywordText, setKeywordText] = useState('');
+  const [scriptJob, setScriptJob] = useState<ScriptJob | null>(null);
+  const [scriptPackage, setScriptPackage] = useState<ScriptPackage | null>(null);
   const [snapshot, setSnapshot] = useState<SessionSnapshot | null>(null);
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [dialogueHighlights, setDialogueHighlights] = useState<DialogueHighlight[]>([]);
   const [dialogueRedTexts, setDialogueRedTexts] = useState<string[]>([]);
-  const [actionNotice, setActionNotice] = useState('书页尚未翻开。');
-  const [presentationFeedback, setPresentationFeedback] = useState<string[]>([]);
+  const [actionNotice, setActionNotice] = useState('选择朝代后开始调查。');
   const [debugEnabled, setDebugEnabled] = useState(getInitialDebugEnabled);
   const [errorText, setErrorText] = useState('');
   const [loadingBoot, setLoadingBoot] = useState(true);
   const [busy, setBusy] = useState(false);
 
-  const backendReady = health?.status === 'ok';
+  const selectedDynasty = useMemo(
+    () => dynasties.find((item) => item.dynasty_id === selectedDynastyId) ?? null,
+    [dynasties, selectedDynastyId],
+  );
 
-  const loadBootData = async (options?: { showSplash?: boolean }) => {
-    const showSplash = options?.showSplash ?? true;
-    if (showSplash) {
+  useEffect(() => {
+    const loadBootData = async () => {
       setLoadingBoot(true);
-    }
-    setErrorText('');
-    try {
-      const [healthResult, dynastyResult] = await Promise.allSettled([api.getHealth(), api.getDynasties()]);
-
-      const nextHealth = healthResult.status === 'fulfilled' ? healthResult.value : null;
-      const nextDynasties = dynastyResult.status === 'fulfilled' && dynastyResult.value.dynasties.length > 0
-        ? dynastyResult.value.dynasties
-        : getFallbackDynasties();
-
-      setHealth(nextHealth);
-      setDynasties(nextDynasties);
-      setActionNotice(nextHealth ? '朝代入口已就绪，等待生成第一桩案。' : '后端未连通，已切换到离线展示模式。');
-    } catch {
-      setHealth(null);
-      setDynasties(getFallbackDynasties());
-      setActionNotice('后端未连通，已切换到离线展示模式。');
-    } finally {
-      if (showSplash) {
+      try {
+        const [healthResult, dynastyResult] = await Promise.allSettled([api.getHealth(), api.getDynasties()]);
+        setHealth(healthResult.status === 'fulfilled' ? healthResult.value : null);
+        if (dynastyResult.status === 'fulfilled' && dynastyResult.value.dynasties.length > 0) {
+          const backendDynasties = dynastyResult.value.dynasties;
+          const hasTang = backendDynasties.some((item) => item.dynasty_id === 'tang' || item.dynasty_id === 'late_tang');
+          setDynasties(hasTang ? backendDynasties : [...backendDynasties, fallbackDynasties[2]]);
+        }
+      } finally {
         setLoadingBoot(false);
       }
+    };
+    void loadBootData();
+  }, []);
+
+  useEffect(() => {
+    if (entryMode !== 'progress' || !scriptJob || ['completed', 'failed', 'visual_blocked'].includes(scriptJob.status)) {
+      return undefined;
     }
-  };
+    const timer = window.setInterval(async () => {
+      try {
+        const latest = await api.getScriptJob(scriptJob.job_id);
+        setScriptJob(latest);
+      } catch (error) {
+        setErrorText(error instanceof Error ? error.message : '读取生成任务失败。');
+      }
+    }, 2000);
+    return () => window.clearInterval(timer);
+  }, [entryMode, scriptJob]);
+
+  useEffect(() => {
+    if (!scriptJob || scriptJob.status !== 'completed' || !scriptJob.ready_for_overview || !scriptJob.script_id) {
+      return;
+    }
+    void openOverview(scriptJob);
+  }, [scriptJob?.status, scriptJob?.ready_for_overview, scriptJob?.script_id]);
 
   const syncSession = async (sessionId: string, preferredNpcId?: string | null) => {
     const nextSnapshot = await api.getSession(sessionId);
@@ -174,115 +166,100 @@ function App() {
     return nextSnapshot;
   };
 
-  useEffect(() => {
-    void loadBootData();
-  }, []);
-
-  const selectedDynasty = useMemo(
-    () => dynasties.find((item) => item.dynasty_id === selectedDynastyId) ?? null,
-    [dynasties, selectedDynastyId],
-  );
-
-  const handleSelectDynasty = (dynastyId: string) => {
-    setSelectedDynastyId(dynastyId);
-    setGeneratedScenario(null);
-    setPresentationFeedback([]);
-    setDialogueHighlights([]);
-    setDialogueRedTexts([]);
-    setErrorText('');
-  };
-
-  const resolveRoleForDynasty = async (dynasty: Dynasty): Promise<PlayerRole> => {
-    try {
-      const roleResponse = await api.getRoles(dynasty.dynasty_id);
-      const enabledRole = roleResponse.roles.find((role) => role.enabled);
-      if (enabledRole) {
-        return enabledRole;
-      }
-    } catch {
-      // 使用本地兜底身份，确保离线时仍可演示前两步流程。
-    }
-
-    const fallbackRole = getFallbackRoleForDynasty(dynasty.dynasty_id) ?? getFallbackRoleForDynasty('ming');
-    if (!fallbackRole) {
-      throw new Error('当前朝代暂无可用身份，无法生成本局事件。');
-    }
-    return fallbackRole;
-  };
-
-  const handlePrepareScenario = async () => {
-    const targetDynasty = selectedDynasty ?? dynasties.find((item) => item.enabled) ?? dynasties[0] ?? null;
-    if (!targetDynasty) {
-      setErrorText('朝代资料还没有载入，请稍后再试。');
-      return;
-    }
-
+  const startMingDemo = async () => {
     setBusy(true);
     setErrorText('');
     try {
-      const normalizedKeywords = normalizeScenarioKeywordText(scenarioKeywordText);
-      setScenarioKeywordText(normalizedKeywords);
-      setSelectedDynastyId(targetDynasty.dynasty_id);
-      const role = await resolveRoleForDynasty(targetDynasty);
-      const basePreview = buildScenarioPreview(targetDynasty, role, undefined, normalizedKeywords);
-      let identityRecommendations = getFallbackIdentityRecommendations();
-      if (backendReady) {
-        try {
-          identityRecommendations = await api.getPlayerIdentities({
-            dynasty_id: targetDynasty.dynasty_id,
-            event_id: basePreview.eventId,
-          });
-        } catch {
-          identityRecommendations = getFallbackIdentityRecommendations();
-        }
-      }
-      setGeneratedScenario(buildScenarioPreview(targetDynasty, role, identityRecommendations, normalizedKeywords));
-    } catch (error) {
-      setErrorText(error instanceof Error ? error.message : '生成本局事件失败，请稍后重试。');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const handleRefreshBackend = async () => {
-    setBusy(true);
-    try {
-      await loadBootData({ showSplash: false });
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const handleStart = async (identityPayload?: { identity_id?: string; custom_identity_text?: string }) => {
-    if (!generatedScenario) {
-      setErrorText('请先完成本局事件生成。');
-      return;
-    }
-
-    setBusy(true);
-    setErrorText('');
-    try {
-      const runtimePayload = generatedScenario.eventId === demoRuntimePayload.event_id
-        ? {
-          dynasty_id: generatedScenario.dynastyId,
-          role_id: generatedScenario.roleId,
-          event_id: generatedScenario.eventId,
-        }
-        : demoRuntimePayload;
-      const nextSnapshot = await api.startSession({
-        ...runtimePayload,
-        ...identityPayload,
-      });
-
+      const nextSnapshot = await api.startSession(mingRuntimePayload);
       setSnapshot(nextSnapshot);
       setSelectedNpcId(nextSnapshot.scene_npcs[0]?.npc_id ?? null);
-      setSuggestedQuestions(['昨夜第一眼看见什么？', '谁最先靠近过旧书箱？', '火场最不对劲的痕迹在哪里？']);
+      setSuggestedQuestions(['昨夜谁先到火场？', '这条线索能说明什么？', '还有谁接触过旧书箱？']);
+      setActionNotice('明代固定 Demo 已启动。');
+    } catch (error) {
+      setErrorText(error instanceof Error ? error.message : '明代 Demo 启动失败。');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handlePrepareScenario = () => {
+    const targetDynastyId = selectedDynastyId || 'ming';
+    setSelectedDynastyId(targetDynastyId);
+    setErrorText('');
+    if (targetDynastyId === 'ming') {
+      void startMingDemo();
+      return;
+    }
+    setEntryMode('keywords');
+  };
+
+  const handleGenerateScript = async () => {
+    if (!selectedDynasty || selectedDynasty.dynasty_id === 'ming') {
+      setErrorText('请先选择北宋或晚唐。');
+      return;
+    }
+    const keywords = parseKeywords(keywordText);
+    if (keywords.length === 0) {
+      setErrorText('请至少填写 1 个关键词。');
+      return;
+    }
+    if (keywords.length > 8) {
+      setErrorText('关键词最多 8 个，请删减后重试。');
+      return;
+    }
+    if (hasVagueKeyword(keywords)) {
+      setErrorText('关键词过于空泛，请补充地点、人物关系、器物或冲突。');
+      return;
+    }
+    setBusy(true);
+    setErrorText('');
+    try {
+      const job = await api.generateScript({ dynasty_id: generatedDynastyId(selectedDynasty.dynasty_id), keywords });
+      setScriptJob(job);
+      setScriptPackage(null);
+      setEntryMode('progress');
+    } catch (error) {
+      setErrorText(error instanceof Error ? error.message : '剧本生成请求失败。');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const openOverview = async (job = scriptJob) => {
+    if (!job || job.status !== 'completed' || !job.ready_for_overview || !job.script_id) {
+      setErrorText('后端 job 尚未完成，不能进入剧本概览。');
+      return;
+    }
+    setBusy(true);
+    setErrorText('');
+    try {
+      const script = await api.getScript(job.script_id);
+      setScriptPackage(script);
+      setEntryMode('overview');
+    } catch (error) {
+      setErrorText(error instanceof Error ? error.message : '读取剧本概览失败。');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleStartGenerated = async (identityId: string) => {
+    if (!scriptPackage) {
+      setErrorText('生成剧本尚未载入。');
+      return;
+    }
+    setBusy(true);
+    setErrorText('');
+    try {
+      const nextSnapshot = await api.startGeneratedSession({ script_id: scriptPackage.script_id, identity_id: identityId });
+      setSnapshot(nextSnapshot);
+      setSelectedNpcId(nextSnapshot.scene_npcs[0]?.npc_id ?? null);
+      setSuggestedQuestions(['你当时看见了什么？', '这件物证是谁留下的？', '还有谁知道这件事？']);
       setDialogueHighlights([]);
       setDialogueRedTexts([]);
-      setPresentationFeedback([]);
-      setActionNotice(nextSnapshot.player_identity?.background ?? '本局事件已经展开，你正站在第一幕的雨声里。');
+      setActionNotice('生成剧本已进入首场景。');
     } catch (error) {
-      setErrorText(error instanceof Error ? error.message : '开局失败，请稍后重试。');
+      setErrorText(error instanceof Error ? error.message : '进入生成剧本失败。');
     } finally {
       setBusy(false);
     }
@@ -295,17 +272,13 @@ function App() {
     setBusy(true);
     setErrorText('');
     try {
-      const result = await api.investigate({
-        session_id: snapshot.session_id,
-        scene_id: sceneId,
-      });
-      setPresentationFeedback([]);
+      const result = await api.investigate({ session_id: snapshot.session_id, scene_id: sceneId });
       setDialogueHighlights([]);
       setDialogueRedTexts([]);
       setActionNotice(result.text);
       await syncSession(snapshot.session_id);
     } catch (error) {
-      setErrorText(error instanceof Error ? error.message : '场景切换失败。');
+      setErrorText(error instanceof Error ? error.message : '进入场景失败。');
     } finally {
       setBusy(false);
     }
@@ -318,20 +291,11 @@ function App() {
     setBusy(true);
     setErrorText('');
     try {
-      const result = await api.investigate({
-        session_id: snapshot.session_id,
-        scene_id: sceneId,
-        hotspot_id: hotspotId,
-        clue_id: clueId,
-      });
-      setPresentationFeedback([]);
+      const result = await api.investigate({ session_id: snapshot.session_id, scene_id: sceneId, hotspot_id: hotspotId, clue_id: clueId });
+      const discoveries = [...result.new_clues.map((clue) => clue.title), ...result.new_combos.map((combo) => combo.result_title)];
       setDialogueHighlights([]);
       setDialogueRedTexts([]);
-      setActionNotice(buildActionNotice(result.text, [
-        ...result.new_clues.map((clue) => clue.title),
-        ...result.new_combos.map((combo) => combo.result_title),
-        ...result.new_deductions.map((deduction) => deduction.question),
-      ]));
+      setActionNotice(discoveries.length > 0 ? `${result.text}\n新发现：${discoveries.join('、')}` : result.text);
       await syncSession(snapshot.session_id, selectedNpcId);
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : '调查失败。');
@@ -357,12 +321,8 @@ function App() {
       setSuggestedQuestions(result.dialogue.suggested_questions);
       setDialogueHighlights(result.dialogue.highlight_clues ?? []);
       setDialogueRedTexts(result.dialogue.red_texts ?? []);
-      setPresentationFeedback(buildPresentationFeedback(snapshot, result, npcId, presentedClueIds));
-      setActionNotice(buildActionNotice(`${result.dialogue.npc_name}：${result.dialogue.npc_dialogue}`, [
-        ...result.new_clues.map((clue) => clue.title),
-        ...result.new_combos.map((combo) => combo.result_title),
-        ...result.new_deductions.map((deduction) => deduction.question),
-      ]));
+      const discoveries = [...result.new_clues.map((clue) => clue.title), ...result.new_combos.map((combo) => combo.result_title)];
+      setActionNotice(discoveries.length > 0 ? `${result.dialogue.npc_name}：${result.dialogue.npc_dialogue}\n新发现：${discoveries.join('、')}` : `${result.dialogue.npc_name}：${result.dialogue.npc_dialogue}`);
       await syncSession(snapshot.session_id, npcId);
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : '对话失败。');
@@ -378,14 +338,7 @@ function App() {
     setBusy(true);
     setErrorText('');
     try {
-      const result = await api.submitDeduction({
-        session_id: snapshot.session_id,
-        deduction_id: deductionId,
-        selected_clue_ids: selectedClueIds,
-      });
-      setPresentationFeedback([]);
-      setDialogueHighlights([]);
-      setDialogueRedTexts([]);
+      const result = await api.submitDeduction({ session_id: snapshot.session_id, deduction_id: deductionId, selected_clue_ids: selectedClueIds });
       setActionNotice(result.correct ? `推理成立：${result.feedback}` : `推理未成立：${result.feedback}`);
       await syncSession(snapshot.session_id, selectedNpcId);
     } catch (error) {
@@ -402,16 +355,12 @@ function App() {
     setBusy(true);
     setErrorText('');
     try {
-      await api.choose({
-        session_id: snapshot.session_id,
-        choice_id: choiceId,
-      });
+      await api.choose({ session_id: snapshot.session_id, choice_id: choiceId });
       const ending = await api.resolveEnding({ session_id: snapshot.session_id });
       setSuggestedQuestions([]);
       setDialogueHighlights([]);
       setDialogueRedTexts([]);
-      setPresentationFeedback([]);
-      setActionNotice(`你做出了最终抉择，结局“${ending.title}”已经落定。`);
+      setActionNotice(`结局判定：${ending.title}`);
       await syncSession(snapshot.session_id);
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : '提交抉择失败。');
@@ -422,16 +371,16 @@ function App() {
 
   const handleRestart = () => {
     setSnapshot(null);
-    setGeneratedScenario(null);
+    setScriptJob(null);
+    setScriptPackage(null);
     setSelectedDynastyId('');
-    setScenarioKeywordText('');
+    setKeywordText('');
     setEntryMode('home');
     setSelectedNpcId(null);
     setSuggestedQuestions([]);
     setDialogueHighlights([]);
     setDialogueRedTexts([]);
-    setPresentationFeedback([]);
-    setActionNotice('回到卷首，准备重新选择朝代。');
+    setActionNotice('选择朝代后开始调查。');
     setErrorText('');
   };
 
@@ -441,14 +390,14 @@ function App() {
       try {
         window.localStorage.setItem(debugStorageKey, next ? '1' : '0');
       } catch {
-        // 调试开关仅影响本地显示；localStorage 不可用时仍允许本次切换。
+        // localStorage unavailable.
       }
       return next;
     });
   };
 
   if (loadingBoot) {
-    return <div className="screen-center">正在连接史隙引擎……</div>;
+    return <div className="screen-center">正在连接后端...</div>;
   }
 
   return (
@@ -476,43 +425,56 @@ function App() {
             onToggleDebug={debugUiAllowed ? handleToggleDebug : undefined}
           />
         </>
-      ) : generatedScenario ? (
-        <ScenarioGenerationPage
-          backendReady={backendReady}
-          preview={generatedScenario}
+      ) : entryMode === 'keywords' && selectedDynasty ? (
+        <ScriptKeywordPage
+          dynasty={selectedDynasty}
+          keywordText={keywordText}
           busy={busy}
           errorText={errorText}
-          onBack={() => {
-            setGeneratedScenario(null);
-            setEntryMode('setup');
+          onKeywordTextChange={(value) => {
+            setKeywordText(value);
             setErrorText('');
           }}
-          onEnterEvent={(identityPayload) => {
-            void handleStart(identityPayload);
-          }}
+          onBack={() => setEntryMode('setup')}
+          onGenerate={handleGenerateScript}
+        />
+      ) : entryMode === 'progress' && scriptJob ? (
+        <ScriptProgressPage
+          job={scriptJob}
+          errorText={errorText}
+          onBack={handleRestart}
+          onOpenOverview={() => void openOverview()}
+        />
+      ) : entryMode === 'overview' && scriptJob && scriptPackage ? (
+        <ScriptOverviewPage
+          job={scriptJob}
+          script={scriptPackage}
+          busy={busy}
+          errorText={errorText}
+          onBack={() => setEntryMode('progress')}
+          onStart={handleStartGenerated}
         />
       ) : (
         <StartPage
-          mode={entryMode}
+          mode={entryMode === 'home' ? 'home' : 'setup'}
           dynasties={dynasties}
           selectedDynastyId={selectedDynastyId}
-          keywordText={scenarioKeywordText}
+          keywordText={keywordText}
           busy={busy}
           errorText={errorText}
           onStart={() => {
             setEntryMode('setup');
             setErrorText('');
           }}
-          onSelectDynasty={handleSelectDynasty}
-          onKeywordTextChange={(value) => {
-            setScenarioKeywordText(value);
+          onSelectDynasty={(dynastyId) => {
+            setSelectedDynastyId(dynastyId);
             setErrorText('');
           }}
-          onPrepareScenario={() => {
-            void handlePrepareScenario();
-          }}
+          onKeywordTextChange={setKeywordText}
+          onPrepareScenario={handlePrepareScenario}
         />
       )}
+      {!health ? <span className="sr-only">后端状态未知，部分功能可能不可用。</span> : null}
     </div>
   );
 }

@@ -9,6 +9,8 @@ import type {
   PlayerIdentityRecommendations,
   PlayerIdentityValidationResult,
   PlayerRole,
+  ScriptJob,
+  ScriptPackage,
   SessionSnapshot,
 } from '../types/game';
 
@@ -39,18 +41,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   try {
-    response = await fetch(buildApiUrl(path), {
-      ...init,
-      headers,
-    });
+    response = await fetch(buildApiUrl(path), { ...init, headers });
   } catch {
-
-    throw new Error('无法连接到后端服务，请先启动后端服务。');
+    throw new Error('无法连接后端服务，请确认服务已启动。');
   }
 
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = data?.error?.message ?? '请求失败，请稍后再试。';
+    const message = data?.error?.message ?? '请求失败，请稍后重试。';
     throw new Error(message);
   }
   return data as T;
@@ -78,6 +76,29 @@ export const api = {
   },
   startSession(payload: { dynasty_id: string; role_id: string; event_id: string; identity_id?: string; custom_identity_text?: string }) {
     return request<SessionSnapshot>('/api/session/start', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  generateScript(payload: { dynasty_id: 'song' | 'late_tang' | 'ming' | 'tang'; keywords: string[] }) {
+    return request<ScriptJob>('/api/scripts/generate', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  getScriptJob(jobId: string) {
+    return request<ScriptJob>(`/api/scripts/jobs/${jobId}`);
+  },
+  getScript(scriptId: string) {
+    return request<ScriptPackage>(`/api/scripts/${scriptId}`);
+  },
+  validateScript(scriptId: string) {
+    return request<{ passed: boolean; issues: Array<Record<string, unknown>> }>(`/api/scripts/${scriptId}/validate`, {
+      method: 'POST',
+    });
+  },
+  startGeneratedSession(payload: { script_id: string; identity_id: string }) {
+    return request<SessionSnapshot>('/api/session/start-generated', {
       method: 'POST',
       body: JSON.stringify(payload),
     });

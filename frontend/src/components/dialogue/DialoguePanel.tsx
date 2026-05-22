@@ -52,6 +52,19 @@ function clueTypeLabel(clue: Clue): string {
   return clueTypeLabels[clue.type] ?? '线索';
 }
 
+function isNpcRelatedClue(clue: Clue, npc?: NPCProfile): boolean {
+  if (!npc) {
+    return false;
+  }
+  return clue.source_npc_id === npc.npc_id || npc.releasable_clue_ids.includes(clue.clue_id);
+}
+
+const typewriterStepMs = 18;
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export function DialoguePanel({
   snapshot,
   sceneNpcs,
@@ -84,6 +97,10 @@ export function DialoguePanel({
   }, [currentNpc, dialogueTurns]);
 
   const currentLine = parseLine(actionNotice, currentNpc);
+  const currentLineCharacters = useMemo(() => Array.from(currentLine.body), [currentLine.body]);
+  const [visibleCharacterCount, setVisibleCharacterCount] = useState(currentLineCharacters.length);
+  const displayedLineBody = currentLineCharacters.slice(0, visibleCharacterCount).join('');
+  const lineIsRevealing = visibleCharacterCount < currentLineCharacters.length;
   const currentTrust = currentNpc ? snapshot.state.npc_trust[currentNpc.npc_id] ?? currentNpc.initial_trust : 0;
   const highlightTerms = useMemo(() => {
     const terms: HighlightTerm[] = [];
@@ -102,12 +119,25 @@ export function DialoguePanel({
     return terms.sort((left, right) => right.text.length - left.text.length);
   }, [highlightClues, redTexts]);
   const replySuggestions = (suggestedQuestions.length > 0 ? suggestedQuestions : fallbackQuestions).slice(0, 3);
-  const recentEvidence = snapshot.clues.slice(-5).reverse();
-  const presentedEvidenceIds = useMemo(
-    () => new Set(dialogueTurns.flatMap((turn) => turn.presented_clue_ids)),
-    [dialogueTurns],
+  const presentedEvidenceIdsForNpc = useMemo(
+    () => new Set(
+      currentNpc
+        ? dialogueTurns
+          .filter((turn) => turn.npc_id === currentNpc.npc_id)
+          .flatMap((turn) => turn.presented_clue_ids)
+        : [],
+    ),
+    [currentNpc, dialogueTurns],
   );
-  const clueTypes = useMemo(() => Array.from(new Set(snapshot.clues.map((clue) => clue.type))), [snapshot.clues]);
+  const presentableEvidence = useMemo(
+    () => snapshot.clues.filter((clue) => {
+      const wasPresentedToCurrentNpc = presentedEvidenceIdsForNpc.has(clue.clue_id);
+      return isNpcRelatedClue(clue, currentNpc) || !wasPresentedToCurrentNpc;
+    }),
+    [currentNpc, presentedEvidenceIdsForNpc, snapshot.clues],
+  );
+  const recentEvidence = presentableEvidence.slice(-5).reverse();
+  const clueTypes = useMemo(() => Array.from(new Set(presentableEvidence.map((clue) => clue.type))), [presentableEvidence]);
   const selectedEvidence = useMemo(
     () => selectedEvidenceIds
       .map((clueId) => snapshot.clues.find((clue) => clue.clue_id === clueId))
@@ -116,17 +146,22 @@ export function DialoguePanel({
   );
   const filteredEvidence = useMemo(() => {
     const query = evidenceQuery.trim().toLowerCase();
-    return snapshot.clues.filter((clue) => {
+    return presentableEvidence.filter((clue) => {
       const matchesType = evidenceType === 'all' || clue.type === evidenceType;
       const searchable = `${clue.title} ${clue.display_text} ${clue.highlight_text}`.toLowerCase();
       const matchesQuery = !query || searchable.includes(query);
       return matchesType && matchesQuery;
     });
-  }, [evidenceQuery, evidenceType, snapshot.clues]);
+  }, [evidenceQuery, evidenceType, presentableEvidence]);
 
   useEffect(() => {
     setSelectedEvidenceIds((current) => current.filter((clueId) => snapshot.clues.some((clue) => clue.clue_id === clueId)));
   }, [snapshot.clues]);
+
+  useEffect(() => {
+    const presentableIds = new Set(presentableEvidence.map((clue) => clue.clue_id));
+    setSelectedEvidenceIds((current) => current.filter((clueId) => presentableIds.has(clueId)));
+  }, [presentableEvidence]);
 
   useEffect(() => {
     if (!evidenceOpen) {
@@ -154,6 +189,27 @@ export function DialoguePanel({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [evidenceOpen]);
+
+  useEffect(() => {
+    if (prefersReducedMotion() || currentLineCharacters.length === 0) {
+      setVisibleCharacterCount(currentLineCharacters.length);
+      return undefined;
+    }
+
+    setVisibleCharacterCount(0);
+    const intervalId = window.setInterval(() => {
+      setVisibleCharacterCount((current) => {
+        const next = current + 1;
+        if (next >= currentLineCharacters.length) {
+          window.clearInterval(intervalId);
+          return currentLineCharacters.length;
+        }
+        return next;
+      });
+    }, typewriterStepMs);
+
+    return () => window.clearInterval(intervalId);
+  }, [currentLine.speaker, currentLineCharacters]);
 
   const toggleEvidence = (clueId: string) => {
     setSelectedEvidenceIds((current) => (
@@ -188,7 +244,10 @@ export function DialoguePanel({
       </div>
 
       <div className="dialogue-main-text">
-        <p>{renderHighlightedText(currentLine.body, highlightTerms)}</p>
+        <p aria-label={currentLine.body}>
+          {renderHighlightedText(displayedLineBody, highlightTerms)}
+          {lineIsRevealing ? <span className="dialogue-typewriter-cursor" aria-hidden="true" /> : null}
+        </p>
       </div>
 
       <div className="evidence-presenter" ref={evidencePresenterRef}>
@@ -197,7 +256,7 @@ export function DialoguePanel({
             type="button"
             className={evidenceOpen ? 'evidence-drawer-toggle active' : 'evidence-drawer-toggle'}
             onClick={() => setEvidenceOpen((open) => !open)}
-            disabled={busy || !currentNpc || snapshot.clues.length === 0}
+            disabled={busy || !currentNpc || presentableEvidence.length === 0}
           >
             出示线索
           </button>
@@ -219,7 +278,7 @@ export function DialoguePanel({
                 className={[
                   'quick-evidence-chip',
                   selectedEvidenceIds.includes(clue.clue_id) ? 'active' : '',
-                  presentedEvidenceIds.has(clue.clue_id) ? 'presented' : '',
+                  presentedEvidenceIdsForNpc.has(clue.clue_id) ? 'presented' : '',
                 ].filter(Boolean).join(' ')}
                 onClick={() => toggleEvidence(clue.clue_id)}
                 disabled={busy || !currentNpc}
@@ -253,14 +312,14 @@ export function DialoguePanel({
                   className={[
                     'evidence-option',
                     selectedEvidenceIds.includes(clue.clue_id) ? 'active' : '',
-                    presentedEvidenceIds.has(clue.clue_id) ? 'presented' : '',
+                    presentedEvidenceIdsForNpc.has(clue.clue_id) ? 'presented' : '',
                   ].filter(Boolean).join(' ')}
                   onClick={() => toggleEvidence(clue.clue_id)}
                   disabled={busy}
                 >
                   <strong>
                     {clue.title}
-                    {presentedEvidenceIds.has(clue.clue_id) ? <em>已出示</em> : null}
+                    {presentedEvidenceIdsForNpc.has(clue.clue_id) ? <em>已出示</em> : null}
                   </strong>
                   <span>{clueTypeLabel(clue)} · {clue.highlight_text}</span>
                 </button>

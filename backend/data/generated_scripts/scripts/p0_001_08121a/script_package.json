@@ -1,0 +1,1496 @@
+{
+  "script_id": "p0_001_08121a",
+  "job_id": "job_5b69c108121a",
+  "dynasty_id": "song",
+  "keywords": [
+    "驿站",
+    "军报",
+    "雨夜",
+    "粮草"
+  ],
+  "generation_source": "deepseek",
+  "generated_at": "2026-05-22T16:29:03",
+  "script_overview": {
+    "title": "雨夜驿变",
+    "logline": "北宋熙宁年间，陕西路一偏远驿站在雨夜中发生紧急军报调包案，导致前线粮草调度失误，真相指向潜伏的内奸。",
+    "case_summary": "熙宁年间，陕西路青石驿在雨夜中丢失一份紧急军报，导致前线粮草调度失误。驿卒声称遭袭昏迷，但现场疑点重重。调查发现，军报被调包，背后有内奸企图破坏宋军补给线。",
+    "opening_location": "青石驿",
+    "public_objective": "查明军报调包真相，找出内奸，恢复粮草调度。",
+    "major_locations": [
+      "青石驿",
+      "马厩",
+      "驿丞书房",
+      "库房",
+      "后山小路"
+    ],
+    "major_npcs": [
+      "赵驿丞",
+      "李驿卒",
+      "王细作",
+      "张厨娘"
+    ],
+    "player_briefing": "你是一名刑部密使，奉命调查青石驿军报调包案。雨夜中，唯一的值班驿卒声称被击晕，军报不翼而飞。你需要勘查现场、询问嫌疑人，找出真相。你也可以选择扮演其他角色（如驿卒），以不同视角调查。"
+  },
+  "playable_identities": [
+    {
+      "identity_id": "mi_shi",
+      "display_name": "刑部密使",
+      "description": "你奉刑部之命，微服私访调查军报调包案。",
+      "social_rank": "high",
+      "relation_to_case": "调查者",
+      "motive": "查明真相，维护军机安全",
+      "permissions": [
+        "审问所有嫌疑人",
+        "搜查所有区域"
+      ],
+      "limitations": [
+        "不能动用私刑",
+        "需避免打草惊蛇"
+      ],
+      "background": "刑部经验丰富的密探，曾破获多起间谍案。",
+      "tags": [
+        "官员",
+        "调查者"
+      ],
+      "is_default": true
+    }
+  ],
+  "world": {
+    "dynasty_id": "song",
+    "dynasty_name": "北宋",
+    "era_name": "熙宁",
+    "year_hint": "熙宁七年（公元1074年）",
+    "location_region": "陕西路",
+    "rules": [
+      "不得泄露细作身份",
+      "不得使用现代科技"
+    ],
+    "forbidden_terms": [
+      "手机",
+      "电脑",
+      "汽车"
+    ]
+  },
+  "story": {
+    "surface_event": "雨夜中，青石驿的紧急军报被调包，导致粮草调度失误。",
+    "hidden_truth": "辽国细作王三混入驿站，调包军报，企图破坏宋军补给。",
+    "themes": [
+      "忠诚与背叛",
+      "谍战",
+      "责任"
+    ],
+    "culprit_boundary": "王细作是主谋，但可能有内应。",
+    "truth_chain_clue_ids": [
+      "clue_001",
+      "clue_002",
+      "clue_003",
+      "clue_004",
+      "clue_005",
+      "clue_006"
+    ]
+  },
+  "stages": [
+    {
+      "stage_id": "intro",
+      "name": "初抵驿站",
+      "order": 0,
+      "goal": "了解案情，勘查现场",
+      "entry_location_id": "loc_qing_shiyi",
+      "unlock_conditions": [],
+      "available_location_ids": [
+        "loc_qing_shiyi",
+        "loc_ma_jiu"
+      ],
+      "key_clue_ids": [
+        "clue_001"
+      ]
+    },
+    {
+      "stage_id": "investigation",
+      "name": "深入调查",
+      "order": 1,
+      "goal": "收集线索，审问嫌疑人",
+      "entry_location_id": "loc_qing_shiyi",
+      "unlock_conditions": [
+        "{'type': 'stage_complete', 'stage_id': 'intro'}"
+      ],
+      "available_location_ids": [
+        "loc_qing_shiyi",
+        "loc_ma_jiu",
+        "loc_shu_fang",
+        "loc_ku_fang",
+        "loc_hou_shan"
+      ],
+      "key_clue_ids": [
+        "clue_002",
+        "clue_003",
+        "clue_004"
+      ]
+    },
+    {
+      "stage_id": "reversal",
+      "name": "真相浮现",
+      "order": 2,
+      "goal": "发现细作踪迹",
+      "entry_location_id": "loc_shu_fang",
+      "unlock_conditions": [
+        "{'type': 'clue_collected', 'clue_id': 'clue_004'}"
+      ],
+      "available_location_ids": [
+        "loc_qing_shiyi",
+        "loc_ma_jiu",
+        "loc_shu_fang",
+        "loc_ku_fang",
+        "loc_hou_shan"
+      ],
+      "key_clue_ids": [
+        "clue_005"
+      ]
+    },
+    {
+      "stage_id": "choice",
+      "name": "最终抉择",
+      "order": 3,
+      "goal": "指认细作，做出选择",
+      "entry_location_id": "loc_qing_shiyi",
+      "unlock_conditions": [
+        "{'type': 'stage_complete', 'stage_id': 'reversal'}"
+      ],
+      "available_location_ids": [
+        "loc_qing_shiyi"
+      ],
+      "key_clue_ids": [
+        "clue_006"
+      ]
+    },
+    {
+      "stage_id": "ending",
+      "name": "结局",
+      "order": 4,
+      "goal": "揭示真相，结算结局",
+      "entry_location_id": "loc_qing_shiyi",
+      "unlock_conditions": [
+        "{'type': 'stage_complete', 'stage_id': 'choice'}"
+      ],
+      "available_location_ids": [
+        "loc_qing_shiyi",
+        "loc_ma_jiu",
+        "loc_shu_fang",
+        "loc_ku_fang",
+        "loc_hou_shan"
+      ],
+      "key_clue_ids": []
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "loc_qing_shiyi",
+      "name": "青石驿",
+      "description": "一座破旧的驿站，雨夜中显得阴森。",
+      "scene_text": "驿站大厅，烛火摇曳，地上有拖拽痕迹。",
+      "stage_ids": [
+        "intro",
+        "investigation",
+        "reversal",
+        "choice",
+        "ending"
+      ],
+      "npc_ids": [
+        "npc_zhao",
+        "npc_li",
+        "npc_wang",
+        "npc_zhang"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_0",
+          "label": "拖拽痕迹通向马厩",
+          "description": "与“地上拖拽痕迹”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_001"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“地上拖拽痕迹”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.4,
+            "width": 0.2,
+            "height": 0.2
+          }
+        },
+        {
+          "hotspot_id": "hotspot_1",
+          "label": "文书墨迹与常用墨不同",
+          "description": "与“墨迹异常的文书”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_002"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“墨迹异常的文书”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.3,
+            "y": 0.6
+          },
+          "bbox": {
+            "x": 0.2,
+            "y": 0.5,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "scene_qing_shiyi"
+    },
+    {
+      "location_id": "loc_ma_jiu",
+      "name": "马厩",
+      "description": "简陋的马厩，几匹马在雨中嘶鸣。",
+      "scene_text": "马厩内潮湿，地上有杂乱的脚印。",
+      "stage_ids": [
+        "intro",
+        "investigation",
+        "reversal"
+      ],
+      "npc_ids": [
+        "npc_li"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_2",
+          "label": "脚印不属于李驿卒",
+          "description": "与“马厩脚印”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_003"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“马厩脚印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.7,
+            "y": 0.3
+          },
+          "bbox": {
+            "x": 0.6,
+            "y": 0.2,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "scene_ma_jiu"
+    },
+    {
+      "location_id": "loc_shu_fang",
+      "name": "驿丞书房",
+      "description": "驿丞的私人书房，书架上有许多卷宗。",
+      "scene_text": "书房内整齐，但书桌抽屉有被翻动的痕迹。",
+      "stage_ids": [
+        "investigation",
+        "reversal"
+      ],
+      "npc_ids": [
+        "npc_zhao"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_3",
+          "label": "密信内容涉及辽国细作",
+          "description": "与“抽屉中的密信”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_004"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“抽屉中的密信”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.4
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.3,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "scene_shu_fang"
+    },
+    {
+      "location_id": "loc_ku_fang",
+      "name": "库房",
+      "description": "存放粮草文书的库房，门锁被撬。",
+      "scene_text": "库房内一片狼藉，文书散落一地。",
+      "stage_ids": [
+        "investigation",
+        "reversal"
+      ],
+      "npc_ids": [
+        "npc_wang"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_4",
+          "label": "撬锁痕迹专业",
+          "description": "与“库房门锁被撬”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_005"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“库房门锁被撬”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.7
+          },
+          "bbox": {
+            "x": 0.1,
+            "y": 0.6,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "scene_ku_fang"
+    },
+    {
+      "location_id": "loc_hou_shan",
+      "name": "后山小路",
+      "description": "驿站后山的一条隐秘小路，通向外界。",
+      "scene_text": "小路上有新鲜的马蹄印。",
+      "stage_ids": [
+        "investigation",
+        "reversal"
+      ],
+      "npc_ids": [
+        "npc_zhao"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_5",
+          "label": "马蹄铁为辽国样式",
+          "description": "与“后山马蹄印”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_006"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“后山马蹄印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.8,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.4,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "scene_hou_shan"
+    }
+  ],
+  "npcs": [
+    {
+      "npc_id": "npc_zhao",
+      "name": "赵驿丞",
+      "public_identity": "青石驿驿丞",
+      "appearance": "中年男子，身着官服，面容疲惫。",
+      "personality": "谨慎、负责，但有些懦弱。",
+      "background_suspicion": "他负责驿站管理，军报丢失他难辞其咎。",
+      "case_connection": "案发当晚他在书房整理文书。",
+      "event_behavior": "声称听到动静但未敢出门。",
+      "public_goal": "找回军报，保住官职。",
+      "hidden_motive": "他私下与辽国商人有交易，但不知对方是细作。",
+      "known_info": [
+        "军报是紧急调令",
+        "当晚只有李驿卒值班"
+      ],
+      "unknown_info": [
+        "细作身份",
+        "军报内容"
+      ],
+      "forbidden_disclosure": [
+        "他受贿的事实"
+      ],
+      "speaking_style": "官腔，支支吾吾",
+      "initial_trust": 30,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_002"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "npc_zhao"
+    },
+    {
+      "npc_id": "npc_li",
+      "name": "李驿卒",
+      "public_identity": "青石驿驿卒",
+      "appearance": "年轻男子，身材魁梧，脸上有伤。",
+      "personality": "直率、暴躁，但忠诚。",
+      "background_suspicion": "他是唯一值班的人，嫌疑最大。",
+      "case_connection": "他声称被袭击，但无人证明。",
+      "event_behavior": "当晚他值班，后脑被击晕。",
+      "public_goal": "洗清嫌疑。",
+      "hidden_motive": "他暗恋张厨娘，想保护她。",
+      "known_info": [
+        "当晚有人潜入驿站",
+        "袭击者身材矮小"
+      ],
+      "unknown_info": [
+        "军报去向",
+        "细作身份"
+      ],
+      "forbidden_disclosure": [
+        "他对张厨娘的感情"
+      ],
+      "speaking_style": "粗犷，直来直去",
+      "initial_trust": 40,
+      "emotion_state": "angry",
+      "releasable_clue_ids": [
+        "clue_001"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "npc_li"
+    },
+    {
+      "npc_id": "npc_wang",
+      "name": "王细作",
+      "public_identity": "过路商人",
+      "appearance": "精瘦男子，眼神锐利，操辽地口音。",
+      "personality": "狡猾、冷静，善于伪装。",
+      "background_suspicion": "他案发前几日入住驿站，行踪可疑。",
+      "case_connection": "他调包了军报。",
+      "event_behavior": "当晚他潜入库房，调包军报。",
+      "public_goal": "尽快离开驿站。",
+      "hidden_motive": "为辽国破坏宋军粮草。",
+      "known_info": [
+        "军报内容",
+        "驿站布局"
+      ],
+      "unknown_info": [
+        "赵驿丞受贿"
+      ],
+      "forbidden_disclosure": [
+        "他的细作身份",
+        "同伙信息"
+      ],
+      "speaking_style": "刻意模仿宋人，但偶尔露馅",
+      "initial_trust": 20,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_005"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "npc_wang"
+    },
+    {
+      "npc_id": "npc_zhang",
+      "name": "张厨娘",
+      "public_identity": "驿站厨娘",
+      "appearance": "中年妇人，和善，手上沾满面粉。",
+      "personality": "热心、八卦，但胆小。",
+      "background_suspicion": "她负责伙食，可能听到什么。",
+      "case_connection": "她当晚在厨房，听到马厩有异响。",
+      "event_behavior": "她听到声音但没敢查看。",
+      "public_goal": "驿站平安。",
+      "hidden_motive": "她曾看到王细作深夜外出。",
+      "known_info": [
+        "王细作案发当晚外出",
+        "李驿卒对她有好感"
+      ],
+      "unknown_info": [
+        "军报内容",
+        "细作身份"
+      ],
+      "forbidden_disclosure": [
+        "她对李驿卒的感情"
+      ],
+      "speaking_style": "絮叨，爱说闲话",
+      "initial_trust": 50,
+      "emotion_state": "fearful",
+      "releasable_clue_ids": [
+        "clue_003"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "npc_zhang"
+    }
+  ],
+  "relationships": [
+    {
+      "source_id": "npc_zhao",
+      "target_id": "npc_wang",
+      "relation": "受贿者与行贿者",
+      "public_state": "驿丞与商人",
+      "hidden_state": "赵驿丞收受王细作贿赂"
+    },
+    {
+      "source_id": "npc_li",
+      "target_id": "npc_zhang",
+      "relation": "暗恋",
+      "public_state": "同事",
+      "hidden_state": "李驿卒暗恋张厨娘"
+    }
+  ],
+  "clues": [
+    {
+      "clue_id": "clue_001",
+      "title": "地上拖拽痕迹",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_qing_shiyi",
+      "source_npc_id": null,
+      "highlight_text": "拖拽痕迹通向马厩",
+      "display_text": "驿站大厅地上有拖拽痕迹，伴有少量血迹。",
+      "detail": "痕迹从大厅中央延伸至马厩方向，血迹已干。",
+      "stage_available": [
+        "intro",
+        "investigation",
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_003"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "clue_trace"
+    },
+    {
+      "clue_id": "clue_002",
+      "title": "墨迹异常的文书",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_qing_shiyi",
+      "source_npc_id": null,
+      "highlight_text": "文书墨迹与常用墨不同",
+      "display_text": "桌上文书有一份墨迹颜色偏深，且未干透。",
+      "detail": "经比对，墨迹中含有松烟成分，非驿站常用墨。",
+      "stage_available": [
+        "investigation",
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_004"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "clue_ink"
+    },
+    {
+      "clue_id": "clue_003",
+      "title": "马厩脚印",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_ma_jiu",
+      "source_npc_id": null,
+      "highlight_text": "脚印不属于李驿卒",
+      "display_text": "马厩内有一串脚印，鞋码较小，花纹不同。",
+      "detail": "脚印长七寸，而李驿卒的鞋长八寸。",
+      "stage_available": [
+        "investigation",
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_001"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "clue_footprint"
+    },
+    {
+      "clue_id": "clue_004",
+      "title": "抽屉中的密信",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_shu_fang",
+      "source_npc_id": null,
+      "highlight_text": "密信内容涉及辽国细作",
+      "display_text": "驿丞书房抽屉中有一封密信，以契丹文书写。",
+      "detail": "信中提到‘军报已得，速送北地’。",
+      "stage_available": [
+        "investigation",
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_002",
+        "clue_005"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "clue_letter"
+    },
+    {
+      "clue_id": "clue_005",
+      "title": "库房门锁被撬",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_ku_fang",
+      "source_npc_id": null,
+      "highlight_text": "撬锁痕迹专业",
+      "display_text": "库房门锁有明显撬痕，锁芯内有金属碎屑。",
+      "detail": "碎屑为精铁，非普通铁匠铺所有。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_004"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "clue_lock"
+    },
+    {
+      "clue_id": "clue_006",
+      "title": "后山马蹄印",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_hou_shan",
+      "source_npc_id": null,
+      "highlight_text": "马蹄铁为辽国样式",
+      "display_text": "后山小路有新鲜马蹄印，马蹄铁形状特殊。",
+      "detail": "马蹄铁为辽国军马所用，带有双钉。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_005"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "clue_hoof"
+    }
+  ],
+  "clue_graph": [
+    {
+      "rule_id": "rule_001",
+      "required_clue_ids": [
+        "clue_001",
+        "clue_003"
+      ],
+      "result_title": "袭击者并非李驿卒",
+      "result_text": "脚印与李驿卒不符，袭击者另有其人。",
+      "effects": {}
+    },
+    {
+      "rule_id": "rule_002",
+      "required_clue_ids": [
+        "clue_002",
+        "clue_004"
+      ],
+      "result_title": "驿丞与细作有勾结",
+      "result_text": "密信与异常墨迹关联，驿丞可能参与。",
+      "effects": {}
+    },
+    {
+      "rule_id": "rule_003",
+      "required_clue_ids": [
+        "clue_004",
+        "clue_005",
+        "clue_006"
+      ],
+      "result_title": "细作身份确认",
+      "result_text": "密信、撬锁、马蹄印均指向王细作。",
+      "effects": {}
+    }
+  ],
+  "dialogue_rules": [
+    {
+      "dialogue_id": "dial_001",
+      "npc_id": "npc_zhao",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "军报",
+        "丢失"
+      ],
+      "presented_clue_ids": [],
+      "response": "下官该死！昨晚我在书房，听到外面有动静，但没敢出去。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "你听到了什么？",
+        "当时还有谁在？"
+      ]
+    },
+    {
+      "dialogue_id": "dial_002",
+      "npc_id": "npc_li",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "袭击",
+        "晕倒"
+      ],
+      "presented_clue_ids": [],
+      "response": "我正打盹，后脑一疼就什么都不知道了。",
+      "released_clue_ids": [
+        "clue_001"
+      ],
+      "suggested_questions": [
+        "你看到袭击者了吗？",
+        "你记得什么细节？"
+      ]
+    },
+    {
+      "dialogue_id": "dial_003",
+      "npc_id": "npc_wang",
+      "stage": "investigation",
+      "priority": 0,
+      "trigger_keywords": [
+        "商人",
+        "货物"
+      ],
+      "presented_clue_ids": [],
+      "response": "我只是个过路商人，什么都不知道。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "你为什么住这么久？",
+        "你昨晚在哪里？"
+      ]
+    },
+    {
+      "dialogue_id": "dial_004",
+      "npc_id": "npc_zhang",
+      "stage": "investigation",
+      "priority": 0,
+      "trigger_keywords": [
+        "声音",
+        "马厩"
+      ],
+      "presented_clue_ids": [],
+      "response": "我听到马厩有动静，但没敢去看。",
+      "released_clue_ids": [
+        "clue_003"
+      ],
+      "suggested_questions": [
+        "你听到什么声音？",
+        "大概什么时辰？"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "choice_id": "choice_arrest_wang",
+      "title": "逮捕王细作",
+      "description": "直接指认王细作为凶手。",
+      "effects": {
+        "ending": "ending_arrest"
+      }
+    },
+    {
+      "choice_id": "choice_investigate_more",
+      "title": "继续调查",
+      "description": "收集更多证据再行动。",
+      "effects": {
+        "stage": "reversal"
+      }
+    }
+  ],
+  "endings": [
+    {
+      "ending_id": "ending_arrest",
+      "title": "真相大白",
+      "priority": 0,
+      "conditions": {
+        "choice": "choice_arrest_wang"
+      },
+      "required_flags": [
+        "clue_006_collected"
+      ],
+      "blocked_flags": [],
+      "result_summary": "王细作被逮捕，军报追回，粮草调度恢复。",
+      "ending_text": "你成功抓获辽国细作，朝廷嘉奖。",
+      "history_echo": "青石驿恢复了平静。",
+      "related_clue_ids": [
+        "clue_006"
+      ],
+      "related_choice_ids": [
+        "choice_arrest_wang"
+      ],
+      "npc_fates": {
+        "npc_wang": "处斩",
+        "npc_zhao": "罢官"
+      },
+      "visual_asset_id": null
+    },
+    {
+      "ending_id": "ending_fail",
+      "title": "功亏一篑",
+      "priority": 1,
+      "conditions": {
+        "default": true
+      },
+      "required_flags": [],
+      "blocked_flags": [
+        "clue_006_collected"
+      ],
+      "result_summary": "证据不足，细作逃脱，粮草延误。",
+      "ending_text": "由于证据不足，王细作逃脱，前线粮草延误。",
+      "history_echo": "你被降职调离。",
+      "related_clue_ids": [
+        "clue_001"
+      ],
+      "related_choice_ids": [],
+      "npc_fates": {
+        "npc_wang": "逃脱",
+        "npc_zhao": "留任"
+      },
+      "visual_asset_id": null
+    }
+  ],
+  "visual_assets": [
+    {
+      "asset_id": "scene_qing_shiyi",
+      "asset_type": "scene",
+      "owner_id": "loc_qing_shiyi",
+      "title": "青石驿大厅",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋驿站，雨夜，烛火，木桌，地上有痕迹，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代物品",
+      "required_subjects": [
+        "驿站",
+        "烛台"
+      ],
+      "era_feature_checklist": [
+        "木结构",
+        "灯笼"
+      ],
+      "prompt_hash": "7bf870d322dcba33",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_qing_shiyi.png",
+      "url": "/api/scripts/p0_001_08121a/assets/scene_qing_shiyi",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:29:11",
+        "attempts": 1,
+        "prompt_hash": "7bf870d322dcba33",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_qing_shiyi.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "scene_ma_jiu",
+      "asset_type": "scene",
+      "owner_id": "loc_ma_jiu",
+      "title": "马厩",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，简陋马厩，几匹马，地上有脚印，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代马具",
+      "required_subjects": [
+        "马",
+        "干草"
+      ],
+      "era_feature_checklist": [
+        "木槽",
+        "草料"
+      ],
+      "prompt_hash": "f559bfc88a3c55c7",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_ma_jiu.png",
+      "url": "/api/scripts/p0_001_08121a/assets/scene_ma_jiu",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:29:17",
+        "attempts": 1,
+        "prompt_hash": "f559bfc88a3c55c7",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_ma_jiu.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "scene_shu_fang",
+      "asset_type": "scene",
+      "owner_id": "loc_shu_fang",
+      "title": "驿丞书房",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，书房，书架，书桌，抽屉半开，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "电灯",
+      "required_subjects": [
+        "书桌",
+        "文房四宝"
+      ],
+      "era_feature_checklist": [
+        "毛笔",
+        "砚台"
+      ],
+      "prompt_hash": "5c775b0b2d35ae66",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_shu_fang.png",
+      "url": "/api/scripts/p0_001_08121a/assets/scene_shu_fang",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:29:23",
+        "attempts": 1,
+        "prompt_hash": "5c775b0b2d35ae66",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_shu_fang.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "scene_ku_fang",
+      "asset_type": "scene",
+      "owner_id": "loc_ku_fang",
+      "title": "库房",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，库房，散落文书，门锁被撬，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代锁具",
+      "required_subjects": [
+        "木箱",
+        "卷宗"
+      ],
+      "era_feature_checklist": [
+        "铜锁",
+        "木架"
+      ],
+      "prompt_hash": "5b9bac09f641504c",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_ku_fang.png",
+      "url": "/api/scripts/p0_001_08121a/assets/scene_ku_fang",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:29:30",
+        "attempts": 1,
+        "prompt_hash": "5b9bac09f641504c",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_ku_fang.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "scene_hou_shan",
+      "asset_type": "scene",
+      "owner_id": "loc_hou_shan",
+      "title": "后山小路",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，泥泞小路，马蹄印，雨夜，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "柏油路",
+      "required_subjects": [
+        "小路",
+        "树木"
+      ],
+      "era_feature_checklist": [
+        "土路",
+        "草丛"
+      ],
+      "prompt_hash": "aeb9b0aa260dc467",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_hou_shan.png",
+      "url": "/api/scripts/p0_001_08121a/assets/scene_hou_shan",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:29:36",
+        "attempts": 1,
+        "prompt_hash": "aeb9b0aa260dc467",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_hou_shan.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "npc_zhao",
+      "asset_type": "npc",
+      "owner_id": "npc_zhao",
+      "title": "赵驿丞",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，中年男子，官服，疲惫面容，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代服装",
+      "required_subjects": [
+        "官帽",
+        "官服"
+      ],
+      "era_feature_checklist": [
+        "幞头",
+        "圆领袍"
+      ],
+      "prompt_hash": "571b4cfd3263186e",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_zhao.png",
+      "url": "/api/scripts/p0_001_08121a/assets/npc_zhao",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:29:42",
+        "attempts": 1,
+        "prompt_hash": "571b4cfd3263186e",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_zhao.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "npc_li",
+      "asset_type": "npc",
+      "owner_id": "npc_li",
+      "title": "李驿卒",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，年轻男子，魁梧，脸上有伤，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代发型",
+      "required_subjects": [
+        "短褐",
+        "布鞋"
+      ],
+      "era_feature_checklist": [
+        "麻衣",
+        "巾帻"
+      ],
+      "prompt_hash": "ef59e9882704bf1c",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_li.png",
+      "url": "/api/scripts/p0_001_08121a/assets/npc_li",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:29:49",
+        "attempts": 1,
+        "prompt_hash": "ef59e9882704bf1c",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_li.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "npc_wang",
+      "asset_type": "npc",
+      "owner_id": "npc_wang",
+      "title": "王细作",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，精瘦男子，眼神锐利，辽地服饰，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "汉人服饰",
+      "required_subjects": [
+        "胡服",
+        "皮靴"
+      ],
+      "era_feature_checklist": [
+        "左衽",
+        "蹀躞带"
+      ],
+      "prompt_hash": "e79b55c61bc9817c",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_wang.png",
+      "url": "/api/scripts/p0_001_08121a/assets/npc_wang",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:14:43",
+        "attempts": 3,
+        "prompt_hash": "e79b55c61bc9817c",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_wang.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "npc_zhang",
+      "asset_type": "npc",
+      "owner_id": "npc_zhang",
+      "title": "张厨娘",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，中年妇人，和善，手上沾面粉，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代厨具",
+      "required_subjects": [
+        "围裙",
+        "发髻"
+      ],
+      "era_feature_checklist": [
+        "襦裙",
+        "布巾"
+      ],
+      "prompt_hash": "e6c3d5669f8954c2",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_zhang.png",
+      "url": "/api/scripts/p0_001_08121a/assets/npc_zhang",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:14:43",
+        "attempts": 3,
+        "prompt_hash": "e6c3d5669f8954c2",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/npc_zhang.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "clue_trace",
+      "asset_type": "clue",
+      "owner_id": "clue_001",
+      "title": "拖拽痕迹",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，地面上的拖拽痕迹和血迹，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代地板",
+      "required_subjects": [
+        "血迹",
+        "痕迹"
+      ],
+      "era_feature_checklist": [
+        "砖地",
+        "油灯"
+      ],
+      "prompt_hash": "b713ee5733562e15",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_trace.png",
+      "url": "/api/scripts/p0_001_08121a/assets/clue_trace",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:14:43",
+        "attempts": 3,
+        "prompt_hash": "b713ee5733562e15",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_trace.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "clue_ink",
+      "asset_type": "clue",
+      "owner_id": "clue_002",
+      "title": "墨迹文书",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，文书上深色墨迹，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "打印字",
+      "required_subjects": [
+        "宣纸",
+        "毛笔字"
+      ],
+      "era_feature_checklist": [
+        "竖排",
+        "繁体"
+      ],
+      "prompt_hash": "b5c1d70fc0ce29af",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_ink.png",
+      "url": "/api/scripts/p0_001_08121a/assets/clue_ink",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T16:30:12",
+        "attempts": 1,
+        "prompt_hash": "b5c1d70fc0ce29af",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_ink.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "clue_footprint",
+      "asset_type": "clue",
+      "owner_id": "clue_003",
+      "title": "脚印",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，泥地上的脚印，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代鞋印",
+      "required_subjects": [
+        "脚印",
+        "泥地"
+      ],
+      "era_feature_checklist": [
+        "布鞋印",
+        "草鞋印"
+      ],
+      "prompt_hash": "0605228aa11dcf81",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_footprint.png",
+      "url": "/api/scripts/p0_001_08121a/assets/clue_footprint",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:14:43",
+        "attempts": 3,
+        "prompt_hash": "0605228aa11dcf81",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_footprint.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "clue_letter",
+      "asset_type": "clue",
+      "owner_id": "clue_004",
+      "title": "密信",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一封契丹文密信，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "汉字",
+      "required_subjects": [
+        "信纸",
+        "契丹文"
+      ],
+      "era_feature_checklist": [
+        "皮纸",
+        "火漆"
+      ],
+      "prompt_hash": "67f341b85ffbb72f",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_letter.png",
+      "url": "/api/scripts/p0_001_08121a/assets/clue_letter",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:14:43",
+        "attempts": 3,
+        "prompt_hash": "67f341b85ffbb72f",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_letter.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "clue_lock",
+      "asset_type": "clue",
+      "owner_id": "clue_005",
+      "title": "撬锁痕迹",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，门锁上的撬痕和金属碎屑，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代锁",
+      "required_subjects": [
+        "铜锁",
+        "撬痕"
+      ],
+      "era_feature_checklist": [
+        "铁锁",
+        "木门"
+      ],
+      "prompt_hash": "d1add70fef214c24",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_lock.png",
+      "url": "/api/scripts/p0_001_08121a/assets/clue_lock",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:14:43",
+        "attempts": 3,
+        "prompt_hash": "d1add70fef214c24",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_lock.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "clue_hoof",
+      "asset_type": "clue",
+      "owner_id": "clue_006",
+      "title": "马蹄印",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，泥地上的马蹄印，特殊马蹄铁，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。\n重试要求 3: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代马蹄铁",
+      "required_subjects": [
+        "马蹄印",
+        "泥地"
+      ],
+      "era_feature_checklist": [
+        "双钉马蹄铁",
+        "土路"
+      ],
+      "prompt_hash": "44a90f8887e9987c",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_hoof.png",
+      "url": "/api/scripts/p0_001_08121a/assets/clue_hoof",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-22T17:14:43",
+        "attempts": 3,
+        "prompt_hash": "44a90f8887e9987c",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/clue_hoof.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    }
+  ],
+  "visual_style_guide": {
+    "style_keywords": [
+      "北宋",
+      "写实",
+      "雨夜",
+      "古风"
+    ],
+    "forbidden_visuals": [
+      "现代物品",
+      "鲜艳色彩"
+    ],
+    "color_script": "暗色调，以棕、灰、黑为主",
+    "camera": "固定机位，俯视为主",
+    "era_feature_checklist": [
+      "木结构建筑",
+      "灯笼",
+      "麻布衣物"
+    ],
+    "appearance_lock": {}
+  },
+  "hotspot_positioning": [
+    {
+      "location_id": "loc_qing_shiyi",
+      "hotspot_id": "hotspot_0",
+      "visual_asset_id": "scene_qing_shiyi",
+      "clue_id": "clue_001",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.4,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_qing_shiyi.png"
+    },
+    {
+      "location_id": "loc_qing_shiyi",
+      "hotspot_id": "hotspot_1",
+      "visual_asset_id": "scene_qing_shiyi",
+      "clue_id": "clue_002",
+      "anchor_point": {
+        "x": 0.3,
+        "y": 0.6
+      },
+      "bbox": {
+        "x": 0.2,
+        "y": 0.5,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_qing_shiyi.png"
+    },
+    {
+      "location_id": "loc_ma_jiu",
+      "hotspot_id": "hotspot_2",
+      "visual_asset_id": "scene_ma_jiu",
+      "clue_id": "clue_003",
+      "anchor_point": {
+        "x": 0.7,
+        "y": 0.3
+      },
+      "bbox": {
+        "x": 0.6,
+        "y": 0.2,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_ma_jiu.png"
+    },
+    {
+      "location_id": "loc_shu_fang",
+      "hotspot_id": "hotspot_3",
+      "visual_asset_id": "scene_shu_fang",
+      "clue_id": "clue_004",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.4
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.3,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_shu_fang.png"
+    },
+    {
+      "location_id": "loc_ku_fang",
+      "hotspot_id": "hotspot_4",
+      "visual_asset_id": "scene_ku_fang",
+      "clue_id": "clue_005",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.7
+      },
+      "bbox": {
+        "x": 0.1,
+        "y": 0.6,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_ku_fang.png"
+    },
+    {
+      "location_id": "loc_hou_shan",
+      "hotspot_id": "hotspot_5",
+      "visual_asset_id": "scene_hou_shan",
+      "clue_id": "clue_006",
+      "anchor_point": {
+        "x": 0.8,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.4,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_001_08121a/scene_hou_shan.png"
+    }
+  ],
+  "quality_gate": {
+    "required_scene_count": 5,
+    "required_npc_count": 4,
+    "required_clue_count": 6,
+    "scene_approved": 5,
+    "npc_approved": 4,
+    "clue_approved": 6,
+    "rejected": 0,
+    "regenerated": 0,
+    "blocked": 0
+  }
+}

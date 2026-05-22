@@ -27,15 +27,24 @@ class AIClient:
     def __init__(self, runtime_settings: Settings | None = None) -> None:
         self.settings = runtime_settings or settings
 
-    async def generate_json(self, *, module: str, prompt: str, schema_hint: dict[str, Any]) -> AIResponse:
+    async def generate_json(
+        self,
+        *,
+        module: str,
+        prompt: str,
+        schema_hint: dict[str, Any],
+        max_tokens: int | None = None,
+        temperature: float | None = None,
+    ) -> AIResponse:
         started_at = time.perf_counter()
         if self.settings.use_mock_ai:
             return self._failure("当前处于 Mock 模式，未调用真实 AI。", started_at)
         if self.settings.ai_provider != "deepseek":
-            return self._failure("当前 AI 提供方不是 DeepSeek，已回退到本地回复。", started_at)
+            return self._failure("当前 AI 提供方不是 DeepSeek，已回退到失败状态。", started_at)
         if not self.settings.deepseek_api_key_available or not self.settings.deepseek_api_key:
-            return self._failure("未检测到 DeepSeek Key，已回退到本地回复。", started_at)
+            return self._failure("未检测到 DeepSeek Key，已回退到失败状态。", started_at)
 
+        token_limit = 900 if max_tokens is None else max_tokens
         payload = {
             "model": self.settings.deepseek_model,
             "messages": [
@@ -46,8 +55,8 @@ class AIClient:
                 {"role": "user", "content": prompt},
             ],
             "response_format": {"type": "json_object"},
-            "temperature": 0.4,
-            "max_tokens": 900,
+            "temperature": 0.4 if temperature is None else temperature,
+            "max_tokens": token_limit,
         }
         url = f"{self.settings.deepseek_base_url}/chat/completions"
         headers = {
@@ -56,14 +65,17 @@ class AIClient:
         }
 
         attempts = max(1, self.settings.ai_max_retries + 1)
-        last_error = "AI 调用失败，已回退到本地回复。"
+        if token_limit >= 6000:
+            attempts = max(attempts, 2)
+        last_error = "AI 调用失败，已回退到失败状态。"
         raw_text = ""
         for _ in range(attempts):
             try:
-                async with httpx.AsyncClient(timeout=self.settings.ai_timeout_seconds) as client:
+                timeout = self._timeout_for_tokens(token_limit)
+                async with httpx.AsyncClient(timeout=timeout) as client:
                     response = await client.post(url, headers=headers, json=payload)
                 if response.status_code >= 400:
-                    last_error = f"AI 服务返回状态 {response.status_code}，已回退到本地回复。"
+                    last_error = f"AI 服务返回状态 {response.status_code}，已回退到失败状态。"
                     continue
                 response_json = response.json()
                 raw_text = response_json["choices"][0]["message"]["content"]
@@ -72,7 +84,6 @@ class AIClient:
                 if missing:
                     return self._failure(f"AI JSON 缺少字段：{', '.join(missing)}。", started_at, raw_text=raw_text)
                 return AIResponse(
-
                     success=True,
                     parsed_json=parsed,
                     raw_text=raw_text,
@@ -82,25 +93,54 @@ class AIClient:
                     model=self.settings.deepseek_model,
                 )
             except (httpx.TimeoutException, httpx.TransportError):
-                last_error = "AI 网络请求超时或不可达，已回退到本地回复。"
+                last_error = "AI 网络请求超时或不可达，已回退到失败状态。"
+                await asyncio.sleep(4)
             except (KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError):
-                last_error = "AI 返回格式无法解析，已回退到本地回复。"
+                last_error = "AI 返回格式无法解析，已回退到失败状态。"
             except Exception as exc:  # noqa: BLE001
-                last_error = self._sanitize_error(str(exc)) or "AI 调用异常，已回退到本地回复。"
+                last_error = self._sanitize_error(str(exc)) or "AI 调用异常，已回退到失败状态。"
         return self._failure(last_error, started_at, raw_text=raw_text)
 
-
-    def generate_json_sync(self, *, module: str, prompt: str, schema_hint: dict[str, Any]) -> AIResponse:
+    def generate_json_sync(
+        self,
+        *,
+        module: str,
+        prompt: str,
+        schema_hint: dict[str, Any],
+        max_tokens: int | None = None,
+        temperature: float | None = None,
+    ) -> AIResponse:
         try:
             asyncio.get_running_loop()
         except RuntimeError:
-            return asyncio.run(self.generate_json(module=module, prompt=prompt, schema_hint=schema_hint))
+            return asyncio.run(
+                self.generate_json(
+                    module=module,
+                    prompt=prompt,
+                    schema_hint=schema_hint,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                )
+            )
 
         with ThreadPoolExecutor(max_workers=1) as executor:
             future = executor.submit(
-                lambda: asyncio.run(self.generate_json(module=module, prompt=prompt, schema_hint=schema_hint))
+                lambda: asyncio.run(
+                    self.generate_json(
+                        module=module,
+                        prompt=prompt,
+                        schema_hint=schema_hint,
+                        max_tokens=max_tokens,
+                        temperature=temperature,
+                    )
+                )
             )
             return future.result()
+
+    def _timeout_for_tokens(self, max_tokens: int) -> httpx.Timeout:
+        # Long structured ScriptPackage rounds routinely take 40-90 seconds.
+        dynamic_timeout = max(self.settings.ai_timeout_seconds, min(240, int(max_tokens / 70) + 10))
+        return httpx.Timeout(float(dynamic_timeout))
 
     def _extract_json(self, raw_text: str) -> dict[str, Any]:
         text = raw_text.strip()

@@ -96,6 +96,9 @@ class SceneHotspot(BaseModel):
     required_stage: str | None = None
     required_clue_ids: list[str] = Field(default_factory=list)
     repeat_text: str = ""
+    anchor_point: dict[str, float] | None = None
+    bbox: dict[str, float] | None = None
+    calibration_status: str | None = None
 
 
 class Scene(BaseModel):
@@ -103,6 +106,9 @@ class Scene(BaseModel):
     name: str
     description: str
     background_asset: str
+    visual_asset_id: str | None = None
+    visual_asset_url: str | None = None
+    visual_status: str = "fallback"
     available_stage: list[str] = Field(default_factory=list)
     npc_ids: list[str] = Field(default_factory=list)
     scene_text: str
@@ -120,6 +126,9 @@ class NPCProfileReveal(BaseModel):
 class NPCProfile(BaseModel):
     npc_id: str
     name: str
+    visual_asset_id: str | None = None
+    visual_asset_url: str | None = None
+    visual_status: str = "fallback"
     public_identity: str
     appearance: str = ""
     personality: str = ""
@@ -143,6 +152,9 @@ class Clue(BaseModel):
     clue_id: str
     title: str
     type: str
+    visual_asset_id: str | None = None
+    visual_asset_url: str | None = None
+    visual_status: str = "fallback"
     is_key: bool = False
     source_scene_id: str | None = None
     source_npc_id: str | None = None
