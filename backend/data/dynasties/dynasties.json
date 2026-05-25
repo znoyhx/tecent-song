@@ -13,22 +13,22 @@
     {
       "dynasty_id": "song",
       "name": "北宋",
-      "enabled": false,
-      "period_label": "后续阶段开放",
-      "core_mood": "占位入口",
+      "enabled": true,
+      "period_label": "AI 剧本生成",
+      "core_mood": "关键词生成案件",
       "allowed_roles": [],
-      "forbidden_terms": ["手机", "互联网"],
-      "visual_keywords": ["占位"]
+      "forbidden_terms": ["手机", "互联网", "电报", "火车", "报纸"],
+      "visual_keywords": ["北宋", "驿站", "雨夜", "历史悬疑", "低饱和国风"]
     },
     {
       "dynasty_id": "tang",
       "name": "晚唐",
-      "enabled": false,
-      "period_label": "后续阶段开放",
-      "core_mood": "占位入口",
+      "enabled": true,
+      "period_label": "AI 剧本生成",
+      "core_mood": "关键词生成案件",
       "allowed_roles": [],
-      "forbidden_terms": ["手机", "互联网"],
-      "visual_keywords": ["占位"]
+      "forbidden_terms": ["手机", "互联网", "电报", "火车", "报纸"],
+      "visual_keywords": ["晚唐", "藩镇", "市坊", "历史悬疑", "低饱和国风"]
     }
   ]
 }

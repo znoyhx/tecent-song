@@ -50,6 +50,8 @@ class ScriptSupervisor:
         npc_ids = {item.npc_id for item in package.npcs}
         clue_ids = {item.clue_id for item in package.clues}
         asset_ids = {item.asset_id for item in package.visual_assets}
+        assets_by_id = {item.asset_id: item for item in package.visual_assets}
+        npcs_by_id = {item.npc_id: item for item in package.npcs}
         stage_ids = {item.stage_id for item in package.stages}
 
         if package.dynasty_id not in {"song", "late_tang"}:
@@ -84,7 +86,7 @@ class ScriptSupervisor:
             if missing:
                 self._add(issues, "CLUE_CHAIN_BROKEN", "blocking", "线索组合引用了不存在的线索。", {"rule_id": graph.rule_id, "missing_clue_ids": missing})
             referenced_in_graph.update(graph.required_clue_ids)
-        if package.clue_graph and not set(truth_chain).issubset(referenced_in_graph.union(set(truth_chain))):
+        if package.clue_graph and not set(truth_chain).issubset(referenced_in_graph):
             self._add(issues, "CLUE_CHAIN_WEAK", "warning", "核心线索链未全部参与组合推理。")
 
         if not package.choices:
@@ -100,6 +102,22 @@ class ScriptSupervisor:
             missing_npcs = sorted(set(location.npc_ids).difference(npc_ids))
             if missing_npcs:
                 self._add(issues, "NPC_REFERENCE_MISSING", "blocking", "场景引用了不存在的人物。", {"location_id": location.location_id, "npc_ids": missing_npcs})
+            scene_asset = assets_by_id.get(location.visual_asset_id)
+            if scene_asset and location.npc_ids:
+                scene_asset_text = " ".join([scene_asset.prompt, *scene_asset.required_subjects])
+                missing_scene_npcs = [
+                    npcs_by_id[npc_id].name
+                    for npc_id in location.npc_ids
+                    if npc_id in npcs_by_id and npcs_by_id[npc_id].name not in scene_asset_text and npc_id not in scene_asset_text
+                ]
+                if missing_scene_npcs:
+                    self._add(
+                        issues,
+                        "SCENE_NPC_INTEGRATION_MISSING",
+                        "blocking",
+                        "场景图 prompt 未包含该地点内人物，可能生成空场景。",
+                        {"location_id": location.location_id, "visual_asset_id": location.visual_asset_id, "npc_names": missing_scene_npcs},
+                    )
             for hotspot in location.hotspots:
                 missing_clues = sorted(set(hotspot.clue_ids).difference(clue_ids))
                 if missing_clues:

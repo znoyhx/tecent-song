@@ -33,6 +33,11 @@ def test_catalog_and_health_endpoints() -> None:
     dynasties = client.get('/api/dynasties')
     assert dynasties.status_code == 200
     assert dynasties.json()['dynasties'][0]['name'] == '明代'
+    dynasty_by_id = {item['dynasty_id']: item for item in dynasties.json()['dynasties']}
+    assert dynasty_by_id['song']['enabled'] is True
+    assert dynasty_by_id['song']['period_label'] == 'AI 剧本生成'
+    assert dynasty_by_id['tang']['enabled'] is True
+    assert dynasty_by_id['tang']['period_label'] == 'AI 剧本生成'
 
     roles = client.get('/api/roles', params={'dynasty_id': 'ming'})
     assert roles.status_code == 200

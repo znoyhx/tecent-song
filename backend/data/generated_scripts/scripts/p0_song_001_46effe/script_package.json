@@ -1,0 +1,1492 @@
+{
+  "script_id": "p0_song_001_46effe",
+  "job_id": "job_b049ae46effe",
+  "dynasty_id": "song",
+  "keywords": [
+    "??",
+    "??",
+    "??",
+    "????"
+  ],
+  "generation_source": "deepseek",
+  "generated_at": "2026-05-23T15:22:26",
+  "script_overview": {
+    "title": "汴京书影",
+    "logline": "太学祭酒离奇自缢，密信牵出古籍伪造案，背后似乎隐藏着更大的秘密。",
+    "case_summary": "北宋汴京，国子监祭酒周文渊在太学斋舍自缢身亡。现场发现一封密信，指向《春秋》经注本伪造案。调查者需查明祭酒之死是否与伪造案有关，以及背后隐藏的朝堂势力。",
+    "opening_location": "location_taixue",
+    "public_objective": "查明国子监祭酒周文渊的死因，揭露古籍伪造案的真相。",
+    "major_locations": [
+      "太学斋舍",
+      "国子监书库",
+      "樊楼",
+      "周府",
+      "御史台"
+    ],
+    "major_npcs": [
+      "赵明远",
+      "钱若水",
+      "孙梦得",
+      "李师师"
+    ],
+    "player_briefing": "你是一名开封府推官，奉命调查国子监祭酒周文渊之死。现场有密信，可能与古籍伪造有关。"
+  },
+  "playable_identities": [
+    {
+      "identity_id": "identity_01",
+      "display_name": "开封府推官",
+      "description": "负责调查案件的官员，正直敏锐。",
+      "social_rank": "middle",
+      "relation_to_case": "奉命调查",
+      "motive": "查明真相，维护法纪",
+      "permissions": [
+        "审问嫌疑人",
+        "搜查现场",
+        "调阅档案"
+      ],
+      "limitations": [
+        "不得滥用私刑",
+        "需向上级汇报"
+      ],
+      "background": "进士出身，刚正不阿。",
+      "tags": [
+        "官员",
+        "调查者"
+      ],
+      "is_default": true
+    }
+  ],
+  "world": {
+    "dynasty_id": "song",
+    "dynasty_name": "北宋",
+    "era_name": "元祐年间",
+    "year_hint": "约公元1086年",
+    "location_region": "汴京",
+    "rules": [
+      "不得伪造证据",
+      "不得诬陷他人"
+    ],
+    "forbidden_terms": [
+      "明代",
+      "书坊",
+      "现代词汇"
+    ]
+  },
+  "story": {
+    "surface_event": "国子监祭酒周文渊在太学斋舍自缢身亡。",
+    "hidden_truth": "周文渊发现古籍被伪造，欲揭发，遭人灭口伪装成自缢。",
+    "themes": [
+      "权力斗争",
+      "学术诚信",
+      "正义与腐败"
+    ],
+    "culprit_boundary": "凶手是钱若水，受孙梦得指使。",
+    "truth_chain_clue_ids": [
+      "clue_01",
+      "clue_02",
+      "clue_03",
+      "clue_04",
+      "clue_05",
+      "clue_06"
+    ]
+  },
+  "stages": [
+    {
+      "stage_id": "intro",
+      "name": "案发初探",
+      "order": 0,
+      "goal": "勘查现场，收集初步线索",
+      "entry_location_id": "location_taixue",
+      "unlock_conditions": [],
+      "available_location_ids": [
+        "location_taixue"
+      ],
+      "key_clue_ids": [
+        "clue_01",
+        "clue_02"
+      ]
+    },
+    {
+      "stage_id": "investigation",
+      "name": "深入调查",
+      "order": 1,
+      "goal": "走访相关人物，搜集更多证据",
+      "entry_location_id": "location_guozijian",
+      "unlock_conditions": [
+        "{'type': 'clue', 'id': 'clue_01'}"
+      ],
+      "available_location_ids": [
+        "location_guozijian",
+        "location_fanlou",
+        "location_zhoufu"
+      ],
+      "key_clue_ids": [
+        "clue_03",
+        "clue_04"
+      ]
+    },
+    {
+      "stage_id": "reversal",
+      "name": "真相浮现",
+      "order": 2,
+      "goal": "发现伪造案关键证据，锁定嫌疑人",
+      "entry_location_id": "location_yushitai",
+      "unlock_conditions": [
+        "{'type': 'clue', 'id': 'clue_04'}"
+      ],
+      "available_location_ids": [
+        "location_yushitai"
+      ],
+      "key_clue_ids": [
+        "clue_05"
+      ]
+    },
+    {
+      "stage_id": "choice",
+      "name": "抉择时刻",
+      "order": 3,
+      "goal": "决定如何处置真凶",
+      "entry_location_id": "location_yushitai",
+      "unlock_conditions": [
+        "{'type': 'clue', 'id': 'clue_05'}"
+      ],
+      "available_location_ids": [
+        "location_yushitai"
+      ],
+      "key_clue_ids": [
+        "clue_06"
+      ]
+    },
+    {
+      "stage_id": "ending",
+      "name": "结案",
+      "order": 4,
+      "goal": "根据选择达成不同结局",
+      "entry_location_id": "location_yushitai",
+      "unlock_conditions": [
+        "{'type': 'stage', 'id': 'choice'}"
+      ],
+      "available_location_ids": [
+        "location_taixue",
+        "location_guozijian",
+        "location_fanlou",
+        "location_zhoufu",
+        "location_yushitai"
+      ],
+      "key_clue_ids": []
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "location_taixue",
+      "name": "太学斋舍",
+      "description": "周文渊自缢的房间，书卷散落，梁上悬着白绫。",
+      "scene_text": "房间内书架倾倒，书籍散落一地，中央梁上挂着一条白绫，下方倒着一张凳子。",
+      "stage_ids": [
+        "intro"
+      ],
+      "npc_ids": [
+        "npc_zhao"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_0",
+          "label": "白绫上有刀割痕迹",
+          "description": "与“白绫刀痕”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_01"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“白绫刀痕”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.3
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.2,
+            "width": 0.2,
+            "height": 0.2
+          }
+        },
+        {
+          "hotspot_id": "hotspot_1",
+          "label": "密信提及《春秋》经注本",
+          "description": "与“密信残稿”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_02"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“密信残稿”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.3,
+            "y": 0.6
+          },
+          "bbox": {
+            "x": 0.2,
+            "y": 0.5,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_taixue"
+    },
+    {
+      "location_id": "location_guozijian",
+      "name": "国子监书库",
+      "description": "存放古籍的地方，书架林立。",
+      "scene_text": "书库内光线昏暗，空气中弥漫着旧纸墨香。",
+      "stage_ids": [
+        "investigation"
+      ],
+      "npc_ids": [
+        "npc_qian"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_2",
+          "label": "经注本字迹墨色新旧不一",
+          "description": "与“可疑经注本”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_03"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“可疑经注本”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.7,
+            "y": 0.4
+          },
+          "bbox": {
+            "x": 0.6,
+            "y": 0.3,
+            "width": 0.2,
+            "height": 0.2
+          }
+        },
+        {
+          "hotspot_id": "hotspot_3",
+          "label": "账册显示大量纸张购入",
+          "description": "与“书库账册”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_04"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“书库账册”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.7
+          },
+          "bbox": {
+            "x": 0.1,
+            "y": 0.6,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_guozijian"
+    },
+    {
+      "location_id": "location_fanlou",
+      "name": "樊楼",
+      "description": "汴京著名酒楼，文人雅士聚集。",
+      "scene_text": "楼内宾客满座，丝竹声声。",
+      "stage_ids": [
+        "investigation"
+      ],
+      "npc_ids": [
+        "npc_sun",
+        "npc_li"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_4",
+          "label": "纸条上写‘事已办妥’",
+          "description": "与“樊楼纸条”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_05"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“樊楼纸条”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.4,
+            "y": 0.4,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_fanlou"
+    },
+    {
+      "location_id": "location_zhoufu",
+      "name": "周府",
+      "description": "周文渊的宅邸。",
+      "scene_text": "府邸内布置雅致，书房尤其整洁。",
+      "stage_ids": [
+        "investigation"
+      ],
+      "npc_ids": [
+        "npc_zhao"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_5",
+          "label": "暗格密信详细记载伪造证据",
+          "description": "与“周府暗格密信”有关的可疑痕迹。",
+          "clue_ids": [
+            "clue_06"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你仔细查验后，发现了“周府暗格密信”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
+          "anchor_point": {
+            "x": 0.8,
+            "y": 0.8
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.7,
+            "width": 0.2,
+            "height": 0.2
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_zhoufu"
+    },
+    {
+      "location_id": "location_yushitai",
+      "name": "御史台",
+      "description": "监察机构，肃穆庄严。",
+      "scene_text": "大堂内官员肃立，气氛凝重。",
+      "stage_ids": [
+        "reversal",
+        "choice",
+        "ending"
+      ],
+      "npc_ids": [
+        "npc_qian",
+        "npc_sun"
+      ],
+      "hotspots": [],
+      "visual_asset_id": "asset_scene_yushitai"
+    }
+  ],
+  "npcs": [
+    {
+      "npc_id": "npc_zhao",
+      "name": "赵明远",
+      "public_identity": "太学博士",
+      "appearance": "中年文士，面容清癯，身着青色官服。",
+      "personality": "谨慎寡言，但内心正直。",
+      "background_suspicion": "与周文渊有学术分歧，但无杀人动机。",
+      "case_connection": "周文渊的同事，发现尸体。",
+      "event_behavior": "案发当天曾与周文渊争论。",
+      "public_goal": "协助调查，洗清嫌疑。",
+      "hidden_motive": "保护古籍真相，但害怕牵连。",
+      "known_info": [
+        "周文渊死前曾提及古籍伪造",
+        "现场密信内容"
+      ],
+      "unknown_info": [
+        "伪造案主谋",
+        "周文渊真正死因"
+      ],
+      "forbidden_disclosure": [
+        "不能透露自己与周文渊的争论细节"
+      ],
+      "speaking_style": "文绉绉，语速慢。",
+      "initial_trust": 50,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_02"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "asset_npc_zhao"
+    },
+    {
+      "npc_id": "npc_qian",
+      "name": "钱若水",
+      "public_identity": "国子监书库管理员",
+      "appearance": "矮小精干，眼神闪烁，着杂役服。",
+      "personality": "谄媚狡猾，贪财。",
+      "background_suspicion": "曾因盗窃古籍被罚，经济拮据。",
+      "case_connection": "负责书库，可能参与伪造。",
+      "event_behavior": "案发后行踪可疑。",
+      "public_goal": "摆脱嫌疑。",
+      "hidden_motive": "受孙梦得指使，为钱财伪造古籍并灭口。",
+      "known_info": [
+        "伪造古籍的细节",
+        "孙梦得是主谋"
+      ],
+      "unknown_info": [
+        "周文渊已掌握证据"
+      ],
+      "forbidden_disclosure": [
+        "不能承认自己杀人"
+      ],
+      "speaking_style": "油滑，常用‘小的’自称。",
+      "initial_trust": 30,
+      "emotion_state": "fearful",
+      "releasable_clue_ids": [
+        "clue_03",
+        "clue_04"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "asset_npc_qian"
+    },
+    {
+      "npc_id": "npc_sun",
+      "name": "孙梦得",
+      "public_identity": "御史中丞",
+      "appearance": "威严，蓄须，着紫色官袍。",
+      "personality": "城府深，权力欲强。",
+      "background_suspicion": "朝中朋党领袖，与周文渊政见不合。",
+      "case_connection": "指使钱若水伪造古籍，并灭口。",
+      "event_behavior": "案发后极力掩盖。",
+      "public_goal": "维护朝堂稳定。",
+      "hidden_motive": "消除政敌，巩固权力。",
+      "known_info": [
+        "伪造案全貌",
+        "周文渊之死真相"
+      ],
+      "unknown_info": [
+        "钱若水可能背叛"
+      ],
+      "forbidden_disclosure": [
+        "不能承认指使杀人"
+      ],
+      "speaking_style": "官腔，威严。",
+      "initial_trust": 20,
+      "emotion_state": "arrogant",
+      "releasable_clue_ids": [
+        "clue_05"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "asset_npc_sun"
+    },
+    {
+      "npc_id": "npc_li",
+      "name": "李师师",
+      "public_identity": "樊楼歌妓",
+      "appearance": "美貌，气质高雅，着华丽衣裙。",
+      "personality": "聪慧，善解人意。",
+      "background_suspicion": "与孙梦得有私交，但无直接关联。",
+      "case_connection": "曾听到孙梦得与钱若水密谈。",
+      "event_behavior": "案发后保持沉默。",
+      "public_goal": "明哲保身。",
+      "hidden_motive": "同情周文渊，但不敢得罪孙梦得。",
+      "known_info": [
+        "孙梦得与钱若水在樊楼密谈内容"
+      ],
+      "unknown_info": [
+        "具体杀人细节"
+      ],
+      "forbidden_disclosure": [
+        "不能直接指认孙梦得"
+      ],
+      "speaking_style": "婉转，暗示。",
+      "initial_trust": 40,
+      "emotion_state": "cautious",
+      "releasable_clue_ids": [
+        "clue_05"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实。"
+      },
+      "visual_asset_id": "asset_npc_li"
+    }
+  ],
+  "relationships": [
+    {
+      "source_id": "npc_zhao",
+      "target_id": "npc_qian",
+      "relation": "同事",
+      "public_state": "正常",
+      "hidden_state": "赵怀疑钱"
+    },
+    {
+      "source_id": "npc_qian",
+      "target_id": "npc_sun",
+      "relation": "主仆",
+      "public_state": "上下级",
+      "hidden_state": "钱受孙指使"
+    },
+    {
+      "source_id": "npc_sun",
+      "target_id": "npc_li",
+      "relation": "熟客",
+      "public_state": "朋友",
+      "hidden_state": "孙利用李打探消息"
+    },
+    {
+      "source_id": "npc_zhao",
+      "target_id": "npc_sun",
+      "relation": "政敌",
+      "public_state": "同僚",
+      "hidden_state": "赵反对孙的朋党"
+    }
+  ],
+  "clues": [
+    {
+      "clue_id": "clue_01",
+      "title": "白绫刀痕",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "location_taixue",
+      "source_npc_id": null,
+      "highlight_text": "白绫上有刀割痕迹",
+      "display_text": "白绫并非自然断裂，而是被刀割过。",
+      "detail": "白绫边缘整齐，系利刃所致，表明死者可能并非自缢。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_02",
+      "title": "密信残稿",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "location_taixue",
+      "source_npc_id": null,
+      "highlight_text": "密信提及《春秋》经注本",
+      "display_text": "一封未写完的信，提到《春秋》经注本有误。",
+      "detail": "信中写道：‘《春秋》经注本，谬误甚多，恐系伪造……’",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_03"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_03",
+      "title": "可疑经注本",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "location_guozijian",
+      "source_npc_id": null,
+      "highlight_text": "经注本字迹墨色新旧不一",
+      "display_text": "《春秋》经注本中部分字迹墨色较新。",
+      "detail": "经鉴定，部分页面为近期补写，与全书年代不符。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_02",
+        "clue_04"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_04",
+      "title": "书库账册",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "location_guozijian",
+      "source_npc_id": null,
+      "highlight_text": "账册显示大量纸张购入",
+      "display_text": "书库账册记录近期购入大量纸张，但无用途记录。",
+      "detail": "纸张数量足以伪造多本古籍。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_03"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_05",
+      "title": "樊楼纸条",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "location_fanlou",
+      "source_npc_id": null,
+      "highlight_text": "纸条上写‘事已办妥’",
+      "display_text": "孙梦得常去的雅间内发现一张纸条，上书‘事已办妥’。",
+      "detail": "字迹与密信残稿相似，可能出自同一人。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_02"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_06",
+      "title": "周府暗格密信",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "location_zhoufu",
+      "source_npc_id": null,
+      "highlight_text": "暗格密信详细记载伪造证据",
+      "display_text": "周文渊书房暗格内藏有一封密信，详细记录了伪造案的证据。",
+      "detail": "密信列出伪造者、时间、方法，并指向孙梦得。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {},
+      "related_clue_ids": [
+        "clue_05"
+      ],
+      "ending_tags": [],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_06"
+    }
+  ],
+  "clue_graph": [
+    {
+      "rule_id": "rule_01",
+      "required_clue_ids": [
+        "clue_01",
+        "clue_02"
+      ],
+      "result_title": "他杀推断",
+      "result_text": "白绫刀痕和密信表明周文渊并非自缢，而是他杀。",
+      "effects": {}
+    },
+    {
+      "rule_id": "rule_02",
+      "required_clue_ids": [
+        "clue_03",
+        "clue_04"
+      ],
+      "result_title": "伪造确认",
+      "result_text": "经注本被伪造，书库账册显示纸张异常。",
+      "effects": {}
+    },
+    {
+      "rule_id": "rule_03",
+      "required_clue_ids": [
+        "clue_05",
+        "clue_06"
+      ],
+      "result_title": "主谋锁定",
+      "result_text": "樊楼纸条与周府密信指向孙梦得。",
+      "effects": {}
+    }
+  ],
+  "dialogue_rules": [
+    {
+      "dialogue_id": "dialogue_01",
+      "npc_id": "npc_zhao",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "密信",
+        "周文渊"
+      ],
+      "presented_clue_ids": [
+        "clue_02"
+      ],
+      "response": "那封信……周大人死前曾给我看过，他说发现了不得了的事。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "什么事？",
+        "你为何不早说？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_02",
+      "npc_id": "npc_qian",
+      "stage": "investigation",
+      "priority": 0,
+      "trigger_keywords": [
+        "书库",
+        "纸张"
+      ],
+      "presented_clue_ids": [
+        "clue_04"
+      ],
+      "response": "那些纸张是孙大人吩咐买的，说是要修补古籍。",
+      "released_clue_ids": [
+        "clue_03"
+      ],
+      "suggested_questions": [
+        "孙大人？",
+        "修补什么古籍？"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "choice_id": "choice_01",
+      "title": "秉公执法",
+      "description": "将孙梦得和钱若水绳之以法。",
+      "effects": {}
+    },
+    {
+      "choice_id": "choice_02",
+      "title": "妥协私了",
+      "description": "接受孙梦得的贿赂，掩盖真相。",
+      "effects": {}
+    }
+  ],
+  "endings": [
+    {
+      "ending_id": "ending_01",
+      "title": "正义昭彰",
+      "priority": 0,
+      "conditions": {
+        "choice": "choice_01"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "孙梦得和钱若水被定罪，古籍伪造案真相大白。",
+      "ending_text": "你秉公执法，将罪犯绳之以法，朝堂为之一清。",
+      "history_echo": "你的决断被载入史册。",
+      "related_clue_ids": [
+        "clue_01",
+        "clue_02",
+        "clue_03",
+        "clue_04",
+        "clue_05",
+        "clue_06"
+      ],
+      "related_choice_ids": [
+        "choice_01"
+      ],
+      "npc_fates": {
+        "npc_sun": "流放",
+        "npc_qian": "处斩",
+        "npc_zhao": "升迁",
+        "npc_li": "平安"
+      },
+      "visual_asset_id": null
+    },
+    {
+      "ending_id": "ending_02",
+      "title": "黑暗笼罩",
+      "priority": 1,
+      "conditions": {
+        "choice": "choice_02"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "你接受贿赂，掩盖真相，孙梦得继续掌权。",
+      "ending_text": "你选择了妥协，真相被掩埋，但良心不安。",
+      "history_echo": "你的选择让正义蒙尘。",
+      "related_clue_ids": [
+        "clue_01",
+        "clue_02",
+        "clue_03",
+        "clue_04",
+        "clue_05",
+        "clue_06"
+      ],
+      "related_choice_ids": [
+        "choice_02"
+      ],
+      "npc_fates": {
+        "npc_sun": "升官",
+        "npc_qian": "逍遥法外",
+        "npc_zhao": "被贬",
+        "npc_li": "被灭口"
+      },
+      "visual_asset_id": null
+    }
+  ],
+  "visual_assets": [
+    {
+      "asset_id": "asset_scene_taixue",
+      "asset_type": "scene",
+      "owner_id": "location_taixue",
+      "title": "太学斋舍",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋太学斋舍内景，房间内书架倾倒，书籍散落一地，梁上悬挂白绫，下方倒着一张凳子。人物：赵明远（中年文士，青色官服，面容清癯）站在门口，面露惊愕。核心线索物件：白绫和书桌上的密信。人物与场景一体生成。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代物品，明代服饰",
+      "required_subjects": [
+        "赵明远",
+        "白绫",
+        "密信",
+        "白绫刀痕",
+        "密信残稿",
+        "人物与场景一体生成",
+        "可点击线索物件"
+      ],
+      "era_feature_checklist": [
+        "宋代家具",
+        "纸质书籍",
+        "白绫"
+      ],
+      "prompt_hash": "311040c8abb834b6",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_taixue.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_scene_taixue",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:22:36",
+        "attempts": 1,
+        "prompt_hash": "311040c8abb834b6",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_taixue.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_guozijian",
+      "asset_type": "scene",
+      "owner_id": "location_guozijian",
+      "title": "国子监书库",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋国子监书库内景，光线昏暗，书架林立，堆满古籍。人物：钱若水（矮小精干，杂役服，眼神闪烁）正在整理书籍。核心线索物件：一本可疑的《春秋》经注本和账册。人物与场景一体生成。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代照明，明代服饰",
+      "required_subjects": [
+        "钱若水",
+        "《春秋》经注本",
+        "账册",
+        "可疑经注本",
+        "书库账册",
+        "人物与场景一体生成",
+        "可点击线索物件"
+      ],
+      "era_feature_checklist": [
+        "宋代书库",
+        "竹简",
+        "纸质书"
+      ],
+      "prompt_hash": "1f29bda813f81663",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_guozijian.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_scene_guozijian",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:22:47",
+        "attempts": 1,
+        "prompt_hash": "1f29bda813f81663",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_guozijian.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_fanlou",
+      "asset_type": "scene",
+      "owner_id": "location_fanlou",
+      "title": "樊楼",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋汴京樊楼内景，宾客满座，丝竹声声。人物：孙梦得（威严，紫色官袍，蓄须）与李师师（美貌，华丽衣裙）在雅间交谈。核心线索物件：雅间桌上的纸条。人物与场景一体生成。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代装饰，明代服饰",
+      "required_subjects": [
+        "孙梦得",
+        "李师师",
+        "纸条",
+        "樊楼纸条",
+        "人物与场景一体生成",
+        "可点击线索物件"
+      ],
+      "era_feature_checklist": [
+        "宋代酒楼",
+        "木制桌椅",
+        "灯笼"
+      ],
+      "prompt_hash": "ab80181ed959339c",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_fanlou.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_scene_fanlou",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:22:58",
+        "attempts": 1,
+        "prompt_hash": "ab80181ed959339c",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_fanlou.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_zhoufu",
+      "asset_type": "scene",
+      "owner_id": "location_zhoufu",
+      "title": "周府书房",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋官员周文渊的书房，布置雅致，书桌整洁。人物：赵明远（中年文士，青色官服）正在查看书桌下的暗格。核心线索物件：暗格内的密信。人物与场景一体生成。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代文具，明代家具",
+      "required_subjects": [
+        "赵明远",
+        "暗格",
+        "密信",
+        "周府暗格密信",
+        "人物与场景一体生成",
+        "可点击线索物件"
+      ],
+      "era_feature_checklist": [
+        "宋代书房",
+        "文房四宝",
+        "书架"
+      ],
+      "prompt_hash": "4a626f97397c62bf",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_zhoufu.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_scene_zhoufu",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:23:09",
+        "attempts": 1,
+        "prompt_hash": "4a626f97397c62bf",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_zhoufu.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_yushitai",
+      "asset_type": "scene",
+      "owner_id": "location_yushitai",
+      "title": "御史台大堂",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，北宋御史台大堂，肃穆庄严，官员肃立。人物：钱若水（杂役服，惶恐）和孙梦得（紫色官袍，威严）站在堂下。核心线索物件：案卷。人物与场景一体生成。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代法庭，明代官服",
+      "required_subjects": [
+        "钱若水",
+        "孙梦得",
+        "案卷",
+        "人物与场景一体生成"
+      ],
+      "era_feature_checklist": [
+        "宋代官衙",
+        "匾额",
+        "公案"
+      ],
+      "prompt_hash": "7eb226bf32304dbe",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_yushitai.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_scene_yushitai",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:23:21",
+        "attempts": 1,
+        "prompt_hash": "7eb226bf32304dbe",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_yushitai.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_zhao",
+      "asset_type": "npc",
+      "owner_id": "npc_zhao",
+      "title": "赵明远",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，中年文士，面容清癯，身着青色宋代官服，头戴幞头。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "明代官服，现代服饰",
+      "required_subjects": [
+        "人物面貌",
+        "时代服饰",
+        "身份特征"
+      ],
+      "era_feature_checklist": [
+        "宋代官服",
+        "幞头"
+      ],
+      "prompt_hash": "d00183dfcebb2ea4",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_zhao.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_npc_zhao",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:23:33",
+        "attempts": 1,
+        "prompt_hash": "d00183dfcebb2ea4",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_zhao.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_qian",
+      "asset_type": "npc",
+      "owner_id": "npc_qian",
+      "title": "钱若水",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，矮小精干，眼神闪烁，着宋代杂役短褐，头戴小帽。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "明代服饰，华丽",
+      "required_subjects": [
+        "人物面貌",
+        "时代服饰",
+        "身份特征"
+      ],
+      "era_feature_checklist": [
+        "宋代杂役服"
+      ],
+      "prompt_hash": "e1feda1b5b2ac5b1",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_qian.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_npc_qian",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:23:44",
+        "attempts": 1,
+        "prompt_hash": "e1feda1b5b2ac5b1",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_qian.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_sun",
+      "asset_type": "npc",
+      "owner_id": "npc_sun",
+      "title": "孙梦得",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，威严，蓄须，着紫色宋代官袍，佩鱼袋。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "明代官服，现代",
+      "required_subjects": [
+        "人物面貌",
+        "时代服饰",
+        "身份特征"
+      ],
+      "era_feature_checklist": [
+        "宋代高官服",
+        "鱼袋"
+      ],
+      "prompt_hash": "8c60bfd763c9620a",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_sun.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_npc_sun",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:23:56",
+        "attempts": 1,
+        "prompt_hash": "8c60bfd763c9620a",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_sun.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_li",
+      "asset_type": "npc",
+      "owner_id": "npc_li",
+      "title": "李师师",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，美貌，气质高雅，着宋代华丽衣裙，梳高髻。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "明代服饰，现代",
+      "required_subjects": [
+        "人物面貌",
+        "时代服饰",
+        "身份特征"
+      ],
+      "era_feature_checklist": [
+        "宋代女装",
+        "高髻"
+      ],
+      "prompt_hash": "83dc8f93ea2aff3b",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_li.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_npc_li",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:24:07",
+        "attempts": 1,
+        "prompt_hash": "83dc8f93ea2aff3b",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_npc_li.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_01",
+      "asset_type": "clue",
+      "owner_id": "clue_01",
+      "title": "白绫刀痕",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一条白色绫带，边缘有整齐的刀割痕迹。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "破损，脏污",
+      "required_subjects": [
+        "核心线索物件",
+        "材质细节",
+        "使用痕迹"
+      ],
+      "era_feature_checklist": [
+        "宋代服饰",
+        "木构建筑",
+        "纸本文书",
+        "油灯烛火"
+      ],
+      "prompt_hash": "054e56459e2d3075",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_01.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_clue_01",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:24:52",
+        "attempts": 2,
+        "prompt_hash": "054e56459e2d3075",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_01.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_02",
+      "asset_type": "clue",
+      "owner_id": "clue_02",
+      "title": "密信残稿",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一张泛黄的宣纸，上面有毛笔字迹，内容提及《春秋》。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代纸张",
+      "required_subjects": [
+        "核心线索物件",
+        "材质细节",
+        "使用痕迹"
+      ],
+      "era_feature_checklist": [
+        "宣纸",
+        "毛笔字"
+      ],
+      "prompt_hash": "58c8ccab97947f36",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_02.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_clue_02",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:25:42",
+        "attempts": 2,
+        "prompt_hash": "58c8ccab97947f36",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_02.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_03",
+      "asset_type": "clue",
+      "owner_id": "clue_03",
+      "title": "可疑经注本",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一本线装古籍，书页翻开，部分字迹墨色较新。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "现代装订",
+      "required_subjects": [
+        "核心线索物件",
+        "材质细节",
+        "使用痕迹"
+      ],
+      "era_feature_checklist": [
+        "线装书",
+        "古籍"
+      ],
+      "prompt_hash": "c0e5168bf7b4225f",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_03.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_clue_03",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:25:54",
+        "attempts": 1,
+        "prompt_hash": "c0e5168bf7b4225f",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_03.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_04",
+      "asset_type": "clue",
+      "owner_id": "clue_04",
+      "title": "书库账册",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一本蓝色封皮的账册，内页记录纸张购入。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代账本",
+      "required_subjects": [
+        "核心线索物件",
+        "材质细节",
+        "使用痕迹"
+      ],
+      "era_feature_checklist": [
+        "宋代账册"
+      ],
+      "prompt_hash": "f5b44efc6c1a35f3",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_04.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_clue_04",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:26:41",
+        "attempts": 2,
+        "prompt_hash": "f5b44efc6c1a35f3",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_04.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_05",
+      "asset_type": "clue",
+      "owner_id": "clue_05",
+      "title": "樊楼纸条",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一张小纸条，上面写着‘事已办妥’，字迹潦草。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。",
+      "negative_prompt": "打印字体",
+      "required_subjects": [
+        "核心线索物件",
+        "材质细节",
+        "使用痕迹"
+      ],
+      "era_feature_checklist": [
+        "毛笔字"
+      ],
+      "prompt_hash": "08e61e0f51a5806a",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_05.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_clue_05",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:26:53",
+        "attempts": 1,
+        "prompt_hash": "08e61e0f51a5806a",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_05.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_06",
+      "asset_type": "clue",
+      "owner_id": "clue_06",
+      "title": "周府暗格密信",
+      "prompt": "北宋历史悬疑调查场景，写实风格，北宋历史悬疑调查场景，写实风格，一封折叠的密信，纸张略旧，内容详细。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。，主体清晰，符合时代建筑、服饰、器物，不含现代物件。\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代信封",
+      "required_subjects": [
+        "核心线索物件",
+        "材质细节",
+        "使用痕迹"
+      ],
+      "era_feature_checklist": [
+        "宣纸"
+      ],
+      "prompt_hash": "eaa8e23cb20d350c",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_06.png",
+      "url": "/api/scripts/p0_song_001_46effe/assets/asset_clue_06",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-23T15:27:38",
+        "attempts": 2,
+        "prompt_hash": "eaa8e23cb20d350c",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_clue_06.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    }
+  ],
+  "visual_style_guide": {
+    "style_keywords": [
+      "宋代水墨",
+      "写实",
+      "暖色调"
+    ],
+    "forbidden_visuals": [
+      "明代元素",
+      "现代物品"
+    ],
+    "color_script": "以赭石、墨色为主，辅以朱红点缀。",
+    "camera": "中景，平视，注重细节。",
+    "era_feature_checklist": [
+      "宋代建筑",
+      "服饰",
+      "家具"
+    ],
+    "appearance_lock": {}
+  },
+  "hotspot_positioning": [
+    {
+      "location_id": "location_taixue",
+      "hotspot_id": "hotspot_0",
+      "visual_asset_id": "asset_scene_taixue",
+      "clue_id": "clue_01",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.3
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.2,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_taixue.png"
+    },
+    {
+      "location_id": "location_taixue",
+      "hotspot_id": "hotspot_1",
+      "visual_asset_id": "asset_scene_taixue",
+      "clue_id": "clue_02",
+      "anchor_point": {
+        "x": 0.3,
+        "y": 0.6
+      },
+      "bbox": {
+        "x": 0.2,
+        "y": 0.5,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_taixue.png"
+    },
+    {
+      "location_id": "location_guozijian",
+      "hotspot_id": "hotspot_2",
+      "visual_asset_id": "asset_scene_guozijian",
+      "clue_id": "clue_03",
+      "anchor_point": {
+        "x": 0.7,
+        "y": 0.4
+      },
+      "bbox": {
+        "x": 0.6,
+        "y": 0.3,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_guozijian.png"
+    },
+    {
+      "location_id": "location_guozijian",
+      "hotspot_id": "hotspot_3",
+      "visual_asset_id": "asset_scene_guozijian",
+      "clue_id": "clue_04",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.7
+      },
+      "bbox": {
+        "x": 0.1,
+        "y": 0.6,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_guozijian.png"
+    },
+    {
+      "location_id": "location_fanlou",
+      "hotspot_id": "hotspot_4",
+      "visual_asset_id": "asset_scene_fanlou",
+      "clue_id": "clue_05",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.4,
+        "y": 0.4,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_fanlou.png"
+    },
+    {
+      "location_id": "location_zhoufu",
+      "hotspot_id": "hotspot_5",
+      "visual_asset_id": "asset_scene_zhoufu",
+      "clue_id": "clue_06",
+      "anchor_point": {
+        "x": 0.8,
+        "y": 0.8
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.7,
+        "width": 0.2,
+        "height": 0.2
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_001_46effe/asset_scene_zhoufu.png"
+    }
+  ],
+  "quality_gate": {
+    "required_scene_count": 5,
+    "required_npc_count": 4,
+    "required_clue_count": 6,
+    "scene_approved": 5,
+    "npc_approved": 4,
+    "clue_approved": 6,
+    "rejected": 4,
+    "regenerated": 4,
+    "blocked": 0
+  }
+}

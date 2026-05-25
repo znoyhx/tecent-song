@@ -1,0 +1,4684 @@
+{
+  "script_id": "p0_song_bbb029",
+  "job_id": "job_43ac43bbb029",
+  "dynasty_id": "song",
+  "keywords": [
+    "粮仓"
+  ],
+  "generation_source": "deepseek",
+  "generated_at": "2026-05-25T01:08:48",
+  "script_overview": {
+    "title": "丰济仓疑云",
+    "logline": "大雪封仓，内侍横死，账册与粮堆之间，藏着一个王朝的裂痕。",
+    "case_summary": "北宋汴京东城丰济仓，大雪后惊现无名男尸，身着内侍服饰，身旁散落铜钱与半块鱼符。表面是盗粮失风，但仓中存粮与账册严重不符，现场更有非本朝文字刻痕。死者身份、鱼符来源、粮仓亏空，皆指向西北军粮调运的隐秘。",
+    "opening_location": "丰济仓大门",
+    "public_objective": "查明死者身份与死因，追回被盗官粮。",
+    "major_locations": [
+      "丰济仓大门",
+      "粮仓甲字库",
+      "粮仓乙字库",
+      "仓吏值房",
+      "仓后小巷",
+      "汴河码头",
+      "东市粮铺",
+      "内侍省衙门"
+    ],
+    "major_npcs": [
+      "赵仓吏",
+      "钱掌柜",
+      "孙内侍",
+      "李脚夫"
+    ],
+    "player_briefing": "你可以查验现场、询问相关人物、整理线索并在最后作出取舍。"
+  },
+  "playable_identities": [
+    {
+      "identity_id": "identity_clerk",
+      "display_name": "随行文吏",
+      "description": "北宋地方文吏，熟悉文书、印记和交接规程。",
+      "social_rank": "middle",
+      "relation_to_case": "有权查验案发现场与相关簿册。",
+      "motive": "厘清文书失误背后的责任，避免无辜者被牵连。",
+      "permissions": [
+        "查验现场",
+        "询问相关人物",
+        "整理线索",
+        "提交推理"
+      ],
+      "limitations": [
+        "不能越权定罪",
+        "不能提前公开未证实的真相"
+      ],
+      "background": "你随官署入场，既要顾及规程，也要找出真正能站住脚的证据。",
+      "tags": [
+        "文书",
+        "调查",
+        "谨慎"
+      ],
+      "is_default": true
+    },
+    {
+      "identity_id": "identity_runner",
+      "display_name": "驿路差人",
+      "description": "北宋驿路差人，熟悉行旅、马匹与夜间出入痕迹。",
+      "social_rank": "low",
+      "relation_to_case": "能接触驿路、仓房、后门与差役口供。",
+      "motive": "证明自己没有卷入案中，同时找出真正破坏规程的人。",
+      "permissions": [
+        "查验驿路痕迹",
+        "询问差役",
+        "辨认行旅物件"
+      ],
+      "limitations": [
+        "身份低微，不能强逼高阶人物认罪"
+      ],
+      "background": "你在驿路上见过太多仓促交接，知道细节比响亮口供更可靠。",
+      "tags": [
+        "驿路",
+        "现场",
+        "民间"
+      ],
+      "is_default": false
+    }
+  ],
+  "world": {
+    "dynasty_id": "song",
+    "dynasty_name": "北宋",
+    "era_name": "北宋·熙宁年间",
+    "year_hint": "熙宁七年冬",
+    "location_region": "汴京东城丰济仓",
+    "rules": [
+      "文书、印记、口供与现场物证需要相互印证。",
+      "人物只会透露自己在当前阶段能够合理知道的内容。"
+    ],
+    "forbidden_terms": [
+      "手机",
+      "电话",
+      "电报",
+      "火车",
+      "报纸",
+      "公司",
+      "警察",
+      "现代"
+    ]
+  },
+  "story": {
+    "surface_event": "丰济仓发现一具内侍尸体，疑似盗窃粮仓时被杀。",
+    "hidden_truth": "死者实为西北边军密使，持鱼符前来核查军粮，却被仓吏勾结奸商灭口。粮仓亏空是因监守自盗，以陈粮充新粮，虚报数目，刻痕为西夏文记账。",
+    "themes": [
+      "文书",
+      "证言",
+      "权责"
+    ],
+    "culprit_boundary": "真凶和包庇者必须通过完整证据链确认，任何单一口供都不足以下结论。",
+    "truth_chain_clue_ids": [
+      "clue_00",
+      "clue_01",
+      "clue_02",
+      "clue_03",
+      "clue_04",
+      "clue_05"
+    ]
+  },
+  "stages": [
+    {
+      "stage_id": "intro",
+      "name": "入局",
+      "order": 0,
+      "goal": "确认表面事件与第一批可见证据。",
+      "entry_location_id": "loc_00",
+      "unlock_conditions": [],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_00",
+        "clue_01",
+        "clue_02",
+        "clue_03",
+        "clue_04"
+      ]
+    },
+    {
+      "stage_id": "investigation",
+      "name": "查证",
+      "order": 1,
+      "goal": "扩大现场范围，串联文书、物件与口供。",
+      "entry_location_id": "loc_01",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_05",
+        "clue_06",
+        "clue_07",
+        "clue_08",
+        "clue_09",
+        "clue_10"
+      ]
+    },
+    {
+      "stage_id": "reversal",
+      "name": "转折",
+      "order": 2,
+      "goal": "识破早期说法中的漏洞，逼近隐藏动机。",
+      "entry_location_id": "loc_02",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_18",
+        "clue_19",
+        "clue_20",
+        "clue_21",
+        "clue_22",
+        "clue_23"
+      ]
+    },
+    {
+      "stage_id": "choice",
+      "name": "抉择",
+      "order": 3,
+      "goal": "根据证据决定如何呈报或处理真相。",
+      "entry_location_id": "loc_03",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_26",
+        "clue_27",
+        "clue_28",
+        "clue_29"
+      ]
+    },
+    {
+      "stage_id": "ending",
+      "name": "收束",
+      "order": 4,
+      "goal": "查看选择造成的历史余波。",
+      "entry_location_id": "loc_04",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": []
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "loc_00",
+      "name": "丰济仓大门",
+      "description": "厚重木门，门闩断裂，雪地上有拖拽痕迹。",
+      "scene_text": "大雪压檐，门扉半掩，雪地上凌乱的脚印延伸向内，空气中弥漫着陈粮的霉味与一丝血腥。",
+      "stage_ids": [
+        "intro",
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_00",
+        "npc_01"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_00",
+          "label": "半块鱼符",
+          "description": "一处与“半块鱼符”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_00"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“半块鱼符”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_08",
+          "label": "脚夫证言",
+          "description": "一处与“脚夫证言”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_08"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“脚夫证言”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_16",
+          "label": "车辙印",
+          "description": "一处与“车辙印”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_16"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“车辙印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_24",
+          "label": "半块鱼符",
+          "description": "一处与“半块鱼符”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_24"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“半块鱼符”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.74,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_00"
+    },
+    {
+      "location_id": "loc_01",
+      "name": "粮仓甲字库",
+      "description": "存放新粮的库房，粮堆表面平整，但底部有翻动痕迹。",
+      "scene_text": "粮袋堆叠如墙，几袋被划开，谷粒洒落一地，墙角暗处似有刻痕。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_01",
+          "label": "西夏文刻痕",
+          "description": "一处与“西夏文刻痕”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_01"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“西夏文刻痕”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_09",
+          "label": "内侍名录",
+          "description": "一处与“内侍名录”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_09"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“内侍名录”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_17",
+          "label": "铜钱",
+          "description": "一处与“铜钱”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_17"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“铜钱”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_25",
+          "label": "西夏文刻痕",
+          "description": "一处与“西夏文刻痕”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_25"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“西夏文刻痕”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.74,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_01"
+    },
+    {
+      "location_id": "loc_02",
+      "name": "粮仓乙字库",
+      "description": "存放陈粮，门锁完好，但粮袋数目与账册不符。",
+      "scene_text": "库内阴冷，粮袋上积满灰尘，数了数，比账册上少了几十袋。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_02",
+          "label": "账册涂改",
+          "description": "一处与“账册涂改”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_02"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“账册涂改”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_10",
+          "label": "军粮调令",
+          "description": "一处与“军粮调令”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_10"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“军粮调令”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_18",
+          "label": "茶盏残渣",
+          "description": "一处与“茶盏残渣”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_18"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“茶盏残渣”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_26",
+          "label": "账册涂改",
+          "description": "一处与“账册涂改”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_26"
+          ],
+          "required_stage": "choice",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“账册涂改”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.74,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_02"
+    },
+    {
+      "location_id": "loc_03",
+      "name": "仓吏值房",
+      "description": "仓吏办公之处，桌上有未写完的账册与茶盏。",
+      "scene_text": "案上账册摊开，墨迹未干，茶盏中茶水已凉，一旁散落着几枚铜钱。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_03",
+          "label": "掺沙粮袋",
+          "description": "一处与“掺沙粮袋”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_03"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“掺沙粮袋”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_11",
+          "label": "鱼符另一半",
+          "description": "一处与“鱼符另一半”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_11"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“鱼符另一半”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_19",
+          "label": "粮铺账本",
+          "description": "一处与“粮铺账本”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_19"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“粮铺账本”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_27",
+          "label": "掺沙粮袋",
+          "description": "一处与“掺沙粮袋”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_27"
+          ],
+          "required_stage": "choice",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“掺沙粮袋”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.74,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_03"
+    },
+    {
+      "location_id": "loc_04",
+      "name": "仓后小巷",
+      "description": "通往坊市的窄巷，雪地上有车辙印。",
+      "scene_text": "巷内积雪被碾成冰辙，辙印深处混着谷粒，直通坊市方向。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_04",
+          "label": "车辙印",
+          "description": "一处与“车辙印”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_04"
+          ],
+          "required_stage": "intro",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“车辙印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_12",
+          "label": "半块鱼符",
+          "description": "一处与“半块鱼符”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_12"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“半块鱼符”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_20",
+          "label": "脚夫证言",
+          "description": "一处与“脚夫证言”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_20"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“脚夫证言”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_28",
+          "label": "车辙印",
+          "description": "一处与“车辙印”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_28"
+          ],
+          "required_stage": "choice",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“车辙印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.74,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_04"
+    },
+    {
+      "location_id": "loc_05",
+      "name": "汴河码头",
+      "description": "粮船装卸处，有临时搭建的棚屋。",
+      "scene_text": "河面冰封，船只靠岸，棚屋下堆着空麻袋，几个脚夫正烤火取暖。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_05",
+          "label": "铜钱",
+          "description": "一处与“铜钱”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_05"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“铜钱”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_13",
+          "label": "西夏文刻痕",
+          "description": "一处与“西夏文刻痕”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_13"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“西夏文刻痕”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_21",
+          "label": "内侍名录",
+          "description": "一处与“内侍名录”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_21"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“内侍名录”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_29",
+          "label": "铜钱",
+          "description": "一处与“铜钱”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_29"
+          ],
+          "required_stage": "choice",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“铜钱”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.74,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.7,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_05"
+    },
+    {
+      "location_id": "loc_06",
+      "name": "东市粮铺",
+      "description": "与丰济仓有往来的粮商店铺。",
+      "scene_text": "铺内粮袋堆积如山，伙计忙碌，掌柜在柜台后拨弄算盘，见有人来便堆起笑脸。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_06",
+          "label": "茶盏残渣",
+          "description": "一处与“茶盏残渣”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_06"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“茶盏残渣”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_14",
+          "label": "账册涂改",
+          "description": "一处与“账册涂改”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_14"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“账册涂改”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_22",
+          "label": "军粮调令",
+          "description": "一处与“军粮调令”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_22"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“军粮调令”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_06"
+    },
+    {
+      "location_id": "loc_07",
+      "name": "内侍省衙门",
+      "description": "内侍办公之所，死者可能隶属此处。",
+      "scene_text": "朱门紧闭，门前石狮积雪，门内隐约传来低语声。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_07",
+          "label": "粮铺账本",
+          "description": "一处与“粮铺账本”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_07"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“粮铺账本”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.32
+          },
+          "bbox": {
+            "x": 0.16,
+            "y": 0.28,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_15",
+          "label": "掺沙粮袋",
+          "description": "一处与“掺沙粮袋”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_15"
+          ],
+          "required_stage": "investigation",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“掺沙粮袋”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.38,
+            "y": 0.5
+          },
+          "bbox": {
+            "x": 0.34,
+            "y": 0.46,
+            "width": 0.12,
+            "height": 0.12
+          }
+        },
+        {
+          "hotspot_id": "hotspot_23",
+          "label": "鱼符另一半",
+          "description": "一处与“鱼符另一半”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_23"
+          ],
+          "required_stage": "reversal",
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“鱼符另一半”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "bbox": {
+            "x": 0.52,
+            "y": 0.64,
+            "width": 0.12,
+            "height": 0.12
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_07"
+    }
+  ],
+  "npcs": [
+    {
+      "npc_id": "npc_00",
+      "name": "赵仓吏",
+      "public_identity": "丰济仓副使",
+      "appearance": "五十余岁，瘦削，山羊胡，常穿旧青衫。",
+      "personality": "谨慎寡言，眼神闪烁，对账册异常紧张。",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "负责粮仓日常管理，账册由他经手。",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "与粮商勾结盗卖官粮，为掩盖罪行杀害密使。",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_00",
+        "clue_04",
+        "clue_08",
+        "clue_12",
+        "clue_16",
+        "clue_20"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_00"
+    },
+    {
+      "npc_id": "npc_01",
+      "name": "钱掌柜",
+      "public_identity": "东市“丰裕粮行”掌柜",
+      "appearance": "四十出头，圆脸微胖，衣着绸缎，手指戴玉扳指。",
+      "personality": "圆滑世故，口若悬河，但提及军粮便神色微变。",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "长期收购丰济仓陈粮，与赵仓吏有私下交易。",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "为谋取暴利，以次充好供应军粮，怕事情败露。",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_01",
+        "clue_05",
+        "clue_09",
+        "clue_13",
+        "clue_17",
+        "clue_21"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_01"
+    },
+    {
+      "npc_id": "npc_02",
+      "name": "孙内侍",
+      "public_identity": "内侍省黄门",
+      "appearance": "三十余岁，面白无须，着紫色内侍服，腰间佩鱼符。",
+      "personality": "沉默寡言，目光锐利，似有军旅之气。",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "死者，实为西北边军密使，持鱼符前来核查军粮。",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "奉密令调查军粮贪腐，不幸遇害。",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_02",
+        "clue_06",
+        "clue_10",
+        "clue_14",
+        "clue_18",
+        "clue_22"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_02"
+    },
+    {
+      "npc_id": "npc_03",
+      "name": "李脚夫",
+      "public_identity": "汴河码头脚夫头目",
+      "appearance": "三十岁，黝黑壮实，粗布短打，腰间系麻绳。",
+      "personality": "粗豪直率，好酒，消息灵通。",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "曾搬运过丰济仓的粮袋，发现袋中掺沙。",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "因知情而被威胁，欲言又止。",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_03",
+        "clue_07",
+        "clue_11",
+        "clue_15",
+        "clue_19",
+        "clue_23"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_03"
+    }
+  ],
+  "relationships": [
+    {
+      "source_id": "npc_00",
+      "target_id": "npc_01",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    },
+    {
+      "source_id": "npc_01",
+      "target_id": "npc_02",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    },
+    {
+      "source_id": "npc_02",
+      "target_id": "npc_03",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    },
+    {
+      "source_id": "npc_03",
+      "target_id": "npc_00",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    }
+  ],
+  "clues": [
+    {
+      "clue_id": "clue_00",
+      "title": "半块鱼符",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "半块鱼符",
+      "display_text": "死者身旁的半块铜鱼符，刻有“西”字与编号。",
+      "detail": "鱼符为边军调兵信物，半块表明密使身份，编号可查所属部队。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_00"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_01",
+      "title": "西夏文刻痕",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "西夏文刻痕",
+      "display_text": "甲字库墙角刻有歪斜文字，非汉字。",
+      "detail": "经识者辨认，为西夏文数字与“粮”字，疑为记账标记。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_01"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_00"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_02",
+      "title": "账册涂改",
+      "type": "文书",
+      "is_key": true,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "账册涂改",
+      "display_text": "仓吏值房的账册有多处涂改，墨迹新旧不一。",
+      "detail": "涂改处涉及乙字库陈粮数目，与实存不符。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_02"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_01"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_03",
+      "title": "掺沙粮袋",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "掺沙粮袋",
+      "display_text": "码头棚屋下发现一只破粮袋，内有沙粒与霉谷。",
+      "detail": "表明有人以沙充粮，克扣军粮。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_03"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_02"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_04",
+      "title": "车辙印",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "车辙印",
+      "display_text": "仓后小巷的车辙印深且宽，与寻常粮车不同。",
+      "detail": "辙印间距与军粮车一致，且通往东市粮铺。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_04"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_03"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_05",
+      "title": "铜钱",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "铜钱",
+      "display_text": "死者身旁散落数枚铜钱，其中一枚为“熙宁通宝”铁钱。",
+      "detail": "铁钱通行于西北边地，汴京少见，暗示死者来自西北。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_05"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_04"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_06",
+      "title": "茶盏残渣",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_06",
+      "source_npc_id": null,
+      "highlight_text": "茶盏残渣",
+      "display_text": "值房茶盏内有未喝完的茶，残渣中有异物。",
+      "detail": "残渣经查验含少量蒙汗药，表明死者可能被迷晕。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_06"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_05"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_07",
+      "title": "粮铺账本",
+      "type": "文书",
+      "is_key": true,
+      "source_location_id": "loc_07",
+      "source_npc_id": null,
+      "highlight_text": "粮铺账本",
+      "display_text": "钱掌柜的私下账本，记录与丰济仓的交易。",
+      "detail": "账本显示低价购入大量陈粮，但出货记录却标注为新粮。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_07"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_06"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_08",
+      "title": "脚夫证言",
+      "type": "证言",
+      "is_key": true,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "脚夫证言",
+      "display_text": "李脚夫称曾见赵仓吏夜间与钱掌柜密会。",
+      "detail": "证言指向二人勾结，且提及“军粮”二字。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_08"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_07"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_09",
+      "title": "内侍名录",
+      "type": "文书",
+      "is_key": true,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "内侍名录",
+      "display_text": "内侍省衙门的名册，显示孙内侍三日前告假离京。",
+      "detail": "告假理由为省亲，但实际去向不明，与死者身份矛盾。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_09"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_08"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_10",
+      "title": "军粮调令",
+      "type": "文书",
+      "is_key": false,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "军粮调令",
+      "display_text": "枢密院下发丰济仓的军粮调令副本。",
+      "detail": "调令要求调拨新粮十万石，但仓中实际新粮不足。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_10"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_09"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_11",
+      "title": "鱼符另一半",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "鱼符另一半",
+      "display_text": "在赵仓吏值房暗格中发现另一半鱼符。",
+      "detail": "与死者所持吻合，证明赵仓吏与死者有接触。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_11"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_10"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_12",
+      "title": "半块鱼符",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "半块鱼符",
+      "display_text": "死者身旁的半块铜鱼符，刻有“西”字与编号。",
+      "detail": "鱼符为边军调兵信物，半块表明密使身份，编号可查所属部队。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_12"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_11"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_13",
+      "title": "西夏文刻痕",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "西夏文刻痕",
+      "display_text": "甲字库墙角刻有歪斜文字，非汉字。",
+      "detail": "经识者辨认，为西夏文数字与“粮”字，疑为记账标记。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_13"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_12"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_14",
+      "title": "账册涂改",
+      "type": "文书",
+      "is_key": false,
+      "source_location_id": "loc_06",
+      "source_npc_id": null,
+      "highlight_text": "账册涂改",
+      "display_text": "仓吏值房的账册有多处涂改，墨迹新旧不一。",
+      "detail": "涂改处涉及乙字库陈粮数目，与实存不符。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_14"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_13"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_15",
+      "title": "掺沙粮袋",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_07",
+      "source_npc_id": null,
+      "highlight_text": "掺沙粮袋",
+      "display_text": "码头棚屋下发现一只破粮袋，内有沙粒与霉谷。",
+      "detail": "表明有人以沙充粮，克扣军粮。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_15"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_14"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_16",
+      "title": "车辙印",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "车辙印",
+      "display_text": "仓后小巷的车辙印深且宽，与寻常粮车不同。",
+      "detail": "辙印间距与军粮车一致，且通往东市粮铺。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_16"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_15"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_17",
+      "title": "铜钱",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "铜钱",
+      "display_text": "死者身旁散落数枚铜钱，其中一枚为“熙宁通宝”铁钱。",
+      "detail": "铁钱通行于西北边地，汴京少见，暗示死者来自西北。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_17"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_16"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_18",
+      "title": "茶盏残渣",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "茶盏残渣",
+      "display_text": "值房茶盏内有未喝完的茶，残渣中有异物。",
+      "detail": "残渣经查验含少量蒙汗药，表明死者可能被迷晕。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_18"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_17"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_19",
+      "title": "粮铺账本",
+      "type": "文书",
+      "is_key": false,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "粮铺账本",
+      "display_text": "钱掌柜的私下账本，记录与丰济仓的交易。",
+      "detail": "账本显示低价购入大量陈粮，但出货记录却标注为新粮。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_19"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_18"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_20",
+      "title": "脚夫证言",
+      "type": "证言",
+      "is_key": false,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "脚夫证言",
+      "display_text": "李脚夫称曾见赵仓吏夜间与钱掌柜密会。",
+      "detail": "证言指向二人勾结，且提及“军粮”二字。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_20"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_19"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_21",
+      "title": "内侍名录",
+      "type": "文书",
+      "is_key": false,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "内侍名录",
+      "display_text": "内侍省衙门的名册，显示孙内侍三日前告假离京。",
+      "detail": "告假理由为省亲，但实际去向不明，与死者身份矛盾。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_21"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_20"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_22",
+      "title": "军粮调令",
+      "type": "文书",
+      "is_key": false,
+      "source_location_id": "loc_06",
+      "source_npc_id": null,
+      "highlight_text": "军粮调令",
+      "display_text": "枢密院下发丰济仓的军粮调令副本。",
+      "detail": "调令要求调拨新粮十万石，但仓中实际新粮不足。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_22"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_21"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_23",
+      "title": "鱼符另一半",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_07",
+      "source_npc_id": null,
+      "highlight_text": "鱼符另一半",
+      "display_text": "在赵仓吏值房暗格中发现另一半鱼符。",
+      "detail": "与死者所持吻合，证明赵仓吏与死者有接触。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_23"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_22"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_24",
+      "title": "半块鱼符",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "半块鱼符",
+      "display_text": "死者身旁的半块铜鱼符，刻有“西”字与编号。",
+      "detail": "鱼符为边军调兵信物，半块表明密使身份，编号可查所属部队。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_24"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_23"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_25",
+      "title": "西夏文刻痕",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "西夏文刻痕",
+      "display_text": "甲字库墙角刻有歪斜文字，非汉字。",
+      "detail": "经识者辨认，为西夏文数字与“粮”字，疑为记账标记。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_25"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_24"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_26",
+      "title": "账册涂改",
+      "type": "文书",
+      "is_key": false,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "账册涂改",
+      "display_text": "仓吏值房的账册有多处涂改，墨迹新旧不一。",
+      "detail": "涂改处涉及乙字库陈粮数目，与实存不符。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_26"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_25"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_27",
+      "title": "掺沙粮袋",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "掺沙粮袋",
+      "display_text": "码头棚屋下发现一只破粮袋，内有沙粒与霉谷。",
+      "detail": "表明有人以沙充粮，克扣军粮。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_27"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_26"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_28",
+      "title": "车辙印",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "车辙印",
+      "display_text": "仓后小巷的车辙印深且宽，与寻常粮车不同。",
+      "detail": "辙印间距与军粮车一致，且通往东市粮铺。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_28"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_27"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_29",
+      "title": "铜钱",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "铜钱",
+      "display_text": "死者身旁散落数枚铜钱，其中一枚为“熙宁通宝”铁钱。",
+      "detail": "铁钱通行于西北边地，汴京少见，暗示死者来自西北。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_29"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_28"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    }
+  ],
+  "clue_graph": [
+    {
+      "rule_id": "combo_00",
+      "required_clue_ids": [
+        "clue_00",
+        "clue_01",
+        "clue_02"
+      ],
+      "result_title": "证据组合1",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_00_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_01",
+      "required_clue_ids": [
+        "clue_01",
+        "clue_02",
+        "clue_03"
+      ],
+      "result_title": "证据组合2",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_01_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_02",
+      "required_clue_ids": [
+        "clue_02",
+        "clue_03",
+        "clue_04"
+      ],
+      "result_title": "证据组合3",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_02_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_03",
+      "required_clue_ids": [
+        "clue_03",
+        "clue_04",
+        "clue_05"
+      ],
+      "result_title": "证据组合4",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_03_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_04",
+      "required_clue_ids": [
+        "clue_04",
+        "clue_05",
+        "clue_06"
+      ],
+      "result_title": "证据组合5",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_04_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_05",
+      "required_clue_ids": [
+        "clue_05",
+        "clue_06",
+        "clue_07"
+      ],
+      "result_title": "证据组合6",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_05_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    }
+  ],
+  "deductions": [
+    {
+      "deduction_id": "deduction_00",
+      "question": "第1个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_00"
+      ],
+      "correct_clue_ids": [
+        "clue_00",
+        "clue_01",
+        "clue_02"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_00_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_01",
+      "question": "第2个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_01"
+      ],
+      "correct_clue_ids": [
+        "clue_01",
+        "clue_02",
+        "clue_03"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_01_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_02",
+      "question": "第3个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_02"
+      ],
+      "correct_clue_ids": [
+        "clue_02",
+        "clue_03",
+        "clue_04"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_02_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_03",
+      "question": "第4个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_03"
+      ],
+      "correct_clue_ids": [
+        "clue_03",
+        "clue_04",
+        "clue_05"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_03_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_04",
+      "question": "第5个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_04"
+      ],
+      "correct_clue_ids": [
+        "clue_04",
+        "clue_05",
+        "clue_06"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_04_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_05",
+      "question": "第6个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_05"
+      ],
+      "correct_clue_ids": [
+        "clue_05",
+        "clue_06",
+        "clue_07"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_05_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_06",
+      "question": "第7个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_06"
+      ],
+      "correct_clue_ids": [
+        "clue_06",
+        "clue_07",
+        "clue_08"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_06_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_07",
+      "question": "第8个疑点最可能由哪组证据支撑？",
+      "required_clue_ids": [
+        "clue_07"
+      ],
+      "correct_clue_ids": [
+        "clue_07",
+        "clue_08",
+        "clue_09"
+      ],
+      "wrong_feedback": "这些证据还不足以支撑这个判断。",
+      "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
+      "effects": {
+        "flags": [
+          "deduction_07_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    }
+  ],
+  "chapter_sections": [
+    {
+      "section_id": "section_00",
+      "stage": "intro",
+      "title": "章节1",
+      "trigger_conditions": [],
+      "scene_id": "loc_00",
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspot_ids": [
+        "hotspot_00"
+      ],
+      "clue_ids": [
+        "clue_00"
+      ],
+      "next_section_ids": [
+        "section_01"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_01",
+      "stage": "intro",
+      "title": "章节2",
+      "trigger_conditions": [
+        "section_00 completed"
+      ],
+      "scene_id": "loc_01",
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspot_ids": [
+        "hotspot_01"
+      ],
+      "clue_ids": [
+        "clue_01"
+      ],
+      "next_section_ids": [
+        "section_02"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_02",
+      "stage": "intro",
+      "title": "章节3",
+      "trigger_conditions": [
+        "section_01 completed"
+      ],
+      "scene_id": "loc_02",
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspot_ids": [
+        "hotspot_02"
+      ],
+      "clue_ids": [
+        "clue_02"
+      ],
+      "next_section_ids": [
+        "section_03"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_03",
+      "stage": "investigation",
+      "title": "章节4",
+      "trigger_conditions": [
+        "section_02 completed"
+      ],
+      "scene_id": "loc_03",
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspot_ids": [
+        "hotspot_03"
+      ],
+      "clue_ids": [
+        "clue_03"
+      ],
+      "next_section_ids": [
+        "section_04"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_04",
+      "stage": "investigation",
+      "title": "章节5",
+      "trigger_conditions": [
+        "section_03 completed"
+      ],
+      "scene_id": "loc_04",
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspot_ids": [
+        "hotspot_04"
+      ],
+      "clue_ids": [
+        "clue_04"
+      ],
+      "next_section_ids": [
+        "section_05"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_05",
+      "stage": "investigation",
+      "title": "章节6",
+      "trigger_conditions": [
+        "section_04 completed"
+      ],
+      "scene_id": "loc_05",
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspot_ids": [
+        "hotspot_05"
+      ],
+      "clue_ids": [
+        "clue_05"
+      ],
+      "next_section_ids": [
+        "section_06"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_06",
+      "stage": "reversal",
+      "title": "章节7",
+      "trigger_conditions": [
+        "section_05 completed"
+      ],
+      "scene_id": "loc_06",
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspot_ids": [
+        "hotspot_06"
+      ],
+      "clue_ids": [
+        "clue_06"
+      ],
+      "next_section_ids": [
+        "section_07"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_07",
+      "stage": "reversal",
+      "title": "章节8",
+      "trigger_conditions": [
+        "section_06 completed"
+      ],
+      "scene_id": "loc_07",
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspot_ids": [
+        "hotspot_07"
+      ],
+      "clue_ids": [
+        "clue_07"
+      ],
+      "next_section_ids": [
+        "section_08"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_08",
+      "stage": "reversal",
+      "title": "章节9",
+      "trigger_conditions": [
+        "section_07 completed"
+      ],
+      "scene_id": "loc_00",
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspot_ids": [
+        "hotspot_08"
+      ],
+      "clue_ids": [
+        "clue_08"
+      ],
+      "next_section_ids": [
+        "section_09"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_09",
+      "stage": "choice",
+      "title": "章节10",
+      "trigger_conditions": [
+        "section_08 completed"
+      ],
+      "scene_id": "loc_01",
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspot_ids": [
+        "hotspot_09"
+      ],
+      "clue_ids": [
+        "clue_09"
+      ],
+      "next_section_ids": [
+        "section_10"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_10",
+      "stage": "choice",
+      "title": "章节11",
+      "trigger_conditions": [
+        "section_09 completed"
+      ],
+      "scene_id": "loc_02",
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspot_ids": [
+        "hotspot_10"
+      ],
+      "clue_ids": [
+        "clue_10"
+      ],
+      "next_section_ids": [
+        "section_11"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_11",
+      "stage": "choice",
+      "title": "章节12",
+      "trigger_conditions": [
+        "section_10 completed"
+      ],
+      "scene_id": "loc_03",
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspot_ids": [
+        "hotspot_11"
+      ],
+      "clue_ids": [
+        "clue_11"
+      ],
+      "next_section_ids": [],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    }
+  ],
+  "dialogue_rules": [
+    {
+      "dialogue_id": "dialogue_00_intro",
+      "npc_id": "npc_00",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "赵仓吏避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_00_investigation",
+      "npc_id": "npc_00",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_01"
+      ],
+      "response": "赵仓吏避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_05"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_00_reversal",
+      "npc_id": "npc_00",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_02"
+      ],
+      "response": "赵仓吏避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_06"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_01_intro",
+      "npc_id": "npc_01",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "钱掌柜避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_01_investigation",
+      "npc_id": "npc_01",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_02"
+      ],
+      "response": "钱掌柜避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_06"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_01_reversal",
+      "npc_id": "npc_01",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_03"
+      ],
+      "response": "钱掌柜避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_07"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_02_intro",
+      "npc_id": "npc_02",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "孙内侍避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_02_investigation",
+      "npc_id": "npc_02",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_03"
+      ],
+      "response": "孙内侍避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_07"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_02_reversal",
+      "npc_id": "npc_02",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_04"
+      ],
+      "response": "孙内侍避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_08"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_03_intro",
+      "npc_id": "npc_03",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "李脚夫避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_03_investigation",
+      "npc_id": "npc_03",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_04"
+      ],
+      "response": "李脚夫避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_08"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_03_reversal",
+      "npc_id": "npc_03",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_05"
+      ],
+      "response": "李脚夫避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_09"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "choice_id": "choice_00",
+      "title": "彻查账册",
+      "description": "深入核查丰济仓历年账册，寻找亏空线索。",
+      "effects": {
+        "flags": [
+          "choice_00"
+        ],
+        "scores": {
+          "truth": 1,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_01",
+      "title": "追查鱼符",
+      "description": "从鱼符入手，查明死者真实身份与使命。",
+      "effects": {
+        "flags": [
+          "choice_01"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_02",
+      "title": "审讯仓吏",
+      "description": "直接提审赵仓吏，逼问真相。",
+      "effects": {
+        "flags": [
+          "choice_02"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_03",
+      "title": "暗访粮商",
+      "description": "乔装打扮，潜入东市粮铺搜集证据。",
+      "effects": {
+        "flags": [
+          "choice_03"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_04",
+      "title": "上报朝廷",
+      "description": "将现有证据上报开封府，请求介入。",
+      "effects": {
+        "flags": [
+          "choice_04"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 1
+        }
+      }
+    }
+  ],
+  "endings": [
+    {
+      "ending_id": "ending_00",
+      "title": "真相大白",
+      "priority": 0,
+      "conditions": {
+        "final_choice_id": "choice_00"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "查明赵仓吏与钱掌柜勾结盗粮，并杀害密使，二人伏法。",
+      "ending_text": "铁证如山，赵仓吏与钱掌柜供认不讳。开封府判二人斩立决，丰济仓亏空由钱家产业抵偿。孙内侍的忠烈上报朝廷，追赠官职。",
+      "history_echo": "此案后，朝廷整顿粮仓制度，但西北军粮贪腐已积重难返，数年后西夏入侵，粮草不济，边军败退。",
+      "related_clue_ids": [
+        "clue_00",
+        "clue_01"
+      ],
+      "related_choice_ids": [
+        "choice_00"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_00"
+    },
+    {
+      "ending_id": "ending_01",
+      "title": "官官相护",
+      "priority": 1,
+      "conditions": {
+        "final_choice_id": "choice_01"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "证据被高层压下，赵仓吏被调离，钱掌柜逍遥法外。",
+      "ending_text": "正当你准备上报时，一道密令将案卷调走。赵仓吏被调往他处，钱掌柜依旧开张。孙内侍之死被定为“意外”，不了了之。",
+      "history_echo": "贪腐未除，粮仓亏空如故。十年后，汴京大疫，粮价飞涨，丰济仓竟无粮可放，饿殍遍野。",
+      "related_clue_ids": [
+        "clue_01",
+        "clue_02"
+      ],
+      "related_choice_ids": [
+        "choice_01"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_01"
+    },
+    {
+      "ending_id": "ending_02",
+      "title": "壮士断腕",
+      "priority": 2,
+      "conditions": {
+        "final_choice_id": "choice_02"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "你自行处置了赵仓吏与钱掌柜，但触犯律法，被迫逃亡。",
+      "ending_text": "你趁夜将二人绑至孙内侍坟前，逼他们写下罪状后，将他们交予边军旧部。你则背负杀人罪名，踏上逃亡之路。",
+      "history_echo": "你的义举在民间流传，但朝廷通缉令下，你隐姓埋名。多年后，边军因粮草充足打了胜仗，却无人知是你的功劳。",
+      "related_clue_ids": [
+        "clue_02",
+        "clue_03"
+      ],
+      "related_choice_ids": [
+        "choice_02"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_02"
+    },
+    {
+      "ending_id": "ending_03",
+      "title": "功成身退",
+      "priority": 3,
+      "conditions": {
+        "final_choice_id": "choice_03"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "你巧妙布局，让赵仓吏与钱掌柜内讧，自己全身而退。",
+      "ending_text": "你故意泄露假消息，使二人互相猜忌。赵仓吏为自保，揭发钱掌柜，二人同归于尽。你则带着证据悄然离开，隐于市井。",
+      "history_echo": "此案成为悬案，但粮仓亏空得以弥补。你虽未留名，却保一方平安。后世说书人将其编成故事，传颂一时。",
+      "related_clue_ids": [
+        "clue_03",
+        "clue_04"
+      ],
+      "related_choice_ids": [
+        "choice_03"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_03"
+    },
+    {
+      "ending_id": "ending_04",
+      "title": "冤案错结",
+      "priority": 4,
+      "conditions": {
+        "final_choice_id": "choice_04"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "证据不足，李脚夫被屈打成招，真凶逍遥。",
+      "ending_text": "开封府急于结案，将李脚夫定为凶手。李脚夫受刑不过，含冤认罪，秋后问斩。赵仓吏与钱掌柜举杯相庆。",
+      "history_echo": "冤案铸成，李脚夫家人流放。数年后，赵仓吏因分赃不均被杀，钱掌柜破产，真相才浮出水面，但已无法挽回。",
+      "related_clue_ids": [
+        "clue_04",
+        "clue_05"
+      ],
+      "related_choice_ids": [
+        "choice_04"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_04"
+    }
+  ],
+  "visual_assets": [
+    {
+      "asset_id": "asset_scene_00",
+      "asset_type": "scene",
+      "owner_id": "loc_00",
+      "title": "丰济仓大门主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 丰济仓大门. Environment: 厚重木门，门闩断裂，雪地上有拖拽痕迹。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 赵仓吏 (丰济仓副使; appearance lock: 赵仓吏：五十余岁，瘦削，山羊胡，常穿旧青衫。); 钱掌柜 (东市“丰裕粮行”掌柜; appearance lock: 钱掌柜：四十出头，圆脸微胖，衣着绸缎，手指戴玉扳指。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 半块鱼符; 脚夫证言; 车辙印; 半块鱼符. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_00:赵仓吏; scene_npc:npc_01:钱掌柜; scene_clue:clue_00:半块鱼符; scene_clue:clue_08:脚夫证言; scene_clue:clue_16:车辙印; scene_clue:clue_24:半块鱼符.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "赵仓吏",
+        "钱掌柜",
+        "半块鱼符",
+        "脚夫证言",
+        "车辙印",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_00:赵仓吏",
+        "scene_npc:npc_01:钱掌柜",
+        "scene_clue:clue_00:半块鱼符",
+        "scene_clue:clue_08:脚夫证言",
+        "scene_clue:clue_16:车辙印",
+        "scene_clue:clue_24:半块鱼符",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "d6948c57cc2dea90",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_00.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_00",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:09:14",
+        "attempts": 1,
+        "prompt_hash": "d6948c57cc2dea90",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_00.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_01",
+      "asset_type": "scene",
+      "owner_id": "loc_01",
+      "title": "粮仓甲字库主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 粮仓甲字库. Environment: 存放新粮的库房，粮堆表面平整，但底部有翻动痕迹。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 钱掌柜 (东市“丰裕粮行”掌柜; appearance lock: 钱掌柜：四十出头，圆脸微胖，衣着绸缎，手指戴玉扳指。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 西夏文刻痕; 内侍名录; 铜钱; 西夏文刻痕. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_01:钱掌柜; scene_clue:clue_01:西夏文刻痕; scene_clue:clue_09:内侍名录; scene_clue:clue_17:铜钱; scene_clue:clue_25:西夏文刻痕.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "钱掌柜",
+        "西夏文刻痕",
+        "内侍名录",
+        "铜钱",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_01:钱掌柜",
+        "scene_clue:clue_01:西夏文刻痕",
+        "scene_clue:clue_09:内侍名录",
+        "scene_clue:clue_17:铜钱",
+        "scene_clue:clue_25:西夏文刻痕",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "79ad2a213ccd8939",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_01.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_01",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:09:23",
+        "attempts": 1,
+        "prompt_hash": "79ad2a213ccd8939",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_01.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_02",
+      "asset_type": "scene",
+      "owner_id": "loc_02",
+      "title": "粮仓乙字库主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 粮仓乙字库. Environment: 存放陈粮，门锁完好，但粮袋数目与账册不符。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 孙内侍 (内侍省黄门; appearance lock: 孙内侍：三十余岁，面白无须，着紫色内侍服，腰间佩鱼符。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 账册涂改; 军粮调令; 茶盏残渣; 账册涂改. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_02:孙内侍; scene_clue:clue_02:账册涂改; scene_clue:clue_10:军粮调令; scene_clue:clue_18:茶盏残渣; scene_clue:clue_26:账册涂改.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "孙内侍",
+        "账册涂改",
+        "军粮调令",
+        "茶盏残渣",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_02:孙内侍",
+        "scene_clue:clue_02:账册涂改",
+        "scene_clue:clue_10:军粮调令",
+        "scene_clue:clue_18:茶盏残渣",
+        "scene_clue:clue_26:账册涂改",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "e0c883fae8796bc0",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_02.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_02",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:09:33",
+        "attempts": 1,
+        "prompt_hash": "e0c883fae8796bc0",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_02.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_03",
+      "asset_type": "scene",
+      "owner_id": "loc_03",
+      "title": "仓吏值房主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 仓吏值房. Environment: 仓吏办公之处，桌上有未写完的账册与茶盏。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 李脚夫 (汴河码头脚夫头目; appearance lock: 李脚夫：三十岁，黝黑壮实，粗布短打，腰间系麻绳。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 掺沙粮袋; 鱼符另一半; 粮铺账本; 掺沙粮袋. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_03:李脚夫; scene_clue:clue_03:掺沙粮袋; scene_clue:clue_11:鱼符另一半; scene_clue:clue_19:粮铺账本; scene_clue:clue_27:掺沙粮袋.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "李脚夫",
+        "掺沙粮袋",
+        "鱼符另一半",
+        "粮铺账本",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_03:李脚夫",
+        "scene_clue:clue_03:掺沙粮袋",
+        "scene_clue:clue_11:鱼符另一半",
+        "scene_clue:clue_19:粮铺账本",
+        "scene_clue:clue_27:掺沙粮袋",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "feb05c34b9617a44",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_03.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_03",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:09:43",
+        "attempts": 1,
+        "prompt_hash": "feb05c34b9617a44",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_03.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_04",
+      "asset_type": "scene",
+      "owner_id": "loc_04",
+      "title": "仓后小巷主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 仓后小巷. Environment: 通往坊市的窄巷，雪地上有车辙印。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 赵仓吏 (丰济仓副使; appearance lock: 赵仓吏：五十余岁，瘦削，山羊胡，常穿旧青衫。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 车辙印; 半块鱼符; 脚夫证言; 车辙印. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_00:赵仓吏; scene_clue:clue_04:车辙印; scene_clue:clue_12:半块鱼符; scene_clue:clue_20:脚夫证言; scene_clue:clue_28:车辙印.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "赵仓吏",
+        "车辙印",
+        "半块鱼符",
+        "脚夫证言",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_00:赵仓吏",
+        "scene_clue:clue_04:车辙印",
+        "scene_clue:clue_12:半块鱼符",
+        "scene_clue:clue_20:脚夫证言",
+        "scene_clue:clue_28:车辙印",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "c843610569fdc0e4",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_04.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_04",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:09:52",
+        "attempts": 1,
+        "prompt_hash": "c843610569fdc0e4",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_04.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_05",
+      "asset_type": "scene",
+      "owner_id": "loc_05",
+      "title": "汴河码头主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 汴河码头. Environment: 粮船装卸处，有临时搭建的棚屋。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 钱掌柜 (东市“丰裕粮行”掌柜; appearance lock: 钱掌柜：四十出头，圆脸微胖，衣着绸缎，手指戴玉扳指。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 铜钱; 西夏文刻痕; 内侍名录; 铜钱. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_01:钱掌柜; scene_clue:clue_05:铜钱; scene_clue:clue_13:西夏文刻痕; scene_clue:clue_21:内侍名录; scene_clue:clue_29:铜钱.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "钱掌柜",
+        "铜钱",
+        "西夏文刻痕",
+        "内侍名录",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_01:钱掌柜",
+        "scene_clue:clue_05:铜钱",
+        "scene_clue:clue_13:西夏文刻痕",
+        "scene_clue:clue_21:内侍名录",
+        "scene_clue:clue_29:铜钱",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "d6bcf464aff08b42",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_05.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_05",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:10:02",
+        "attempts": 1,
+        "prompt_hash": "d6bcf464aff08b42",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_05.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_06",
+      "asset_type": "scene",
+      "owner_id": "loc_06",
+      "title": "东市粮铺主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 东市粮铺. Environment: 与丰济仓有往来的粮商店铺。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 孙内侍 (内侍省黄门; appearance lock: 孙内侍：三十余岁，面白无须，着紫色内侍服，腰间佩鱼符。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 茶盏残渣; 账册涂改; 军粮调令. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_02:孙内侍; scene_clue:clue_06:茶盏残渣; scene_clue:clue_14:账册涂改; scene_clue:clue_22:军粮调令.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "孙内侍",
+        "茶盏残渣",
+        "账册涂改",
+        "军粮调令",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_02:孙内侍",
+        "scene_clue:clue_06:茶盏残渣",
+        "scene_clue:clue_14:账册涂改",
+        "scene_clue:clue_22:军粮调令",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "0ad7b0fadca184cc",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_06.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_06",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:10:12",
+        "attempts": 1,
+        "prompt_hash": "0ad7b0fadca184cc",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_06.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_07",
+      "asset_type": "scene",
+      "owner_id": "loc_07",
+      "title": "内侍省衙门主舞台图",
+      "prompt": "北宋 historical mystery game main scene, integrated environment illustration, not an empty street and not a pure background. PRIMARY SUBJECT: one large visible adult human NPC in historical Song clothing is mandatory; the location is the background, not the main subject. Compose the person at left or center foreground. Location: 内侍省衙门. Environment: 内侍办公之所，死者可能隶属此处。. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 30-45 percent of the frame, in the same perspective and light: 李脚夫 (汴河码头脚夫头目; appearance lock: 李脚夫：三十岁，黝黑壮实，粗布短打，腰间系麻绳。). Additional NPCs may stand nearby, but people must not be tiny distant silhouettes. Clickable evidence objects must be clear and locatable in the scene: 粮铺账本; 掺沙粮袋; 鱼符另一半. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Use a grounded investigation camera, readable silhouettes, no modern objects, no watermark, no generated readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; script_visual_contract_v2. QA markers: scene_npc:npc_03:李脚夫; scene_clue:clue_07:粮铺账本; scene_clue:clue_15:掺沙粮袋; scene_clue:clue_23:鱼符另一半.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度, empty street without people, empty room without people, no visible NPC, tiny distant people only, landscape-only, architecture-only, animal-only, object-only, missing clue object, modern object, watermark, readable generated text, wrong dynasty costume",
+      "required_subjects": [
+        "李脚夫",
+        "粮铺账本",
+        "掺沙粮袋",
+        "鱼符另一半",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_03:李脚夫",
+        "scene_clue:clue_07:粮铺账本",
+        "scene_clue:clue_15:掺沙粮袋",
+        "scene_clue:clue_23:鱼符另一半",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "32b373af3a602fe9",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_07.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_scene_07",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:10:22",
+        "attempts": 1,
+        "prompt_hash": "32b373af3a602fe9",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_07.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_00",
+      "asset_type": "npc",
+      "owner_id": "npc_00",
+      "title": "赵仓吏人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 赵仓吏, public identity: 丰济仓副使. Appearance lock: 赵仓吏：五十余岁，瘦削，山羊胡，常穿旧青衫。. Personality: 谨慎寡言，眼神闪烁，对账册异常紧张。. Show the person clearly as a usable character portrait, historically grounded clothing, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; script_visual_contract_v2; npc_identity:npc_00:赵仓吏.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume",
+      "required_subjects": [
+        "赵仓吏",
+        "丰济仓副使",
+        "时代服饰",
+        "npc_identity:npc_00:赵仓吏",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "5e5b29f18990b4b4",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_00.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_npc_00",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:11:06",
+        "attempts": 2,
+        "prompt_hash": "5e5b29f18990b4b4",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_00.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_01",
+      "asset_type": "npc",
+      "owner_id": "npc_01",
+      "title": "钱掌柜人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 钱掌柜, public identity: 东市“丰裕粮行”掌柜. Appearance lock: 钱掌柜：四十出头，圆脸微胖，衣着绸缎，手指戴玉扳指。. Personality: 圆滑世故，口若悬河，但提及军粮便神色微变。. Show the person clearly as a usable character portrait, historically grounded clothing, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; script_visual_contract_v2; npc_identity:npc_01:钱掌柜.",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume",
+      "required_subjects": [
+        "钱掌柜",
+        "东市“丰裕粮行”掌柜",
+        "时代服饰",
+        "npc_identity:npc_01:钱掌柜",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "daaf7e3d59670ce3",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_01.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_npc_01",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:11:16",
+        "attempts": 1,
+        "prompt_hash": "daaf7e3d59670ce3",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_01.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_02",
+      "asset_type": "npc",
+      "owner_id": "npc_02",
+      "title": "孙内侍人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 孙内侍, public identity: 内侍省黄门. Appearance lock: 孙内侍：三十余岁，面白无须，着紫色内侍服，腰间佩鱼符。. Personality: 沉默寡言，目光锐利，似有军旅之气。. Show the person clearly as a usable character portrait, historically grounded clothing, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; script_visual_contract_v2; npc_identity:npc_02:孙内侍.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume",
+      "required_subjects": [
+        "孙内侍",
+        "内侍省黄门",
+        "时代服饰",
+        "npc_identity:npc_02:孙内侍",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "aabad59e638d41b4",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_02.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_npc_02",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:12:00",
+        "attempts": 2,
+        "prompt_hash": "aabad59e638d41b4",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_02.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_03",
+      "asset_type": "npc",
+      "owner_id": "npc_03",
+      "title": "李脚夫人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 李脚夫, public identity: 汴河码头脚夫头目. Appearance lock: 李脚夫：三十岁，黝黑壮实，粗布短打，腰间系麻绳。. Personality: 粗豪直率，好酒，消息灵通。. Show the person clearly as a usable character portrait, historically grounded clothing, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; script_visual_contract_v2; npc_identity:npc_03:李脚夫.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume",
+      "required_subjects": [
+        "李脚夫",
+        "汴河码头脚夫头目",
+        "时代服饰",
+        "npc_identity:npc_03:李脚夫",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "32c7cac0660cf272",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_03.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_npc_03",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:12:43",
+        "attempts": 2,
+        "prompt_hash": "32c7cac0660cf272",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_npc_03.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_00",
+      "asset_type": "clue",
+      "owner_id": "clue_00",
+      "title": "半块鱼符线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one core object fills the frame: 半块鱼符. Evidence note: 死者身旁的半块铜鱼符，刻有“西”字与编号。. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, watermark, or modern object. The object must be clear, near-camera, useful as a clue-card thumbnail. Contract: clue_object_closeup_no_readable_text; script_visual_contract_v2; clue_owner:clue_00:半块鱼符.",
+      "negative_prompt": "现代物件，水印，空白图，错朝代, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, watermark, modern object",
+      "required_subjects": [
+        "半块鱼符",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_00:半块鱼符",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "35164602ea5b4c91",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_00.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_clue_00",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:12:53",
+        "attempts": 1,
+        "prompt_hash": "35164602ea5b4c91",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_00.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_01",
+      "asset_type": "clue",
+      "owner_id": "clue_01",
+      "title": "西夏文刻痕线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one core object fills the frame: 西夏文刻痕. Evidence note: 甲字库墙角刻有歪斜文字，非汉字。. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, watermark, or modern object. The object must be clear, near-camera, useful as a clue-card thumbnail. Contract: clue_object_closeup_no_readable_text; script_visual_contract_v2; clue_owner:clue_01:西夏文刻痕.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代物件，水印，空白图，错朝代, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, watermark, modern object",
+      "required_subjects": [
+        "西夏文刻痕",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_01:西夏文刻痕",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "9d62bbc5c5d02e86",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_01.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_clue_01",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:13:37",
+        "attempts": 2,
+        "prompt_hash": "9d62bbc5c5d02e86",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_01.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_02",
+      "asset_type": "clue",
+      "owner_id": "clue_02",
+      "title": "账册涂改线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one core object fills the frame: 账册涂改. Evidence note: 仓吏值房的账册有多处涂改，墨迹新旧不一。. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, watermark, or modern object. The object must be clear, near-camera, useful as a clue-card thumbnail. Contract: clue_object_closeup_no_readable_text; script_visual_contract_v2; clue_owner:clue_02:账册涂改.",
+      "negative_prompt": "现代物件，水印，空白图，错朝代, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, watermark, modern object",
+      "required_subjects": [
+        "账册涂改",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_02:账册涂改",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "92b5b614b36a35ad",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_02.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_clue_02",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:13:47",
+        "attempts": 1,
+        "prompt_hash": "92b5b614b36a35ad",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_02.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_03",
+      "asset_type": "clue",
+      "owner_id": "clue_03",
+      "title": "掺沙粮袋线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one core object fills the frame: 掺沙粮袋. Evidence note: 码头棚屋下发现一只破粮袋，内有沙粒与霉谷。. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, watermark, or modern object. The object must be clear, near-camera, useful as a clue-card thumbnail. Contract: clue_object_closeup_no_readable_text; script_visual_contract_v2; clue_owner:clue_03:掺沙粮袋.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代物件，水印，空白图，错朝代, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, watermark, modern object",
+      "required_subjects": [
+        "掺沙粮袋",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_03:掺沙粮袋",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "4790832a3b402190",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_03.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_clue_03",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:14:32",
+        "attempts": 2,
+        "prompt_hash": "4790832a3b402190",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_03.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_04",
+      "asset_type": "clue",
+      "owner_id": "clue_04",
+      "title": "车辙印线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one core object fills the frame: 车辙印. Evidence note: 仓后小巷的车辙印深且宽，与寻常粮车不同。. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, watermark, or modern object. The object must be clear, near-camera, useful as a clue-card thumbnail. Contract: clue_object_closeup_no_readable_text; script_visual_contract_v2; clue_owner:clue_04:车辙印.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代物件，水印，空白图，错朝代, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, watermark, modern object",
+      "required_subjects": [
+        "车辙印",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_04:车辙印",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "557f822d8557b926",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_04.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_clue_04",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:15:15",
+        "attempts": 2,
+        "prompt_hash": "557f822d8557b926",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_04.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_05",
+      "asset_type": "clue",
+      "owner_id": "clue_05",
+      "title": "铜钱线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one core object fills the frame: 铜钱. Evidence note: 死者身旁散落数枚铜钱，其中一枚为“熙宁通宝”铁钱。. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, watermark, or modern object. The object must be clear, near-camera, useful as a clue-card thumbnail. Contract: clue_object_closeup_no_readable_text; script_visual_contract_v2; clue_owner:clue_05:铜钱.",
+      "negative_prompt": "现代物件，水印，空白图，错朝代, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, watermark, modern object",
+      "required_subjects": [
+        "铜钱",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_05:铜钱",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "script_visual_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "58598dc666f12a8b",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_05.png",
+      "url": "/api/scripts/p0_song_bbb029/assets/asset_clue_05",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-25T01:15:25",
+        "attempts": 1,
+        "prompt_hash": "58598dc666f12a8b",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_clue_05.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_00",
+      "asset_type": "ending",
+      "owner_id": "ending_00",
+      "title": "真相大白结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_01",
+      "asset_type": "ending",
+      "owner_id": "ending_01",
+      "title": "官官相护结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_02",
+      "asset_type": "ending",
+      "owner_id": "ending_02",
+      "title": "壮士断腕结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_03",
+      "asset_type": "ending",
+      "owner_id": "ending_03",
+      "title": "功成身退结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_04",
+      "asset_type": "ending",
+      "owner_id": "ending_04",
+      "title": "冤案错结结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰",
+        "建筑",
+        "器物"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    }
+  ],
+  "visual_style_guide": {
+    "style_keywords": [
+      "低饱和",
+      "北宋",
+      "历史悬疑"
+    ],
+    "forbidden_visuals": [
+      "现代电线",
+      "塑料",
+      "水印",
+      "空白背景",
+      "错误朝代服饰"
+    ],
+    "color_script": "以灰白、赭石、墨青为主调，雪景冷寂，室内烛光昏黄，血迹暗红。",
+    "camera": "多用固定镜头与缓慢推拉，营造压抑氛围；关键线索以特写呈现。",
+    "era_feature_checklist": [
+      "服饰",
+      "建筑",
+      "器物"
+    ],
+    "appearance_lock": {
+      "npc_00": "赵仓吏：五十余岁，瘦削，山羊胡，常穿旧青衫。",
+      "npc_01": "钱掌柜：四十出头，圆脸微胖，衣着绸缎，手指戴玉扳指。",
+      "npc_02": "孙内侍：三十余岁，面白无须，着紫色内侍服，腰间佩鱼符。",
+      "npc_03": "李脚夫：三十岁，黝黑壮实，粗布短打，腰间系麻绳。"
+    }
+  },
+  "hotspot_positioning": [
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_00",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_00",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_08",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_08",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_16",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_16",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_24",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_24",
+      "anchor_point": {
+        "x": 0.74,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_01",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_01",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_09",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_09",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_17",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_17",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_25",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_25",
+      "anchor_point": {
+        "x": 0.74,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_02",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_02",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_10",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_10",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_18",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_18",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_26",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_26",
+      "anchor_point": {
+        "x": 0.74,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_03",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_03",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_11",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_11",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_19",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_19",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_27",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_27",
+      "anchor_point": {
+        "x": 0.74,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_04",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_04",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_12",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_12",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_20",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_20",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_28",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_28",
+      "anchor_point": {
+        "x": 0.74,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_05",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_05",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_13",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_13",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_21",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_21",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_29",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_29",
+      "anchor_point": {
+        "x": 0.74,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.7,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_06",
+      "hotspot_id": "hotspot_06",
+      "visual_asset_id": "asset_scene_06",
+      "clue_id": "clue_06",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_06.png"
+    },
+    {
+      "location_id": "loc_06",
+      "hotspot_id": "hotspot_14",
+      "visual_asset_id": "asset_scene_06",
+      "clue_id": "clue_14",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_06.png"
+    },
+    {
+      "location_id": "loc_06",
+      "hotspot_id": "hotspot_22",
+      "visual_asset_id": "asset_scene_06",
+      "clue_id": "clue_22",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_06.png"
+    },
+    {
+      "location_id": "loc_07",
+      "hotspot_id": "hotspot_07",
+      "visual_asset_id": "asset_scene_07",
+      "clue_id": "clue_07",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.32
+      },
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_07.png"
+    },
+    {
+      "location_id": "loc_07",
+      "hotspot_id": "hotspot_15",
+      "visual_asset_id": "asset_scene_07",
+      "clue_id": "clue_15",
+      "anchor_point": {
+        "x": 0.38,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.34,
+        "y": 0.46,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_07.png"
+    },
+    {
+      "location_id": "loc_07",
+      "hotspot_id": "hotspot_23",
+      "visual_asset_id": "asset_scene_07",
+      "clue_id": "clue_23",
+      "anchor_point": {
+        "x": 0.56,
+        "y": 0.68
+      },
+      "bbox": {
+        "x": 0.52,
+        "y": 0.64,
+        "width": 0.12,
+        "height": 0.12
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_bbb029/asset_scene_07.png"
+    }
+  ],
+  "quality_gate": {
+    "required_scene_count": 8,
+    "required_npc_count": 4,
+    "required_clue_count": 6,
+    "scene_approved": 8,
+    "npc_approved": 4,
+    "clue_approved": 6,
+    "rejected": 6,
+    "regenerated": 6,
+    "blocked": 0
+  }
+}

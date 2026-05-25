@@ -1,0 +1,70 @@
+- main [ref=e187]:
+  - region "可交互叙事舞台" [ref=e188]
+  - generic "顶部状态栏" [ref=e191]:
+    - generic [ref=e192]:
+      - strong [ref=e193]: 北宋 · 北宋·熙宁年间
+      - generic [ref=e194]: / 丰济仓大门
+      - generic [ref=e195]: 身份：随行文吏
+      - generic [ref=e196]: 当前目标：扩大现场范围，串联文书、物件与口供。
+    - generic "调查进度" [ref=e197]:
+      - generic [ref=e198]: 调查进度
+      - strong [ref=e199]: 21%
+    - button "设置" [ref=e200] [cursor=pointer]
+  - navigation "左侧功能栏" [ref=e201]:
+    - button "展开左侧栏" [ref=e202] [cursor=pointer]: 展
+    - button "场景" [ref=e203] [cursor=pointer]:
+      - img [ref=e205]
+      - strong [ref=e210]: 场景
+    - button "人物" [ref=e211] [cursor=pointer]:
+      - img [ref=e213]
+      - strong [ref=e216]: 人物
+    - button "任务" [ref=e217] [cursor=pointer]:
+      - img [ref=e219]
+      - strong [ref=e222]: 任务
+    - button "智能助手" [ref=e223] [cursor=pointer]:
+      - img [ref=e225]
+      - strong [ref=e227]: 智能助手
+  - region "当前对话" [ref=e228]:
+    - generic [ref=e229]:
+      - generic [ref=e230]: 赵仓吏
+      - generic [ref=e231]:
+        - generic [ref=e232]: 丰济仓副使
+        - generic [ref=e233]: 信任：观望（0）
+    - paragraph [ref=e235]: 你细查此处，发现了“半块鱼符”。 新发现：半块鱼符
+    - generic [ref=e236]:
+      - generic [ref=e237]:
+        - button "出示线索" [ref=e238] [cursor=pointer]
+        - generic "当前选择的证据" [ref=e239]:
+          - generic [ref=e240]: 未选择线索
+      - generic "最近关键线索" [ref=e252]:
+        - button "半块鱼符" [ref=e253] [cursor=pointer]
+      - generic "推荐回复" [ref=e241]:
+        - button "你当时看见了什么？" [ref=e242] [cursor=pointer]
+        - button "这件物证是谁留下的？" [ref=e243] [cursor=pointer]
+        - button "还有谁知道这件事？" [ref=e244] [cursor=pointer]
+      - generic [ref=e245]:
+        - textbox "低声追问，例如：昨夜是谁先到火场？" [ref=e246]
+        - button "继续追问" [ref=e247] [cursor=pointer]
+  - complementary "右侧调查栏" [ref=e254]:
+    - generic [ref=e255]:
+      - generic [ref=e256]: 案卷调查
+      - button "收起" [ref=e257] [cursor=pointer]
+    - navigation "调查栏分页" [ref=e258]:
+      - button "线索" [ref=e259] [cursor=pointer]
+      - button "推理" [ref=e260] [cursor=pointer]
+      - button "笔记" [ref=e261] [cursor=pointer]
+      - button "助手" [ref=e262] [cursor=pointer]
+    - generic [ref=e264]:
+      - generic [ref=e265]:
+        - paragraph [ref=e266]: 已发现线索
+        - heading "1 条" [level=3] [ref=e267]
+      - article [ref=e269]:
+        - img "半块鱼符线索图" [ref=e271]
+        - generic [ref=e272]:
+          - generic [ref=e273]:
+            - strong [ref=e274]: 半块鱼符
+            - generic [ref=e275]: 关键线索
+          - paragraph [ref=e276]: 死者身旁的半块铜鱼符，刻有“西”字与编号。
+          - generic [ref=e277]:
+            - emphasis [ref=e278]: 线索
+            - emphasis [ref=e279]: 关键

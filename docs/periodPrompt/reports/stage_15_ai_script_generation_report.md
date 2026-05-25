@@ -163,14 +163,27 @@ DeepSeek 生成链路依次执行 `pitch_generation`、`script_package_generatio
 - 是否有英文用户可见文本。
 - 是否有 API Key 泄露。
 
+## 17. 复审补充
 
+本次复审重点检查了“报告承诺”和“代码实际行为”是否一致，尤其是生成剧本是否真的来自 DeepSeek 输出，而不是由本地默认文本补齐后冒充完整剧本。
 
-CODEBUDDY.md
+已修正问题：
 
+- `ScriptPackageNormalizer` 不再为缺失的 `world`、`story`、`playable_identities`、`locations`、`npcs`、`clues`、`choices`、`endings` 代写核心内容；缺失或数量不足会抛出 `ScriptNormalizationError`，由生成 job 标记为失败。
+- `story.surface_event`、`story.hidden_truth`、`story.truth_chain_clue_ids` 现在是硬性生成内容；缺任一项都会失败，不再使用“关键文书失踪”等本地通用案情兜底。
+- `visual_assets` 必须包含足量 scene / npc / clue 资产并能映射到对应 owner；缺图像资产不再由本地根据地点、人物、线索描述自动造 5/4/6 个视觉资产。
+- `endings` 必须至少提供可展示的结果文本与 `history_echo`；不再用通用结局文本补齐。
+- `ScriptSupervisor` 的 `CLUE_CHAIN_WEAK` 检查已修正，核心真相链未进入组合推理时会产生 warning。
+- 新增单测覆盖缺 `world`、缺 `story` 核心字段、核心内容数量不足、缺 choices/endings、缺 visual asset 映射、结局文本不完整，以及真相链弱连接 warning。
 
+验证结果：
 
-​stage_15_ai_script_generation_report.md
+- `python -m pytest backend/tests/test_script_normalizer.py backend/tests/test_script_supervisor.py backend/tests/test_script_generation_models.py backend/tests/test_script_generation_api.py backend/tests/test_image_quality_gate.py backend/tests/test_generated_session.py -q`：通过。
+- `python -m pytest backend -q`：135 passed。
+- `npm.cmd run build`：通过；仍有 Vite chunk size warning。
 
+## 18. 复审后仍需关注
 
-
-​   当前问题, 剧本生成完后场景没有人物， 违反了我说的原则人物和场景一起生成， 然后就是当前UI很丑，
+- 当前 `ImageQualityGate` 仍主要依赖文件、元数据、prompt/required_subjects 规则，不能真正从像素语义确认“人物确实在场景里”。仍建议接入独立视觉理解模型或人工抽检。
+- 旧 `ScenarioGenerationPage` 与 `mock/entryFlow` 仍在代码库中，虽未挂载到当前入口，但后续应删除或明确标注废弃，避免回归误用。
+- 当前 UI 已能闭环，但视觉复杂度和组件体量偏大；后续应单独做一次 UI/UX 重构，不要和生成链路逻辑混在同一阶段。

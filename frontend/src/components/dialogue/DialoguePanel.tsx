@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getTrustLabel } from '../../store/gameStore';
-import type { Clue, DialogueHighlight, DialogueTurn, NPCProfile, SessionSnapshot } from '../../types/game';
+import type { Clue, DialogueHighlight, DialogueMessageSource, DialogueTurn, NPCProfile, SessionSnapshot } from '../../types/game';
 
 type DialoguePanelProps = {
   snapshot: SessionSnapshot;
@@ -13,7 +13,7 @@ type DialoguePanelProps = {
   redTexts: string[];
   actionNotice: string;
   busy: boolean;
-  onSendDialogue: (npcId: string, message: string, presentedClueIds: string[]) => void;
+  onSendDialogue: (npcId: string, message: string, presentedClueIds: string[], messageSource: DialogueMessageSource) => void;
 };
 
 function parseLine(actionNotice: string, currentNpc?: NPCProfile): { speaker: string; body: string } {
@@ -217,7 +217,7 @@ export function DialoguePanel({
     ));
   };
 
-  const handleSend = (nextMessage?: string) => {
+  const handleSend = (nextMessage?: string, explicitSource?: DialogueMessageSource) => {
     if (!currentNpc) {
       return;
     }
@@ -225,7 +225,8 @@ export function DialoguePanel({
     if (!content) {
       return;
     }
-    onSendDialogue(currentNpc.npc_id, content, selectedEvidenceIds);
+    const messageSource = explicitSource ?? (selectedEvidenceIds.length > 0 ? 'evidence_present' : 'free_text');
+    onSendDialogue(currentNpc.npc_id, content, selectedEvidenceIds, messageSource);
     setMessage('');
     setSelectedEvidenceIds([]);
     setEvidenceOpen(false);
@@ -330,7 +331,7 @@ export function DialoguePanel({
 
         <div className="suggested-row" aria-label="推荐回复">
           {replySuggestions.map((question) => (
-            <button key={question} type="button" className="suggested-button" onClick={() => handleSend(question)} disabled={busy || !currentNpc}>
+            <button key={question} type="button" className="suggested-button" onClick={() => handleSend(question, 'suggested_option')} disabled={busy || !currentNpc}>
               {question}
             </button>
           ))}

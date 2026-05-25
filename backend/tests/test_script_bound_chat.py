@@ -41,14 +41,21 @@ def start_session_in_scene(*, stage: str = "investigation", scene_id: str = "sce
     return session_id
 
 
-def post_dialogue(session_id: str, npc_id: str, message: str, presented: list[str] | None = None):
+def post_dialogue(
+    session_id: str,
+    npc_id: str,
+    message: str,
+    presented: list[str] | None = None,
+    message_source: str = "free_text",
+):
     return client.post(
         "/api/dialogue",
         json={
             "session_id": session_id,
             "npc_id": npc_id,
             "message": message,
-            "action_type": "present_clue" if presented else "question",
+            "action_type": "suggested_question" if message_source == "suggested_option" else ("present_clue" if presented else "question"),
+            "message_source": message_source,
             "presented_clue_ids": presented or [],
         },
     )
@@ -180,6 +187,37 @@ def test_rule_matched_dialogue_still_uses_ai_agent_when_real_mode_enabled(monkey
     assert "ScriptBoundChat" in fake_ai.last_prompt
     assert "RAG" in fake_ai.last_prompt
     assert engine.sessions[session_id]["logs"][-1].module == "NPCDialogueAgent"
+
+
+def test_suggested_option_uses_fixed_dialogue_without_ai_call(monkeypatch, tmp_path) -> None:
+    fake_ai = GreetingAIClient()
+    runtime_settings = Settings(
+        app_name="测试",
+        version="0.4.0",
+        use_mock_ai=False,
+        ai_provider="deepseek",
+        backend_port=8000,
+        frontend_port=5173,
+        deepseek_base_url="https://example.invalid",
+        deepseek_model="fake-deepseek",
+        ai_timeout_seconds=1,
+        ai_max_retries=0,
+        deepseek_api_key="测试密钥占位",
+    )
+    monkeypatch.setattr(
+        engine,
+        "dialogue_orchestrator",
+        DialogueOrchestrator(ai_client=fake_ai, runtime_settings=runtime_settings, logs=LogService(tmp_path)),
+    )
+    session_id = start_session_in_scene()
+
+    response = post_dialogue(session_id, "npc_worker", "你袖口的旧墨怎么回事？", message_source="suggested_option")
+
+    assert response.status_code == 200, response.text
+    assert fake_ai.last_prompt == ""
+    assert response.json()["fallback_used"] is False
+    assert engine.sessions[session_id]["dialogue_turns"][-1].message_source == "suggested_option"
+    assert engine.sessions[session_id]["logs"][-1].module == "fixed_dialogue"
 
 
 def test_force_truth_does_not_reveal_final_truth_or_superior() -> None:

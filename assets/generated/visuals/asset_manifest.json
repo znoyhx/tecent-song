@@ -68,8 +68,8 @@
       "path": "assets/generated/visuals/clues/clue_burned_page.png",
       "model": "Kwai-Kolors/Kolors",
       "cached": false,
-      "updated_at": "2026-05-22T17:24:22",
-      "call_id": "img_6fba3a54",
+      "updated_at": "2026-05-24T16:34:11",
+      "call_id": "img_16d884af",
       "input_summary": "烧焦残页 / clue_item",
       "prompt_version": "clue_no_text_v3"
     },

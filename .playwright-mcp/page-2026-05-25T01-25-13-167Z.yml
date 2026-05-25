@@ -1,0 +1,76 @@
+- main [ref=e102]:
+  - region "身份选择与剧本概览" [ref=e103]:
+    - generic [ref=e104]:
+      - button "返回流程" [ref=e105] [cursor=pointer]
+      - paragraph [ref=e108]: 步骤 3/3
+      - heading "丰济仓疑云" [level=1] [ref=e110]
+    - generic [ref=e111]:
+      - region "身份选择" [ref=e112]:
+        - heading "身份选择" [level=2] [ref=e115]
+        - generic [ref=e117]:
+          - button "随行文吏 北宋地方文吏，熟悉文书、印记和交接规程。 中身份" [ref=e118] [cursor=pointer]:
+            - generic [ref=e119]: ✓
+            - strong [ref=e120]: 随行文吏
+            - generic [ref=e121]: 北宋地方文吏，熟悉文书、印记和交接规程。
+            - emphasis [ref=e122]: 中身份
+          - button "驿路差人 北宋驿路差人，熟悉行旅、马匹与夜间出入痕迹。 低身份" [ref=e123] [cursor=pointer]:
+            - strong [ref=e124]: 驿路差人
+            - generic [ref=e125]: 北宋驿路差人，熟悉行旅、马匹与夜间出入痕迹。
+            - emphasis [ref=e126]: 低身份
+        - generic [ref=e127]:
+          - textbox "输入自定义身份，例如：游方医者" [ref=e128]
+          - button "校验" [ref=e129] [cursor=pointer]
+      - complementary "剧本概览" [ref=e130]:
+        - heading "剧本概览" [level=2] [ref=e133]
+        - article [ref=e135]:
+          - img "生成剧本主场景" [ref=e136]
+          - generic [ref=e137]:
+            - heading "事件背景" [level=3] [ref=e138]
+            - paragraph [ref=e139]: 北宋汴京东城丰济仓，大雪后惊现无名男尸，身着内侍服饰，身旁散落铜钱与半块鱼符。表面是盗粮失风，但仓中存粮与账册严重不符，现场更有非本朝文字刻痕。死者身份、鱼符来源、粮仓亏空，皆指向西北军粮调运的隐秘。
+          - generic [ref=e140]:
+            - heading "核心人物" [level=3] [ref=e141]
+            - generic [ref=e142]:
+              - generic "赵仓吏" [ref=e143]:
+                - img "赵仓吏" [ref=e144]
+              - generic "钱掌柜" [ref=e145]:
+                - img "钱掌柜" [ref=e146]
+              - generic "孙内侍" [ref=e147]:
+                - img "孙内侍" [ref=e148]
+              - generic "李脚夫" [ref=e149]:
+                - img "李脚夫" [ref=e150]
+          - generic [ref=e151]:
+            - heading "调查目标" [level=3] [ref=e152]
+            - paragraph [ref=e153]: 查明死者身份与死因，追回被盗官粮。
+          - generic [ref=e154]:
+            - generic [ref=e155]: 当前身份
+            - heading "随行文吏" [level=3] [ref=e156]
+            - paragraph [ref=e157]: 你随官署入场，既要顾及规程，也要找出真正能站住脚的证据。
+            - paragraph [ref=e158]: 动机：厘清文书失误背后的责任，避免无辜者被牵连。
+          - generic [ref=e159]:
+            - article [ref=e160]:
+              - generic [ref=e161]: 时代背景
+              - strong [ref=e162]: 北宋 · 北宋·熙宁年间 · 熙宁七年冬
+            - article [ref=e163]:
+              - generic [ref=e164]: 开场地点
+              - strong [ref=e165]: 丰济仓大门
+            - article [ref=e166]:
+              - generic [ref=e167]: 关键词
+              - strong [ref=e168]: 粮仓
+            - article [ref=e169]:
+              - generic [ref=e170]: 地点数量
+              - strong [ref=e171]: 8 处
+            - article [ref=e172]:
+              - generic [ref=e173]: 核心人物
+              - strong [ref=e174]: 4 人
+            - article [ref=e175]:
+              - generic [ref=e176]: 关键线索
+              - strong [ref=e177]: 30 条
+            - article [ref=e178]:
+              - generic [ref=e179]: 结局数量
+              - strong [ref=e180]: 5 个
+            - article [ref=e181]:
+              - generic [ref=e182]: 图片门禁
+              - strong [ref=e183]: 场景 8 / 人物 4 / 线索 6
+    - generic [ref=e184]:
+      - button "返回流程" [ref=e185] [cursor=pointer]
+      - button "开始游戏" [ref=e186] [cursor=pointer]

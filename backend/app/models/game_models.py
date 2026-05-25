@@ -299,6 +299,7 @@ class DialogueTurn(BaseModel):
     npc_name: str
     player_message: str
     action_type: str
+    message_source: Literal["free_text", "suggested_option", "evidence_present"] = "free_text"
     presented_clue_ids: list[str] = Field(default_factory=list)
     npc_response: str
     npc_action: str
@@ -378,6 +379,7 @@ class DialogueRequest(BaseModel):
     npc_id: str
     message: str
     action_type: str = "question"
+    message_source: Literal["free_text", "suggested_option", "evidence_present"] = "free_text"
     presented_clue_ids: list[str] = Field(default_factory=list)
 
 

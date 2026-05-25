@@ -322,6 +322,10 @@ class GameEngine:
         return {
             "session_id": session_id,
             "state": state.model_dump(),
+            "case_overview": {
+                "title": catalog["event"].title,
+                "summary": catalog["event"].surface_event,
+            },
             "dynasty": catalog["dynasty"].model_dump(),
             "player_role": catalog["roles"][state.player_role_id].model_dump(),
             "player_identity": state.player_identity.model_dump() if state.player_identity else None,
@@ -440,21 +444,23 @@ class GameEngine:
         current_scene = catalog["scenes"][state.current_scene_id]
         discovered_clues = [catalog["clues"][clue_id] for clue_id in state.discovered_clue_ids if clue_id in catalog["clues"]]
         presented_clues = [catalog["clues"][clue_id] for clue_id in request.presented_clue_ids if clue_id in catalog["clues"]]
-        orchestrated = self.dialogue_orchestrator.handle_dialogue(
-            state=state,
-            dynasty=catalog["dynasty"],
-            player_role=player_role,
-            player_identity=state.player_identity,
-            current_scene=current_scene,
-            npc=npc,
-            request=request,
-            discovered_clues=discovered_clues,
-            presented_clues=presented_clues,
-            clue_map=catalog["clues"],
-            mock_response=mock_response,
-            supervisor=self.supervisor,
-            script_context=script_context,
-        )
+        orchestrated = None
+        if request.message_source == "free_text":
+            orchestrated = self.dialogue_orchestrator.handle_dialogue(
+                state=state,
+                dynasty=catalog["dynasty"],
+                player_role=player_role,
+                player_identity=state.player_identity,
+                current_scene=current_scene,
+                npc=npc,
+                request=request,
+                discovered_clues=discovered_clues,
+                presented_clues=presented_clues,
+                clue_map=catalog["clues"],
+                mock_response=mock_response,
+                supervisor=self.supervisor,
+                script_context=script_context,
+            )
         if orchestrated is not None:
             response = self.script_bound_chat.finalize_response(
                 response=orchestrated.response,
@@ -482,7 +488,7 @@ class GameEngine:
             )
             fallback_used = False
             ai_success = True
-            log_module = "mock_dialogue"
+            log_module = "fixed_dialogue" if rule is not None else "mock_dialogue"
             if not supervisor_result.pass_:
                 response = self.script_bound_chat.response_for_context(
                     base_response=self._fallback_response_for_npc(npc.name),
@@ -513,6 +519,7 @@ class GameEngine:
             npc_name=npc.name,
             player_message=request.message,
             action_type=request.action_type,
+            message_source=request.message_source,
             presented_clue_ids=request.presented_clue_ids,
             npc_response=response.npc_dialogue,
             npc_action=response.npc_action,
@@ -531,7 +538,7 @@ class GameEngine:
         self._log_call(
             record,
             module=log_module,
-            summary=f"与 {npc.name} 对话",
+            summary=f"与 {npc.name} 对话 / {request.message_source}",
             success=ai_success,
             fallback_used=fallback_used,
             supervisor_pass=supervisor_result.pass_,

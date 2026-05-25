@@ -1,0 +1,48 @@
+- main [ref=e172]:
+  - region "可交互叙事舞台" [ref=e173]
+  - generic "顶部状态栏" [ref=e176]:
+    - generic [ref=e177]:
+      - strong [ref=e178]: 北宋 · 北宋·熙宁年间
+      - generic [ref=e179]: / 丰济仓大门
+      - generic [ref=e180]: 身份：随行文吏
+      - generic [ref=e181]: 当前目标：确认表面事件与第一批可见证据。
+    - generic "调查进度" [ref=e182]:
+      - generic [ref=e183]: 调查进度
+      - strong [ref=e184]: 0%
+    - button "设置" [ref=e185] [cursor=pointer]
+  - navigation "左侧功能栏" [ref=e186]:
+    - button "展开左侧栏" [ref=e187] [cursor=pointer]: 展
+    - button "场景" [ref=e188] [cursor=pointer]:
+      - img [ref=e190]
+      - strong [ref=e195]: 场景
+    - button "人物" [ref=e196] [cursor=pointer]:
+      - img [ref=e198]
+      - strong [ref=e201]: 人物
+    - button "任务" [ref=e202] [cursor=pointer]:
+      - img [ref=e204]
+      - strong [ref=e207]: 任务
+    - button "智能助手" [ref=e208] [cursor=pointer]:
+      - img [ref=e210]
+      - strong [ref=e212]: 智能助手
+  - region "当前对话" [ref=e213]:
+    - generic [ref=e214]:
+      - generic [ref=e215]: 赵仓吏
+      - generic [ref=e216]:
+        - generic [ref=e217]: 丰济仓副使
+        - generic [ref=e218]: 信任：观望（0）
+    - paragraph [ref=e220]: 生成剧本已进入首场景。
+    - generic [ref=e221]:
+      - generic [ref=e222]:
+        - button "出示线索" [disabled] [ref=e223]
+        - generic "当前选择的证据" [ref=e224]:
+          - generic [ref=e225]: 未选择线索
+      - generic "推荐回复" [ref=e226]:
+        - button "你当时看见了什么？" [ref=e227] [cursor=pointer]
+        - button "这件物证是谁留下的？" [ref=e228] [cursor=pointer]
+        - button "还有谁知道这件事？" [ref=e229] [cursor=pointer]
+      - generic [ref=e230]:
+        - textbox "低声追问，例如：昨夜是谁先到火场？" [ref=e231]
+        - button "继续追问" [ref=e232] [cursor=pointer]
+  - button "展开右侧调查栏" [ref=e233] [cursor=pointer]:
+    - generic [ref=e234]: 案
+    - strong [ref=e235]: 调查栏

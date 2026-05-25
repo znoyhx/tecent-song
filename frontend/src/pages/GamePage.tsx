@@ -9,7 +9,7 @@ import { EndingPanel } from '../components/ending/EndingPanel';
 import { PhaserStage } from '../components/scene/PhaserStage';
 import { ScenePanel } from '../components/scene/ScenePanel';
 import { getTrustLabel, stageDescriptions } from '../store/gameStore';
-import type { NPCProfile, Scene, SessionSnapshot } from '../types/game';
+import type { DialogueMessageSource, NPCProfile, Scene, SessionSnapshot } from '../types/game';
 
 type GamePageProps = {
   snapshot: SessionSnapshot;
@@ -23,7 +23,7 @@ type GamePageProps = {
   onEnterScene: (sceneId: string) => void;
   onInspect: (sceneId: string, hotspotId: string, clueId?: string | null) => void;
   onSelectNpc: (npcId: string) => void;
-  onSendDialogue: (npcId: string, message: string, presentedClueIds: string[]) => void;
+  onSendDialogue: (npcId: string, message: string, presentedClueIds: string[], messageSource: DialogueMessageSource) => void;
   onSubmitDeduction: (deductionId: string, selectedClueIds: string[]) => void;
   onChoose: (choiceId: string) => void;
   onRestart: () => void;
@@ -60,10 +60,16 @@ const mainSurfaceIgnoreSelector = [
 ].join(', ');
 
 function sceneImageUrl(scene: Scene): string {
-  if (scene.visual_status !== 'generated') {
+  if (scene.visual_status !== 'generated' && scene.visual_status !== 'approved') {
     return '';
   }
-  return resolveApiUrl(scene.visual_asset_url, scene.visual_asset_id ? `/api/visual/assets/${scene.visual_asset_id}` : '');
+  if (scene.visual_asset_url) {
+    return resolveApiUrl(scene.visual_asset_url);
+  }
+  if (scene.visual_asset_id && !scene.visual_asset_id.startsWith('asset_')) {
+    return resolveApiUrl(`/api/visual/assets/${scene.visual_asset_id}`);
+  }
+  return '';
 }
 
 function npcDisplayImage(npc: NPCProfile): { url: string; source: 'scene-cutout' | 'portrait' } {
@@ -234,7 +240,7 @@ function SceneGridModal({ snapshot, busy, onClose, onEnterScene }: { snapshot: S
           return (
             <article key={scene.scene_id} className={current ? 'scene-grid-card current' : 'scene-grid-card'}>
               <div className="scene-grid-image">
-                {imageUrl ? <img src={imageUrl} alt={`${scene.name}场景图`} /> : <span>场景图待生成</span>}
+                {imageUrl ? <img src={imageUrl} alt={`${scene.name}场景图`} /> : null}
               </div>
               <div className="scene-grid-copy">
                 <div className="detail-head">

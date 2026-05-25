@@ -174,6 +174,8 @@ export type DialogueHighlight = {
   display_text: string;
 };
 
+export type DialogueMessageSource = 'free_text' | 'suggested_option' | 'evidence_present';
+
 export type ComboSummary = {
   combo_id: string;
   required_clue_ids: string[];
@@ -204,6 +206,7 @@ export type DialogueTurn = {
   npc_name: string;
   player_message: string;
   action_type: string;
+  message_source?: DialogueMessageSource;
   presented_clue_ids: string[];
   npc_response: string;
   npc_action: string;
@@ -279,6 +282,10 @@ export type DebugLog = {
 export type SessionSnapshot = {
   session_id: string;
   state: GameState;
+  case_overview?: {
+    title: string;
+    summary: string;
+  };
   dynasty: Dynasty;
   player_role: PlayerRole;
   player_identity: PlayerIdentity | null;
@@ -391,6 +398,38 @@ export type ScriptJob = {
   script_id?: string | null;
 };
 
+export type GeneratedScriptDemo = {
+  script_id: string;
+  job_id?: string | null;
+  dynasty_id: 'song' | 'late_tang';
+  title: string;
+  logline: string;
+  case_summary: string;
+  opening_location: string;
+  keywords: string[];
+  generated_at?: string | null;
+  updated_at?: string | null;
+  ready_for_overview: boolean;
+  playable: boolean;
+  default_identity_id?: string | null;
+  thumbnail_url?: string | null;
+  counts: {
+    locations: number;
+    hotspots: number;
+    clues: number;
+    npcs: number;
+    deductions: number;
+    chapter_sections: number;
+    choices: number;
+    endings: number;
+  };
+  visual_quality: {
+    scene: number;
+    npc: number;
+    clue: number;
+  };
+};
+
 export type PlayableIdentity = {
   identity_id: string;
   display_name: string;
@@ -433,9 +472,32 @@ export type VisualAsset = {
 
 export type ScriptPackage = {
   script_id: string;
+  job_id?: string | null;
   dynasty_id: 'song' | 'late_tang';
   keywords: string[];
+  generation_source?: 'deepseek' | string;
+  generated_at?: string;
   script_overview: ScriptOverview;
   playable_identities: PlayableIdentity[];
+  world?: {
+    dynasty_id: 'song' | 'late_tang';
+    dynasty_name: string;
+    era_name: string;
+    year_hint: string;
+    location_region: string;
+  };
+  locations?: Array<{ location_id: string; name: string }>;
+  npcs?: Array<{ npc_id: string; name: string; public_identity: string }>;
+  clues?: Array<{ clue_id: string; title: string }>;
+  deductions?: DeductionSummary[];
+  chapter_sections?: Array<{
+    section_id: string;
+    stage: string;
+    title: string;
+    scene_id: string;
+    goal: string;
+    display_text: string;
+  }>;
+  endings?: Array<{ ending_id: string; title: string }>;
   visual_assets: VisualAsset[];
 };

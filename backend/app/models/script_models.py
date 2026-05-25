@@ -1,12 +1,44 @@
 from __future__ import annotations
 
 from datetime import datetime
+import re
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 P0_DYNASTY_IDS = {"song", "late_tang"}
+KEYWORDS_ENCODING_INVALID_MESSAGE = "关键词疑似编码损坏，请重新输入中文关键词后再生成。"
+_CJK_RE = re.compile(r"[\u4e00-\u9fff]")
+_ASCII_ALNUM_RE = re.compile(r"[A-Za-z0-9]")
+_C1_CONTROL_RE = re.compile(r"[\u0080-\u009f]")
+_MOJIBAKE_RE = re.compile(r"(Ã|Â|â€|�|(?:[åçéèæä]\S*){2,})")
+_PUNCTUATION_ONLY_RE = re.compile(r"^[\s\W_]+$", re.UNICODE)
+
+
+def keyword_encoding_issue(keyword: str) -> str | None:
+    text = str(keyword).strip()
+    if not text:
+        return "关键词不能为空"
+    if all(char in {"?", "？", "�"} or char.isspace() for char in text):
+        return KEYWORDS_ENCODING_INVALID_MESSAGE
+    if _C1_CONTROL_RE.search(text) or _MOJIBAKE_RE.search(text):
+        return KEYWORDS_ENCODING_INVALID_MESSAGE
+    if _PUNCTUATION_ONLY_RE.fullmatch(text) and not _CJK_RE.search(text) and not _ASCII_ALNUM_RE.search(text):
+        return KEYWORDS_ENCODING_INVALID_MESSAGE
+    if not _CJK_RE.search(text) and not _ASCII_ALNUM_RE.search(text):
+        return KEYWORDS_ENCODING_INVALID_MESSAGE
+    return None
+
+
+def clean_script_keywords(value: list[str]) -> list[str]:
+    cleaned = [str(item).strip() for item in value if str(item).strip()]
+    if not 1 <= len(cleaned) <= 8:
+        raise ValueError("关键词必须为 1-8 个")
+    invalid = [item for item in cleaned if keyword_encoding_issue(item)]
+    if invalid:
+        raise ValueError(KEYWORDS_ENCODING_INVALID_MESSAGE)
+    return cleaned
 
 
 class NormalizedPoint(BaseModel):
@@ -162,6 +194,30 @@ class ClueGraphRule(BaseModel):
     effects: dict[str, Any] = Field(default_factory=dict)
 
 
+class ScriptDeduction(BaseModel):
+    deduction_id: str
+    question: str
+    required_clue_ids: list[str] = Field(default_factory=list)
+    correct_clue_ids: list[str] = Field(default_factory=list)
+    wrong_feedback: str
+    success_text: str
+    effects: dict[str, Any] = Field(default_factory=dict)
+
+
+class ScriptChapterSection(BaseModel):
+    section_id: str
+    stage: str
+    title: str
+    trigger_conditions: list[str] = Field(default_factory=list)
+    scene_id: str
+    npc_ids: list[str] = Field(default_factory=list)
+    hotspot_ids: list[str] = Field(default_factory=list)
+    clue_ids: list[str] = Field(default_factory=list)
+    next_section_ids: list[str] = Field(default_factory=list)
+    goal: str
+    display_text: str
+
+
 class ScriptDialogueRule(BaseModel):
     dialogue_id: str
     npc_id: str
@@ -247,7 +303,7 @@ class HotspotPositioning(BaseModel):
 
 
 class QualityGateSummary(BaseModel):
-    required_scene_count: int = 5
+    required_scene_count: int = 8
     required_npc_count: int = 4
     required_clue_count: int = 6
     scene_approved: int = 0
@@ -275,6 +331,8 @@ class ScriptPackage(BaseModel):
     relationships: list[ScriptRelationship] = Field(default_factory=list)
     clues: list[ScriptClue] = Field(min_length=1)
     clue_graph: list[ClueGraphRule] = Field(default_factory=list)
+    deductions: list[ScriptDeduction] = Field(default_factory=list)
+    chapter_sections: list[ScriptChapterSection] = Field(default_factory=list)
     dialogue_rules: list[ScriptDialogueRule] = Field(default_factory=list)
     choices: list[ScriptChoice] = Field(default_factory=list)
     endings: list[ScriptEnding] = Field(min_length=1)
@@ -286,10 +344,7 @@ class ScriptPackage(BaseModel):
     @field_validator("keywords")
     @classmethod
     def clean_keywords(cls, value: list[str]) -> list[str]:
-        cleaned = [item.strip() for item in value if item.strip()]
-        if not 1 <= len(cleaned) <= 8:
-            raise ValueError("关键词必须为 1-8 个")
-        return cleaned
+        return clean_script_keywords(value)
 
     @model_validator(mode="after")
     def ensure_world_matches(self) -> "ScriptPackage":
@@ -305,12 +360,7 @@ class ScriptGenerateRequest(BaseModel):
     @field_validator("keywords")
     @classmethod
     def validate_keywords(cls, value: list[str]) -> list[str]:
-        cleaned = [str(item).strip() for item in value if str(item).strip()]
-        if not cleaned:
-            raise ValueError("请至少填写 1 个关键词")
-        if len(cleaned) > 8:
-            raise ValueError("关键词最多 8 个")
-        return cleaned
+        return clean_script_keywords(value)
 
 
 class ScriptJobStep(BaseModel):
@@ -332,7 +382,7 @@ class TransitionalQuote(BaseModel):
 
 
 class VisualQualitySummary(BaseModel):
-    scene: dict[str, int] = Field(default_factory=lambda: {"required": 5, "approved": 0, "rejected": 0, "regenerated": 0, "blocked": 0})
+    scene: dict[str, int] = Field(default_factory=lambda: {"required": 8, "approved": 0, "rejected": 0, "regenerated": 0, "blocked": 0})
     npc: dict[str, int] = Field(default_factory=lambda: {"required": 4, "approved": 0, "rejected": 0, "regenerated": 0, "blocked": 0})
     clue: dict[str, int] = Field(default_factory=lambda: {"required": 6, "approved": 0, "rejected": 0, "regenerated": 0, "blocked": 0})
 
@@ -357,4 +407,11 @@ class ScriptJob(BaseModel):
 
 class StartGeneratedRequest(BaseModel):
     script_id: str
-    identity_id: str
+    identity_id: str | None = None
+    custom_identity_text: str | None = None
+
+    @model_validator(mode="after")
+    def require_identity(self) -> "StartGeneratedRequest":
+        if not (self.identity_id or (self.custom_identity_text and self.custom_identity_text.strip())):
+            raise ValueError("必须选择身份或填写自定义身份")
+        return self

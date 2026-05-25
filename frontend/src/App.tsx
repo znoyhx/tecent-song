@@ -2,13 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api } from './api/client';
 import { AudioDirector } from './components/audio/AudioDirector';
-import { ScriptKeywordPage, ScriptOverviewPage, ScriptProgressPage } from './components/script-generation/ScriptGenerationFlow';
+import { FixedDemoOverviewPage, ScriptOverviewPage, ScriptProgressPage } from './components/script-generation/ScriptGenerationFlow';
 import { GamePage } from './pages/GamePage';
 import { StartPage } from './pages/StartPage';
 import type {
   DialogueHighlight,
+  DialogueMessageSource,
   Dynasty,
+  GeneratedScriptDemo,
   HealthResponse,
+  PlayerIdentityRecommendations,
   ScriptJob,
   ScriptPackage,
   SessionSnapshot,
@@ -22,7 +25,7 @@ const mingRuntimePayload = {
   event_id: 'ming_bookshop_fire',
 };
 
-type EntryMode = 'home' | 'setup' | 'keywords' | 'progress' | 'overview';
+type EntryMode = 'home' | 'setup' | 'fixedOverview' | 'progress' | 'overview';
 
 const fallbackDynasties: Dynasty[] = [
   {
@@ -99,6 +102,10 @@ function App() {
   const [keywordText, setKeywordText] = useState('');
   const [scriptJob, setScriptJob] = useState<ScriptJob | null>(null);
   const [scriptPackage, setScriptPackage] = useState<ScriptPackage | null>(null);
+  const [savedDemos, setSavedDemos] = useState<GeneratedScriptDemo[]>([]);
+  const [savedDemosLoaded, setSavedDemosLoaded] = useState(false);
+  const [savedDemosError, setSavedDemosError] = useState('');
+  const [fixedIdentityRecommendations, setFixedIdentityRecommendations] = useState<PlayerIdentityRecommendations | null>(null);
   const [snapshot, setSnapshot] = useState<SessionSnapshot | null>(null);
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
@@ -115,18 +122,43 @@ function App() {
     [dynasties, selectedDynastyId],
   );
 
+  const loadSavedDemos = async () => {
+    setSavedDemosError('');
+    try {
+      const result = await api.listGeneratedDemos();
+      setSavedDemos(result.demos);
+    } catch {
+      setSavedDemos([]);
+      setSavedDemosError('已生成 Demo 暂时无法读取');
+    } finally {
+      setSavedDemosLoaded(true);
+    }
+  };
+
   useEffect(() => {
     const loadBootData = async () => {
       setLoadingBoot(true);
+      setSavedDemosError('');
       try {
-        const [healthResult, dynastyResult] = await Promise.allSettled([api.getHealth(), api.getDynasties()]);
+        const [healthResult, dynastyResult, demoResult] = await Promise.allSettled([
+          api.getHealth(),
+          api.getDynasties(),
+          api.listGeneratedDemos(),
+        ]);
         setHealth(healthResult.status === 'fulfilled' ? healthResult.value : null);
         if (dynastyResult.status === 'fulfilled' && dynastyResult.value.dynasties.length > 0) {
           const backendDynasties = dynastyResult.value.dynasties;
           const hasTang = backendDynasties.some((item) => item.dynasty_id === 'tang' || item.dynasty_id === 'late_tang');
           setDynasties(hasTang ? backendDynasties : [...backendDynasties, fallbackDynasties[2]]);
         }
+        if (demoResult.status === 'fulfilled') {
+          setSavedDemos(demoResult.value.demos);
+        } else {
+          setSavedDemos([]);
+          setSavedDemosError('已生成 Demo 暂时无法读取');
+        }
       } finally {
+        setSavedDemosLoaded(true);
         setLoadingBoot(false);
       }
     };
@@ -166,11 +198,14 @@ function App() {
     return nextSnapshot;
   };
 
-  const startMingDemo = async () => {
+  const startMingDemo = async (identityId?: string, customIdentityText?: string) => {
     setBusy(true);
     setErrorText('');
     try {
-      const nextSnapshot = await api.startSession(mingRuntimePayload);
+      const nextSnapshot = await api.startSession({
+        ...mingRuntimePayload,
+        ...(customIdentityText ? { custom_identity_text: customIdentityText } : identityId ? { identity_id: identityId } : {}),
+      });
       setSnapshot(nextSnapshot);
       setSelectedNpcId(nextSnapshot.scene_npcs[0]?.npc_id ?? null);
       setSuggestedQuestions(['昨夜谁先到火场？', '这条线索能说明什么？', '还有谁接触过旧书箱？']);
@@ -182,19 +217,8 @@ function App() {
     }
   };
 
-  const handlePrepareScenario = () => {
-    const targetDynastyId = selectedDynastyId || 'ming';
-    setSelectedDynastyId(targetDynastyId);
-    setErrorText('');
-    if (targetDynastyId === 'ming') {
-      void startMingDemo();
-      return;
-    }
-    setEntryMode('keywords');
-  };
-
-  const handleGenerateScript = async () => {
-    if (!selectedDynasty || selectedDynasty.dynasty_id === 'ming') {
+  const handleGenerateScript = async (targetDynasty = selectedDynasty) => {
+    if (!targetDynasty || targetDynasty.dynasty_id === 'ming') {
       setErrorText('请先选择北宋或晚唐。');
       return;
     }
@@ -214,7 +238,7 @@ function App() {
     setBusy(true);
     setErrorText('');
     try {
-      const job = await api.generateScript({ dynasty_id: generatedDynastyId(selectedDynasty.dynasty_id), keywords });
+      const job = await api.generateScript({ dynasty_id: generatedDynastyId(targetDynasty.dynasty_id), keywords });
       setScriptJob(job);
       setScriptPackage(null);
       setEntryMode('progress');
@@ -223,6 +247,28 @@ function App() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const handlePrepareScenario = async () => {
+    const defaultDynastyId = dynasties.find((item) => item.enabled)?.dynasty_id ?? 'ming';
+    const targetDynastyId = selectedDynastyId || defaultDynastyId;
+    const targetDynasty = dynasties.find((item) => item.dynasty_id === targetDynastyId) ?? fallbackDynasties[0];
+    setSelectedDynastyId(targetDynasty.dynasty_id);
+    setErrorText('');
+    if (targetDynasty.dynasty_id === 'ming') {
+      setBusy(true);
+      try {
+        const recommendations = await api.getPlayerIdentities({ dynasty_id: 'ming', event_id: mingRuntimePayload.event_id });
+        setFixedIdentityRecommendations(recommendations);
+        setEntryMode('fixedOverview');
+      } catch (error) {
+        setErrorText(error instanceof Error ? error.message : '读取明代身份与概览失败。');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+    void handleGenerateScript(targetDynasty);
   };
 
   const openOverview = async (job = scriptJob) => {
@@ -236,6 +282,7 @@ function App() {
       const script = await api.getScript(job.script_id);
       setScriptPackage(script);
       setEntryMode('overview');
+      void loadSavedDemos();
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : '读取剧本概览失败。');
     } finally {
@@ -243,7 +290,50 @@ function App() {
     }
   };
 
-  const handleStartGenerated = async (identityId: string) => {
+  const completedDemoJob = (script: ScriptPackage): ScriptJob => {
+    const approved = (assetType: 'scene' | 'npc' | 'clue') =>
+      script.visual_assets.filter((asset) => asset.asset_type === assetType && asset.quality_gate.status === 'approved').length;
+    const sceneApproved = approved('scene');
+    const npcApproved = approved('npc');
+    const clueApproved = approved('clue');
+
+    return {
+      job_id: `saved_${script.script_id}`,
+      dynasty_id: script.dynasty_id,
+      keywords: script.keywords,
+      status: 'completed',
+      progress: 100,
+      current_step: 'completed',
+      steps: [],
+      blocking_issues: [],
+      transitional_quote: null,
+      visual_quality: {
+        scene: { approved: sceneApproved, required: Math.max(8, sceneApproved) },
+        npc: { approved: npcApproved, required: Math.max(4, npcApproved) },
+        clue: { approved: clueApproved, required: Math.max(6, clueApproved) },
+      },
+      ready_for_overview: true,
+      script_id: script.script_id,
+    };
+  };
+
+  const handleOpenSavedDemo = async (scriptId: string) => {
+    setBusy(true);
+    setErrorText('');
+    try {
+      const script = await api.getScript(scriptId);
+      setScriptPackage(script);
+      setScriptJob(completedDemoJob(script));
+      setSelectedDynastyId(script.dynasty_id);
+      setEntryMode('overview');
+    } catch (error) {
+      setErrorText(error instanceof Error ? error.message : '读取已保存 Demo 失败。');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleStartGenerated = async (identityPayload: { identity_id?: string; custom_identity_text?: string }) => {
     if (!scriptPackage) {
       setErrorText('生成剧本尚未载入。');
       return;
@@ -251,7 +341,7 @@ function App() {
     setBusy(true);
     setErrorText('');
     try {
-      const nextSnapshot = await api.startGeneratedSession({ script_id: scriptPackage.script_id, identity_id: identityId });
+      const nextSnapshot = await api.startGeneratedSession({ script_id: scriptPackage.script_id, ...identityPayload });
       setSnapshot(nextSnapshot);
       setSelectedNpcId(nextSnapshot.scene_npcs[0]?.npc_id ?? null);
       setSuggestedQuestions(['你当时看见了什么？', '这件物证是谁留下的？', '还有谁知道这件事？']);
@@ -304,7 +394,7 @@ function App() {
     }
   };
 
-  const handleSendDialogue = async (npcId: string, message: string, presentedClueIds: string[]) => {
+  const handleSendDialogue = async (npcId: string, message: string, presentedClueIds: string[], messageSource: DialogueMessageSource) => {
     if (!snapshot) {
       return;
     }
@@ -315,7 +405,8 @@ function App() {
         session_id: snapshot.session_id,
         npc_id: npcId,
         message,
-        action_type: presentedClueIds.length > 0 ? 'present_clue' : 'question',
+        action_type: messageSource === 'suggested_option' ? 'suggested_question' : (presentedClueIds.length > 0 ? 'present_clue' : 'question'),
+        message_source: messageSource,
         presented_clue_ids: presentedClueIds,
       });
       setSuggestedQuestions(result.dialogue.suggested_questions);
@@ -373,6 +464,7 @@ function App() {
     setSnapshot(null);
     setScriptJob(null);
     setScriptPackage(null);
+    setFixedIdentityRecommendations(null);
     setSelectedDynastyId('');
     setKeywordText('');
     setEntryMode('home');
@@ -425,18 +517,13 @@ function App() {
             onToggleDebug={debugUiAllowed ? handleToggleDebug : undefined}
           />
         </>
-      ) : entryMode === 'keywords' && selectedDynasty ? (
-        <ScriptKeywordPage
-          dynasty={selectedDynasty}
-          keywordText={keywordText}
+      ) : entryMode === 'fixedOverview' && fixedIdentityRecommendations ? (
+        <FixedDemoOverviewPage
+          identities={fixedIdentityRecommendations}
           busy={busy}
           errorText={errorText}
-          onKeywordTextChange={(value) => {
-            setKeywordText(value);
-            setErrorText('');
-          }}
           onBack={() => setEntryMode('setup')}
-          onGenerate={handleGenerateScript}
+          onStart={(payload) => void startMingDemo(payload.identity_id, payload.custom_identity_text)}
         />
       ) : entryMode === 'progress' && scriptJob ? (
         <ScriptProgressPage
@@ -451,7 +538,7 @@ function App() {
           script={scriptPackage}
           busy={busy}
           errorText={errorText}
-          onBack={() => setEntryMode('progress')}
+          onBack={() => setEntryMode(scriptJob.job_id.startsWith('saved_') ? 'setup' : 'progress')}
           onStart={handleStartGenerated}
         />
       ) : (
@@ -462,7 +549,11 @@ function App() {
           keywordText={keywordText}
           busy={busy}
           errorText={errorText}
+          savedDemos={savedDemos}
+          savedDemosLoaded={savedDemosLoaded}
+          savedDemosError={savedDemosError}
           onStart={() => {
+            setSelectedDynastyId((current) => current || dynasties.find((item) => item.enabled)?.dynasty_id || 'ming');
             setEntryMode('setup');
             setErrorText('');
           }}
@@ -472,6 +563,7 @@ function App() {
           }}
           onKeywordTextChange={setKeywordText}
           onPrepareScenario={handlePrepareScenario}
+          onOpenSavedDemo={(scriptId) => void handleOpenSavedDemo(scriptId)}
         />
       )}
       {!health ? <span className="sr-only">后端状态未知，部分功能可能不可用。</span> : null}

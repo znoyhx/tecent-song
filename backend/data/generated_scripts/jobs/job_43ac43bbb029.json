@@ -1,0 +1,289 @@
+{
+  "job_id": "job_43ac43bbb029",
+  "dynasty_id": "song",
+  "keywords": [
+    "粮仓"
+  ],
+  "status": "completed",
+  "progress": 100,
+  "current_step": "completed",
+  "steps": [
+    {
+      "step_id": "pitch_generation",
+      "title": "生成案件构想",
+      "description": "DeepSeek 根据朝代与关键词生成案件骨架。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:08:12",
+      "completed_at": "2026-05-25T01:08:17",
+      "metadata": {
+        "call_id": "call_c164cfca61"
+      }
+    },
+    {
+      "step_id": "script_package_generation",
+      "title": "生成结构化剧本",
+      "description": "DeepSeek 输出完整 ScriptPackage JSON 初稿。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:08:17",
+      "completed_at": "2026-05-25T01:08:48",
+      "metadata": {
+        "call_id": "call_2e2be25c48"
+      }
+    },
+    {
+      "step_id": "script_doctor_review",
+      "title": "编剧审稿",
+      "description": "DeepSeek 审核人物动机、可玩性与信息边界。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:08:48",
+      "completed_at": "2026-05-25T01:08:55",
+      "metadata": {
+        "call_id": "call_af69a41105"
+      }
+    },
+    {
+      "step_id": "logic_qa_review",
+      "title": "逻辑 QA",
+      "description": "DeepSeek 检查线索链、阶段推进与结局可达。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:08:55",
+      "completed_at": "2026-05-25T01:09:02",
+      "metadata": {
+        "call_id": "call_bf17f7bcaa"
+      }
+    },
+    {
+      "step_id": "refinement_repair",
+      "title": "修复合并",
+      "description": "DeepSeek 按审稿意见修复并合并最终剧本。",
+      "status": "passed",
+      "message": "DeepSeek 本轮输出已解析为 JSON。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:09:02",
+      "completed_at": "2026-05-25T01:09:07",
+      "metadata": {
+        "call_id": "call_a8a769dab0",
+        "repair_check": {
+          "repair_notes": [
+            "将概览中“内侍服饰”改为“宫中服饰”，隐藏死者具体身份。",
+            "在仓吏值房或粮铺增加一本“西夏商旅账册”作为间接线索，引导玩家联想。",
+            "为李脚夫增加一条线索：他曾目睹钱掌柜深夜进入丰济仓，并收到封口费。",
+            "在locations中，对于死者出现的loc_02和loc_06，添加备注说明是尸体发现地点或回忆场景。",
+            "补充endings数组，定义5个结局及其触发条件。",
+            "补充choices数组，定义5个关键选择及其影响。",
+            "补充deductions数组，定义8个推理节点。",
+            "确保所有30个线索在first_clues或后续数组中完整列出。"
+          ],
+          "blocking_issues": [
+            "死者孙内侍的“西北边军密使”身份在概览中直接暴露，导致玩家失去身份推理环节。",
+            "真相链中“西夏文刻痕”作为关键线索，但未在NPC或地点描述中铺垫，玩家可能无法自然联想。",
+            "李脚夫作为目击者，其证言“粮袋掺沙”与主线关联较弱，建议增加其与钱掌柜或赵仓吏的互动。",
+            "死者孙内侍（npc_02）出现在locations的loc_02和loc_06中，但作为死者，其出现可能不合理，除非是尸体或回忆。",
+            "script中未定义endings、choices、deductions的具体内容，但counts中声明有相应数量，需补充。"
+          ]
+        }
+      }
+    },
+    {
+      "step_id": "script_supervisor",
+      "title": "剧本监管",
+      "description": "后端校验 schema、朝代、线索链、剧透与可达性。",
+      "status": "passed",
+      "message": "剧本监管通过。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:09:07",
+      "completed_at": "2026-05-25T01:09:07",
+      "metadata": {
+        "passed": true,
+        "issues": [],
+        "blocking_issues": []
+      }
+    },
+    {
+      "step_id": "volume_gate_review",
+      "title": "体量门禁",
+      "description": "后端校验场景、热点、线索、推理、章节、选择和结局数量。",
+      "status": "passed",
+      "message": "剧本体量与引用关系通过。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:09:07",
+      "completed_at": "2026-05-25T01:09:07",
+      "metadata": {
+        "passed": true,
+        "counts": {
+          "locations": 8,
+          "hotspots": 30,
+          "clues": 30,
+          "clue_graph": 6,
+          "deductions": 8,
+          "chapter_sections": 12,
+          "choices": 5,
+          "endings": 5,
+          "scene_assets": 8,
+          "hotspot_positioning": 30
+        },
+        "missing": {
+          "locations": 0,
+          "hotspots": 0,
+          "clues": 0,
+          "clue_graph": 0,
+          "deductions": 0,
+          "chapter_sections": 0,
+          "choices": 0,
+          "endings": 0,
+          "scene_assets": 0,
+          "hotspot_positioning": 0
+        },
+        "issues": [],
+        "blocking_issues": []
+      }
+    },
+    {
+      "step_id": "visual_generation",
+      "title": "生成视觉资产",
+      "description": "后端生成场景图、人物图和核心线索图。",
+      "status": "passed",
+      "message": "图片请求已完成，进入质量门禁。",
+      "attempts": 7,
+      "started_at": "2026-05-25T01:09:07",
+      "completed_at": "2026-05-25T01:15:28",
+      "metadata": {}
+    },
+    {
+      "step_id": "image_quality_gate",
+      "title": "图片质量门禁",
+      "description": "拒绝占位、空白、错风格、错朝代或缺核心物件的图片。",
+      "status": "passed",
+      "message": "必需图片已全部 approved。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:15:28",
+      "completed_at": "2026-05-25T01:15:28",
+      "metadata": {}
+    },
+    {
+      "step_id": "hotspot_calibration",
+      "title": "热点坐标校准",
+      "description": "基于 approved 图片生成 0-1 归一化坐标。",
+      "status": "passed",
+      "message": "热点坐标已校准。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:15:28",
+      "completed_at": "2026-05-25T01:15:28",
+      "metadata": {}
+    },
+    {
+      "step_id": "script_import",
+      "title": "导入游戏引擎",
+      "description": "把生成剧本导入现有调查、对话、线索和结局系统。",
+      "status": "passed",
+      "message": "生成剧本已准备进入现有游戏引擎。",
+      "attempts": 1,
+      "started_at": "2026-05-25T01:15:28",
+      "completed_at": "2026-05-25T01:15:28",
+      "metadata": {}
+    }
+  ],
+  "blocking_issues": [],
+  "transitional_quote": {
+    "text": "疑则勿用，用则勿疑；然疑案之中，先问证据。",
+    "author": "司马光",
+    "source": "仿史论语气"
+  },
+  "visual_quality": {
+    "scene": {
+      "required": 8,
+      "approved": 8,
+      "rejected": 0,
+      "regenerated": 0,
+      "blocked": 0
+    },
+    "npc": {
+      "required": 4,
+      "approved": 4,
+      "rejected": 3,
+      "regenerated": 3,
+      "blocked": 0
+    },
+    "clue": {
+      "required": 6,
+      "approved": 6,
+      "rejected": 3,
+      "regenerated": 3,
+      "blocked": 0
+    }
+  },
+  "ready_for_overview": true,
+  "script_id": "p0_song_bbb029",
+  "created_at": "2026-05-25T01:08:12",
+  "updated_at": "2026-05-25T01:15:28",
+  "ai_calls": [
+    {
+      "module": "DeepSeekScriptPitch",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/粮仓",
+      "latency": 4542,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_c164cfca61.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_c164cfca61.json"
+    },
+    {
+      "module": "DeepSeekScriptSeed",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/粮仓",
+      "latency": 31594,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_2e2be25c48.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_2e2be25c48.json"
+    },
+    {
+      "module": "DeepSeekScriptDoctor",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/粮仓",
+      "latency": 6486,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_af69a41105.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_af69a41105.json"
+    },
+    {
+      "module": "DeepSeekLogicQA",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/粮仓",
+      "latency": 7318,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_bf17f7bcaa.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_bf17f7bcaa.json"
+    },
+    {
+      "module": "DeepSeekScriptRepairPlan",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "input_summary": "song/粮仓",
+      "latency": 4713,
+      "success": true,
+      "supervisor_pass": true,
+      "fallback_used": false,
+      "prompt_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\prompts\\call_a8a769dab0.txt",
+      "response_path": "D:\\SomeFunnyProjFromGithub\\HistoryGame\\backend\\logs\\responses\\call_a8a769dab0.json"
+    }
+  ]
+}

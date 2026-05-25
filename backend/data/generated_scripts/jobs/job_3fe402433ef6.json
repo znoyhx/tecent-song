@@ -1,0 +1,170 @@
+{
+  "job_id": "job_3fe402433ef6",
+  "dynasty_id": "song",
+  "keywords": [
+    "驿站",
+    "军报",
+    "雨夜",
+    "粮草"
+  ],
+  "status": "queued",
+  "progress": 0,
+  "current_step": "queued",
+  "steps": [
+    {
+      "step_id": "pitch_generation",
+      "title": "生成案件构想",
+      "description": "DeepSeek 根据朝代与关键词生成案件骨架。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "script_package_generation",
+      "title": "生成结构化剧本",
+      "description": "DeepSeek 输出完整 ScriptPackage JSON 初稿。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "script_doctor_review",
+      "title": "编剧审稿",
+      "description": "DeepSeek 审核人物动机、可玩性与信息边界。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "logic_qa_review",
+      "title": "逻辑 QA",
+      "description": "DeepSeek 检查线索链、阶段推进与结局可达。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "refinement_repair",
+      "title": "修复合并",
+      "description": "DeepSeek 按审稿意见修复并合并最终剧本。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "script_supervisor",
+      "title": "剧本监管",
+      "description": "后端校验 schema、朝代、线索链、剧透与可达性。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "volume_gate_review",
+      "title": "体量门禁",
+      "description": "后端校验场景、热点、线索、推理、章节、选择和结局数量。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "visual_generation",
+      "title": "生成视觉资产",
+      "description": "后端生成场景图、人物图和核心线索图。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "image_quality_gate",
+      "title": "图片质量门禁",
+      "description": "拒绝占位、空白、错风格、错朝代或缺核心物件的图片。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "hotspot_calibration",
+      "title": "热点坐标校准",
+      "description": "基于 approved 图片生成 0-1 归一化坐标。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    },
+    {
+      "step_id": "script_import",
+      "title": "导入游戏引擎",
+      "description": "把生成剧本导入现有调查、对话、线索和结局系统。",
+      "status": "pending",
+      "message": "",
+      "attempts": 0,
+      "started_at": null,
+      "completed_at": null,
+      "metadata": {}
+    }
+  ],
+  "blocking_issues": [],
+  "transitional_quote": {
+    "text": "疑则勿用，用则勿疑；然疑案之中，先问证据。",
+    "author": "司马光",
+    "source": "仿史论语气"
+  },
+  "visual_quality": {
+    "scene": {
+      "required": 8,
+      "approved": 0,
+      "rejected": 0,
+      "regenerated": 0,
+      "blocked": 0
+    },
+    "npc": {
+      "required": 4,
+      "approved": 0,
+      "rejected": 0,
+      "regenerated": 0,
+      "blocked": 0
+    },
+    "clue": {
+      "required": 6,
+      "approved": 0,
+      "rejected": 0,
+      "regenerated": 0,
+      "blocked": 0
+    }
+  },
+  "ready_for_overview": false,
+  "script_id": null,
+  "created_at": "2026-05-24T00:44:47",
+  "updated_at": "2026-05-24T00:44:47",
+  "ai_calls": []
+}

@@ -349,13 +349,16 @@ export class MainScene extends Phaser.Scene {
   private drawHotspots(snapshot: SessionSnapshot, busy: boolean): void {
     const width = this.scale.width;
     const height = this.scale.height;
+    const minInteractiveX = Math.max(132, width * 0.14);
+    const minInteractiveY = Math.max(152, height * 0.3);
+    const maxInteractiveY = Math.max(minInteractiveY + 34, height - Math.max(190, height * 0.37));
     const scenePositions = hotspotPositionMap[snapshot.scene.scene_id] ?? {};
     snapshot.scene.hotspots.forEach((hotspot, index) => {
       const slot = calibratedHotspotPoint(hotspot) ?? scenePositions[hotspot.hotspot_id] ?? hotspotSlots[index % hotspotSlots.length];
       const rowOffset = Math.floor(index / hotspotSlots.length) * 28;
       const point = imagePointToCanvas(slot, width, height, this.backgroundImageSize);
-      const x = Phaser.Math.Clamp(point.x, 42, width - 42);
-      const y = Phaser.Math.Clamp(point.y + rowOffset, 104, height - 84);
+      const x = Phaser.Math.Clamp(point.x, minInteractiveX, width - 42);
+      const y = Phaser.Math.Clamp(point.y + rowOffset, minInteractiveY, maxInteractiveY);
       const hotspotObject = new Hotspot(this, x, y, {
         sceneId: snapshot.scene.scene_id,
         hotspot,

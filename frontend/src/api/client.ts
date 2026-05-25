@@ -2,6 +2,7 @@ import type {
   ChoiceCard,
   DeductionSubmitResult,
   DialogueActionResult,
+  DialogueMessageSource,
   Dynasty,
   EndingResult,
   HealthResponse,
@@ -9,6 +10,7 @@ import type {
   PlayerIdentityRecommendations,
   PlayerIdentityValidationResult,
   PlayerRole,
+  GeneratedScriptDemo,
   ScriptJob,
   ScriptPackage,
   SessionSnapshot,
@@ -89,6 +91,9 @@ export const api = {
   getScriptJob(jobId: string) {
     return request<ScriptJob>(`/api/scripts/jobs/${jobId}`);
   },
+  listGeneratedDemos() {
+    return request<{ demos: GeneratedScriptDemo[] }>('/api/scripts/demos');
+  },
   getScript(scriptId: string) {
     return request<ScriptPackage>(`/api/scripts/${scriptId}`);
   },
@@ -97,7 +102,13 @@ export const api = {
       method: 'POST',
     });
   },
-  startGeneratedSession(payload: { script_id: string; identity_id: string }) {
+  validateGeneratedIdentity(scriptId: string, payload: { identity_id?: string; custom_identity_text: string }) {
+    return request<PlayerIdentityValidationResult>(`/api/scripts/${scriptId}/identity/validate`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  startGeneratedSession(payload: { script_id: string; identity_id?: string; custom_identity_text?: string }) {
     return request<SessionSnapshot>('/api/session/start-generated', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -112,7 +123,7 @@ export const api = {
       body: JSON.stringify(payload),
     });
   },
-  dialogue(payload: { session_id: string; npc_id: string; message: string; action_type: string; presented_clue_ids: string[] }) {
+  dialogue(payload: { session_id: string; npc_id: string; message: string; action_type: string; message_source: DialogueMessageSource; presented_clue_ids: string[] }) {
     return request<DialogueActionResult>('/api/dialogue', {
       method: 'POST',
       body: JSON.stringify(payload),

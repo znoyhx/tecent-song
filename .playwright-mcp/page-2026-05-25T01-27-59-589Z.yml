@@ -1,0 +1,70 @@
+- main [ref=e187]:
+  - region "可交互叙事舞台" [ref=e188]
+  - generic "顶部状态栏" [ref=e191]:
+    - generic [ref=e192]:
+      - strong [ref=e193]: 北宋 · 北宋·熙宁年间
+      - generic [ref=e194]: / 丰济仓大门
+      - generic [ref=e195]: 身份：随行文吏
+      - generic [ref=e196]: 当前目标：扩大现场范围，串联文书、物件与口供。
+    - generic "调查进度" [ref=e197]:
+      - generic [ref=e198]: 调查进度
+      - strong [ref=e199]: 21%
+    - button "设置" [ref=e200] [cursor=pointer]
+  - navigation "左侧功能栏" [ref=e201]:
+    - button "展开左侧栏" [ref=e202] [cursor=pointer]: 展
+    - button "场景" [ref=e203] [cursor=pointer]:
+      - img [ref=e205]
+      - strong [ref=e210]: 场景
+    - button "人物" [ref=e211] [cursor=pointer]:
+      - img [ref=e213]
+      - strong [ref=e216]: 人物
+    - button "任务" [ref=e217] [cursor=pointer]:
+      - img [ref=e219]
+      - strong [ref=e222]: 任务
+    - button "智能助手" [ref=e223] [cursor=pointer]:
+      - img [ref=e225]
+      - strong [ref=e227]: 智能助手
+  - region "当前对话" [ref=e228]:
+    - generic [ref=e229]:
+      - generic [ref=e230]: 赵仓吏
+      - generic [ref=e231]:
+        - generic [ref=e232]: 丰济仓副使
+        - generic [ref=e233]: 信任：观望（0）
+    - paragraph [ref=e235]: 你细查此处，发现了“半块鱼符”。 新发现：半块鱼符
+    - generic [ref=e236]:
+      - generic [ref=e237]:
+        - button "出示线索" [ref=e238] [cursor=pointer]
+        - generic "当前选择的证据" [ref=e239]:
+          - generic [ref=e240]: 未选择线索
+      - generic "最近关键线索" [ref=e252]:
+        - button "半块鱼符" [ref=e253] [cursor=pointer]
+      - generic "推荐回复" [ref=e241]:
+        - button "你当时看见了什么？" [ref=e242] [cursor=pointer]
+        - button "这件物证是谁留下的？" [ref=e243] [cursor=pointer]
+        - button "还有谁知道这件事？" [ref=e244] [cursor=pointer]
+      - generic [ref=e245]:
+        - textbox "低声追问，例如：昨夜是谁先到火场？" [ref=e246]
+        - button "继续追问" [ref=e247] [cursor=pointer]
+  - complementary "右侧调查栏" [ref=e254]:
+    - generic [ref=e255]:
+      - generic [ref=e256]: 案卷调查
+      - button "收起" [ref=e257] [cursor=pointer]
+    - navigation "调查栏分页" [ref=e258]:
+      - button "线索" [ref=e259] [cursor=pointer]
+      - button "推理" [ref=e260] [cursor=pointer]
+      - button "笔记" [ref=e261] [cursor=pointer]
+      - button "助手" [active] [ref=e262] [cursor=pointer]
+    - region "智能助手" [ref=e296]:
+      - generic [ref=e297]:
+        - paragraph [ref=e298]: 智能助手
+        - heading "只看当前案卷的提示" [level=3] [ref=e299]
+        - generic [ref=e300]: 当前地点：丰济仓大门 · 已发现：半块鱼符
+      - article [ref=e302]:
+        - paragraph [ref=e303]: 助手只会依据当前已发现线索给出提示，不会替你决定结局。
+      - generic "助手推荐问题" [ref=e304]:
+        - button "目前哪条线索最值得复查？" [ref=e305] [cursor=pointer]
+        - button "谁的说法和物证冲突最大？" [ref=e306] [cursor=pointer]
+        - button "我接下来该去哪个地点？" [ref=e307] [cursor=pointer]
+      - generic [ref=e308]:
+        - textbox "问助手当前证据链，不要让它替你下结论。" [ref=e309]
+        - button "询问" [disabled] [ref=e310]

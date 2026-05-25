@@ -1,0 +1,54 @@
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/dynasties[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/scripts/demos[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/dynasties[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/scripts/demos[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/music/manifest[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:15:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/music/manifest[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:16:45[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/music/manifest[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:16:45[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/music/manifest[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/dynasties[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/scripts/demos[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/dynasties[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/scripts/demos[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/music/manifest[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+[2m19:22:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/music/manifest[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)

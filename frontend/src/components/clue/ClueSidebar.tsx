@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { api, resolveApiUrl } from '../../api/client';
-import { getTrustLabel } from '../../store/gameStore';
 import type { Clue, DeductionPrompt, SessionSnapshot } from '../../types/game';
 import { AssistantPanel } from '../assistant/AssistantPanel';
 
@@ -59,24 +58,74 @@ function clueAssetCandidates(clue: Clue): string[] {
   return ids.filter((id): id is string => Boolean(id));
 }
 
+function isRenderableVisualStatus(status?: string | null): boolean {
+  return status === 'generated' || status === 'approved';
+}
+
 function clueImageUrl(clue: Clue, statusMap: Map<string, VisualStatusItem>): string {
+  if (clue.visual_asset_url && isRenderableVisualStatus(clue.visual_status)) {
+    return resolveApiUrl(clue.visual_asset_url);
+  }
   const generated = clueAssetCandidates(clue)
     .map((assetId) => statusMap.get(assetId))
-    .find((item) => item?.status === 'generated' && item.url);
+    .find((item) => isRenderableVisualStatus(item?.status) && item?.url);
   if (!generated?.url) {
     return '';
   }
   return resolveApiUrl(generated.url);
 }
 
+function normalizeFact(value: string): string {
+  return value
+    .replace(/\s+/g, '')
+    .replace(/[“”"']/g, '')
+    .trim();
+}
+
+function uniqueFacts(facts: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  facts.forEach((fact) => {
+    const normalized = normalizeFact(fact);
+    if (!normalized || seen.has(normalized)) {
+      return;
+    }
+    seen.add(normalized);
+    result.push(fact);
+  });
+  return result;
+}
+
 function buildKnownFacts(snapshot: SessionSnapshot): string[] {
+  const dialogueFacts: string[] = [];
+  const seenDialogue = new Set<string>();
+  [...snapshot.dialogue_turns].reverse().some((turn) => {
+    const response = turn.npc_response.trim();
+    const key = `${turn.npc_name}:${normalizeFact(response)}`;
+    if (response && !seenDialogue.has(key)) {
+      seenDialogue.add(key);
+      dialogueFacts.unshift(`${turn.npc_name}提到：${response}`);
+    }
+    return dialogueFacts.length >= 3;
+  });
+
   const facts = [
     ...snapshot.clues.slice(-4).map((clue) => `已发现「${clue.title}」：${clue.display_text}`),
     ...snapshot.combo_summaries.slice(-3).map((combo) => `线索组合「${combo.result_title}」：${combo.result_text}`),
     ...snapshot.deduction_summaries.slice(-3).map((deduction) => `推理「${deduction.question}」：${deduction.success_text}`),
-    ...snapshot.dialogue_turns.slice(-3).map((turn) => `${turn.npc_name}提到：${turn.npc_response}`),
+    ...dialogueFacts,
   ];
-  return facts.length > 0 ? facts : ['案卷尚未形成稳定事实，先从当前地点的可疑物件查起。'];
+  const unique = uniqueFacts(facts);
+  return unique.length > 0 ? unique : ['案卷尚未形成稳定事实，先从当前地点的可疑物件查起。'];
+}
+
+function caseSummary(snapshot: SessionSnapshot): { title: string; summary: string; location: string; goal: string } {
+  return {
+    title: snapshot.case_overview?.title || snapshot.state.event_id,
+    summary: snapshot.case_overview?.summary || snapshot.dynasty.core_mood || snapshot.scene.description,
+    location: snapshot.scene.name,
+    goal: snapshot.current_goal,
+  };
 }
 
 export function ClueSidebar({
@@ -121,7 +170,7 @@ export function ClueSidebar({
     [snapshot.dialogue_turns],
   );
   const knownFacts = useMemo(() => buildKnownFacts(snapshot), [snapshot]);
-  const selectedNpc = snapshot.scene_npcs.find((npc) => npc.npc_id === selectedNpcId) ?? snapshot.scene_npcs[0];
+  const summary = useMemo(() => caseSummary(snapshot), [snapshot]);
   const activeDeduction = useMemo<DeductionPrompt | undefined>(
     () => snapshot.available_deductions.find((item) => item.deduction_id === selectedDeductionId) ?? snapshot.available_deductions[0],
     [selectedDeductionId, snapshot.available_deductions],
@@ -191,7 +240,7 @@ export function ClueSidebar({
                 return (
                   <article key={clue.clue_id} className={clue.is_key ? 'investigation-clue-card key' : 'investigation-clue-card'}>
                     <div className="investigation-clue-image">
-                      {imageUrl ? <img src={imageUrl} alt={`${clue.title}线索图`} /> : <span>线索图待生成</span>}
+                      {imageUrl ? <img src={imageUrl} alt={`${clue.title}线索图`} /> : null}
                     </div>
                     <div className="investigation-clue-copy">
                       <div className="detail-head">
@@ -280,23 +329,30 @@ export function ClueSidebar({
           <section className="investigation-tab-content">
             <header className="side-panel-heading">
               <p className="meta-label">案情笔记</p>
-              <h3>已知事实</h3>
+              <h3>案件摘要</h3>
+            </header>
+            <article className="case-summary-card">
+              <strong>{summary.title}</strong>
+              <p>{summary.summary}</p>
+              <div className="case-summary-meta">
+                <span>当前地点：{summary.location}</span>
+                <span>目标：{summary.goal}</span>
+              </div>
+            </article>
+            <header className="side-panel-subheading">
+              <p className="meta-label">已知事实</p>
+              <h3>{knownFacts.length} 条</h3>
             </header>
             <ul className="note-fact-list">
               {knownFacts.map((fact) => <li key={fact}>{fact}</li>)}
             </ul>
-            {selectedNpc ? (
-              <article className="current-person-note">
-                <strong>当前人物：{selectedNpc.name}</strong>
-                <span>{selectedNpc.public_identity} · 信任：{getTrustLabel(snapshot.state.npc_trust[selectedNpc.npc_id] ?? 0)}</span>
-                <p>{selectedNpc.background_suspicion}</p>
-              </article>
-            ) : null}
           </section>
         ) : null}
 
         {activeTab === 'assistant' ? (
-          <AssistantPanel snapshot={snapshot} compact />
+          <section className="investigation-tab-content assistant-tab-content">
+            <AssistantPanel snapshot={snapshot} compact />
+          </section>
         ) : null}
       </div>
     </aside>

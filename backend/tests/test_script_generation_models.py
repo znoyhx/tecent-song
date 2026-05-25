@@ -24,3 +24,13 @@ def test_script_package_missing_required_field_reports_error() -> None:
         ScriptPackage.model_validate(payload)
 
     assert "script_overview" in str(exc_info.value)
+
+
+def test_script_generate_request_rejects_damaged_keywords() -> None:
+    payload = sample_script_payload()
+    payload["keywords"] = ["??"]
+
+    with pytest.raises(ValidationError) as exc_info:
+        ScriptPackage.model_validate(payload)
+
+    assert "关键词疑似编码损坏" in str(exc_info.value)

@@ -17,6 +17,10 @@ STAGE_NAMES = {
 DYNASTY_NAMES = {"song": "北宋", "late_tang": "晚唐"}
 
 
+class ScriptNormalizationError(ValueError):
+    """Raised when model output is too incomplete to normalize safely."""
+
+
 class ScriptPackageNormalizer:
     """Convert model-shaped JSON into the strict ScriptPackage contract.
 
@@ -41,14 +45,10 @@ class ScriptPackageNormalizer:
         if base:
             source = self._deep_fill_missing(source, base)
 
-        raw_locations = self._list_of_dicts(source.get("locations"))
-        raw_npcs = self._list_of_dicts(source.get("npcs"))
-        raw_clues = self._list_of_dicts(source.get("clues"))
+        raw_locations = self._require_minimum_items(source.get("locations"), min_count=5, field_name="locations")
+        raw_npcs = self._require_minimum_items(source.get("npcs"), min_count=4, field_name="npcs")
+        raw_clues = self._require_minimum_items(source.get("clues"), min_count=6, field_name="clues")
         raw_stages = self._list_of_dicts(source.get("stages"))
-
-        raw_locations = self._ensure_minimum_locations(raw_locations)
-        raw_npcs = self._ensure_minimum_npcs(raw_npcs)
-        raw_clues = self._ensure_minimum_clues(raw_clues, raw_locations)
 
         location_ids = [self._slug(self._field(item, "location_id", "id", "location"), f"loc_{index}") for index, item in enumerate(raw_locations)]
         npc_ids = [self._slug(self._field(item, "npc_id", "id"), f"npc_{index}") for index, item in enumerate(raw_npcs)]
@@ -60,9 +60,6 @@ class ScriptPackageNormalizer:
             location_ids=location_ids,
             npc_ids=npc_ids,
             clue_ids=clue_ids,
-            raw_locations=raw_locations,
-            raw_npcs=raw_npcs,
-            raw_clues=raw_clues,
             dynasty_id=dynasty_id,
         )
         asset_by_owner_type = {(asset["asset_type"], asset["owner_id"]): asset["asset_id"] for asset in visual_assets}
@@ -87,6 +84,15 @@ class ScriptPackageNormalizer:
         stages = self._normalize_stages(raw_stages, stage_map=stage_map, locations=locations, clues=clues)
         story = self._normalize_story(source.get("story"), clues)
         overview = self._normalize_overview(source.get("script_overview"), source, locations, npcs, story)
+        style_guide = self._normalize_style_guide(source.get("visual_style_guide"), dynasty_id, npcs)
+        visual_assets = self._enrich_scene_visual_assets(
+            visual_assets,
+            locations=locations,
+            npcs=npcs,
+            clues=clues,
+            visual_style_guide=style_guide,
+            dynasty_id=dynasty_id,
+        )
 
         return {
             "script_id": self._script_id(source.get("script_id") or source.get("id"), dynasty_id=dynasty_id, job_id=job_id),
@@ -105,11 +111,16 @@ class ScriptPackageNormalizer:
             "relationships": self._normalize_relationships(source.get("relationships")),
             "clues": clues,
             "clue_graph": self._normalize_clue_graph(source.get("clue_graph"), story["truth_chain_clue_ids"]),
+            "deductions": self._normalize_deductions(source.get("deductions")),
+            "chapter_sections": self._normalize_chapter_sections(
+                source.get("chapter_sections"),
+                stage_map=stage_map,
+            ),
             "dialogue_rules": self._normalize_dialogue_rules(source.get("dialogue_rules"), stage_map),
             "choices": self._normalize_choices(source.get("choices")),
             "endings": self._normalize_endings(source.get("endings"), clue_ids),
             "visual_assets": visual_assets,
-            "visual_style_guide": self._normalize_style_guide(source.get("visual_style_guide"), dynasty_id, npcs),
+            "visual_style_guide": style_guide,
             "hotspot_positioning": self._normalize_hotspots(
                 source.get("hotspot_positioning"),
                 generated_hotspots=generated_hotspots,
@@ -117,7 +128,7 @@ class ScriptPackageNormalizer:
                 asset_by_owner_type=asset_by_owner_type,
             ),
             "quality_gate": {
-                "required_scene_count": 5,
+                "required_scene_count": 8,
                 "required_npc_count": 4,
                 "required_clue_count": 6,
                 "scene_approved": 0,
@@ -148,7 +159,7 @@ class ScriptPackageNormalizer:
 
     def _normalize_overview(self, raw: Any, source: dict[str, Any], locations: list[dict[str, Any]], npcs: list[dict[str, Any]], story: dict[str, Any]) -> dict[str, Any]:
         item = raw if isinstance(raw, dict) else {}
-        title = self._text(item.get("title"), source.get("title"), default="雨夜疑案")
+        title = self._text(item.get("title"), source.get("title"), story.get("surface_event"), default="生成剧本")
         case_summary = self._text(item.get("case_summary"), item.get("description"), item.get("pitch"), story.get("surface_event"), default="一桩牵涉文书、人物证言与现场物证的疑案正在展开。")
         return {
             "title": title,
@@ -162,7 +173,7 @@ class ScriptPackageNormalizer:
         }
 
     def _normalize_identities(self, raw: Any) -> list[dict[str, Any]]:
-        identities = self._list_of_dicts(raw) or [{"id": "identity_inspector", "name": "临时查访官", "description": "受命查明此案的调查者。"}]
+        identities = self._require_minimum_items(raw, min_count=1, field_name="playable_identities")
         normalized: list[dict[str, Any]] = []
         for index, item in enumerate(identities):
             identity_id = self._slug(self._field(item, "identity_id", "id"), f"identity_{index}")
@@ -185,24 +196,47 @@ class ScriptPackageNormalizer:
         return normalized
 
     def _normalize_world(self, raw: Any, dynasty_id: str) -> dict[str, Any]:
-        item = raw if isinstance(raw, dict) else {}
+        if not isinstance(raw, dict) or not raw:
+            raise ScriptNormalizationError("SCRIPT_WORLD_MISSING: DeepSeek 未输出 world，拒绝用本地默认世界观补齐。")
+        item = raw
         dynasty_name = DYNASTY_NAMES.get(dynasty_id, dynasty_id)
+        era_name = self._text(item.get("era_name"), item.get("name"), default="")
+        location_region = self._text(item.get("location_region"), item.get("description"), item.get("name"), default="")
+        missing = []
+        if not era_name:
+            missing.append("era_name/name")
+        if not location_region:
+            missing.append("location_region/description")
+        if missing:
+            raise ScriptNormalizationError(f"SCRIPT_WORLD_INCOMPLETE: world 缺少 {', '.join(missing)}。")
         return {
             "dynasty_id": dynasty_id,
             "dynasty_name": self._text(item.get("dynasty_name"), item.get("dynasty"), default=dynasty_name),
-            "era_name": self._text(item.get("era_name"), item.get("name"), default=f"{dynasty_name}地方州县"),
+            "era_name": era_name,
             "year_hint": self._text(item.get("year_hint"), default=f"{dynasty_name}年间"),
-            "location_region": self._text(item.get("location_region"), item.get("name"), item.get("description"), default="地方驿道与官署之间"),
+            "location_region": location_region,
             "rules": self._string_list(item.get("rules")) or ["证据需由现场、口供和文书共同支撑。"],
             "forbidden_terms": self._string_list(item.get("forbidden_terms")) or ["手机", "电话", "电报", "火车", "报纸", "公司"],
         }
 
     def _normalize_story(self, raw: Any, clues: list[dict[str, Any]]) -> dict[str, Any]:
-        item = raw if isinstance(raw, dict) else {}
-        truth_chain = self._string_list(item.get("truth_chain_clue_ids")) or [clue["clue_id"] for clue in clues[: max(3, min(len(clues), 6))]]
-        hidden_truth = self._text(item.get("hidden_truth"), default="关键人物为遮掩旧错调换了核心文书，导致案情表面与事实相反。")
+        if not isinstance(raw, dict) or not raw:
+            raise ScriptNormalizationError("SCRIPT_STORY_MISSING: DeepSeek 未输出 story，拒绝用本地默认案情补齐。")
+        item = raw
+        surface_event = self._text(item.get("surface_event"), item.get("summary"), default="")
+        hidden_truth = self._text(item.get("hidden_truth"), default="")
+        truth_chain = self._string_list(item.get("truth_chain_clue_ids"))
+        missing = []
+        if not surface_event:
+            missing.append("surface_event/summary")
+        if not hidden_truth:
+            missing.append("hidden_truth")
+        if len(truth_chain) < 3:
+            missing.append("truth_chain_clue_ids")
+        if missing:
+            raise ScriptNormalizationError(f"SCRIPT_STORY_INCOMPLETE: story 缺少 {', '.join(missing)}。")
         return {
-            "surface_event": self._text(item.get("surface_event"), item.get("summary"), default="关键文书在案发夜失踪。"),
+            "surface_event": surface_event,
             "hidden_truth": hidden_truth,
             "themes": self._string_list(item.get("themes")) or ["文书", "证据", "人心"],
             "culprit_boundary": self._text(item.get("culprit_boundary"), default="真凶必须通过完整线索链才能确认，早期证言只能提供侧面信息。"),
@@ -427,8 +461,57 @@ class ScriptPackageNormalizer:
             )
         return normalized
 
+    def _normalize_deductions(self, raw: Any) -> list[dict[str, Any]]:
+        items = self._list_of_dicts(raw)
+        normalized: list[dict[str, Any]] = []
+        for index, item in enumerate(items):
+            question = self._text(item.get("question"), item.get("title"), item.get("description"), default="")
+            required = self._string_list(item.get("required_clue_ids"))
+            correct = self._string_list(item.get("correct_clue_ids")) or required
+            if not question or not correct:
+                continue
+            deduction_id = self._slug(self._field(item, "deduction_id", "id"), f"deduction_{index}")
+            normalized.append(
+                {
+                    "deduction_id": deduction_id,
+                    "question": question,
+                    "required_clue_ids": required,
+                    "correct_clue_ids": correct,
+                    "wrong_feedback": self._text(item.get("wrong_feedback"), default="这些线索还不能支持这个判断。"),
+                    "success_text": self._text(item.get("success_text"), item.get("result_text"), default="这组证据能够支撑该推理。"),
+                    "effects": item.get("effects") if isinstance(item.get("effects"), dict) else {"flags": [f"{deduction_id}_solved"]},
+                }
+            )
+        return normalized
+
+    def _normalize_chapter_sections(self, raw: Any, *, stage_map: dict[str, str]) -> list[dict[str, Any]]:
+        items = self._list_of_dicts(raw)
+        normalized: list[dict[str, Any]] = []
+        for index, item in enumerate(items):
+            title = self._text(item.get("title"), item.get("name"), default="")
+            scene_id = self._slug(self._field(item, "scene_id", "location_id", "location"), "")
+            if not title or not scene_id:
+                continue
+            section_id = self._slug(self._field(item, "section_id", "id"), f"section_{index}")
+            normalized.append(
+                {
+                    "section_id": section_id,
+                    "stage": self._stage_mapped(item.get("stage"), stage_map),
+                    "title": title,
+                    "trigger_conditions": self._string_list(item.get("trigger_conditions")),
+                    "scene_id": scene_id,
+                    "npc_ids": self._string_list(item.get("npc_ids")),
+                    "hotspot_ids": self._string_list(item.get("hotspot_ids")),
+                    "clue_ids": self._string_list(item.get("clue_ids")),
+                    "next_section_ids": self._string_list(item.get("next_section_ids")),
+                    "goal": self._text(item.get("goal"), item.get("objective"), default=title),
+                    "display_text": self._text(item.get("display_text"), item.get("description"), default=title),
+                }
+            )
+        return normalized
+
     def _normalize_choices(self, raw: Any) -> list[dict[str, Any]]:
-        items = self._list_of_dicts(raw) or [{"id": "choice_report", "description": "整理证据后上报。"}]
+        items = self._require_minimum_items(raw, min_count=1, field_name="choices")
         normalized: list[dict[str, Any]] = []
         for index, item in enumerate(items):
             choice_id = self._slug(self._field(item, "choice_id", "id"), f"choice_{index}")
@@ -443,10 +526,22 @@ class ScriptPackageNormalizer:
         return normalized
 
     def _normalize_endings(self, raw: Any, clue_ids: list[str]) -> list[dict[str, Any]]:
-        items = self._list_of_dicts(raw) or [{"id": "ending_truth", "name": "真相归档", "description": "真相被查明。"}]
+        items = self._require_minimum_items(raw, min_count=1, field_name="endings")
         normalized: list[dict[str, Any]] = []
         for index, item in enumerate(items):
             ending_id = self._slug(self._field(item, "ending_id", "id"), f"ending_{index}")
+            result_summary = self._text(item.get("result_summary"), item.get("description"), item.get("ending_text"), default="")
+            ending_text = self._text(item.get("ending_text"), item.get("description"), item.get("result_summary"), default="")
+            history_echo = self._text(item.get("history_echo"), default="")
+            missing = []
+            if not result_summary:
+                missing.append("result_summary/description")
+            if not ending_text:
+                missing.append("ending_text/description")
+            if not history_echo:
+                missing.append("history_echo")
+            if missing:
+                raise ScriptNormalizationError(f"SCRIPT_ENDING_INCOMPLETE: ending {ending_id} 缺少 {', '.join(missing)}。")
             condition = (
                 item.get("conditions")
                 if isinstance(item.get("conditions"), dict) and item.get("conditions")
@@ -460,9 +555,9 @@ class ScriptPackageNormalizer:
                     "conditions": condition,
                     "required_flags": self._string_list(item.get("required_flags")),
                     "blocked_flags": self._string_list(item.get("blocked_flags")),
-                    "result_summary": self._text(item.get("result_summary"), item.get("description"), default="案件有了结果。"),
-                    "ending_text": self._text(item.get("ending_text"), item.get("description"), default="证据被整理归档，相关人物各自承担后果。"),
-                    "history_echo": self._text(item.get("history_echo"), default="历史的缝隙里，证据比流言更能留住真相。"),
+                    "result_summary": result_summary,
+                    "ending_text": ending_text,
+                    "history_echo": history_echo,
                     "related_clue_ids": [clue_id for clue_id in self._string_list(item.get("related_clue_ids")) if clue_id in clue_ids] or clue_ids[:1],
                     "related_choice_ids": self._string_list(item.get("related_choice_ids")),
                     "npc_fates": item.get("npc_fates") if isinstance(item.get("npc_fates"), dict) else {},
@@ -478,9 +573,6 @@ class ScriptPackageNormalizer:
         location_ids: list[str],
         npc_ids: list[str],
         clue_ids: list[str],
-        raw_locations: list[dict[str, Any]],
-        raw_npcs: list[dict[str, Any]],
-        raw_clues: list[dict[str, Any]],
         dynasty_id: str,
     ) -> list[dict[str, Any]]:
         assets: list[dict[str, Any]] = []
@@ -495,10 +587,79 @@ class ScriptPackageNormalizer:
                 assets.append(self._asset_from_raw(item, asset_type, location_ids, npc_ids, clue_ids, dynasty_id))
 
         assets = self._dedupe_assets(assets)
-        self._ensure_assets_for("scene", location_ids[:5], assets, raw_locations, dynasty_id)
-        self._ensure_assets_for("npc", npc_ids[:4], assets, raw_npcs, dynasty_id)
-        self._ensure_assets_for("clue", clue_ids[:6], assets, raw_clues, dynasty_id)
+        self._require_assets_for("scene", location_ids[:5], assets)
+        self._require_assets_for("npc", npc_ids[:4], assets)
+        self._require_assets_for("clue", clue_ids[:6], assets)
         return assets
+
+    def _enrich_scene_visual_assets(
+        self,
+        assets: list[dict[str, Any]],
+        *,
+        locations: list[dict[str, Any]],
+        npcs: list[dict[str, Any]],
+        clues: list[dict[str, Any]],
+        visual_style_guide: dict[str, Any],
+        dynasty_id: str,
+    ) -> list[dict[str, Any]]:
+        dynasty_name = DYNASTY_NAMES.get(dynasty_id, dynasty_id)
+        npc_by_id = {npc["npc_id"]: npc for npc in npcs}
+        clue_by_id = {clue["clue_id"]: clue for clue in clues}
+        location_by_id = {location["location_id"]: location for location in locations}
+        location_by_scene_asset = {location["visual_asset_id"]: location for location in locations}
+        appearance_lock = visual_style_guide.get("appearance_lock") if isinstance(visual_style_guide.get("appearance_lock"), dict) else {}
+        style_keywords = self._string_list(visual_style_guide.get("style_keywords")) or [dynasty_name, "写实", "悬疑"]
+        color_script = self._text(visual_style_guide.get("color_script"), default="低饱和雨夜与暖灯对照。")
+        camera = self._text(visual_style_guide.get("camera"), default="平视调查视角。")
+        enriched: list[dict[str, Any]] = []
+
+        for asset in assets:
+            if asset.get("asset_type") != "scene":
+                enriched.append(asset)
+                continue
+
+            location = location_by_id.get(asset.get("owner_id", "")) or location_by_scene_asset.get(asset.get("asset_id", ""))
+            if not location:
+                enriched.append(asset)
+                continue
+
+            scene_npcs = [npc_by_id[npc_id] for npc_id in location.get("npc_ids", []) if npc_id in npc_by_id]
+            clue_ids: list[str] = []
+            for hotspot in location.get("hotspots", []):
+                clue_ids.extend(self._string_list(hotspot.get("clue_ids")))
+            scene_clues = [clue_by_id[clue_id] for clue_id in clue_ids if clue_id in clue_by_id][:4]
+
+            npc_phrase = "、".join(
+                f"{npc['name']}（{npc['public_identity']}，{appearance_lock.get(npc['npc_id']) or npc['appearance']}）"
+                for npc in scene_npcs
+            )
+            clue_phrase = "、".join(clue["title"] for clue in scene_clues)
+            prompt_parts = [
+                "这是一张人物与场景一体生成的完整主舞台图，不是空场景，也不是背景图加后期立绘。",
+                f"地点：{location['name']}；{location['description']}",
+                f"统一风格：{'、'.join(style_keywords)}；{color_script}；{camera}",
+            ]
+            if npc_phrase:
+                prompt_parts.append(f"画面中必须自然出现可交互人物：{npc_phrase}。人物要融入同一透视、同一光源和同一时代服饰。")
+            if clue_phrase:
+                prompt_parts.append(f"画面中必须清楚出现可点击线索物件：{clue_phrase}。线索物件要可定位、无遮挡、不能只是装饰。")
+            prompt_parts.append("保留低饱和中国历史悬疑气质，主体清晰，符合时代建筑、服饰、器物，不含现代物件、文字水印、空白背景。")
+
+            current_prompt = self._text(asset.get("prompt"), default=f"{dynasty_name}历史悬疑调查场景")
+            if "人物与场景一体生成" not in current_prompt:
+                asset["prompt"] = f"{current_prompt}\n" + "\n".join(prompt_parts)
+
+            required_subjects = self._string_list(asset.get("required_subjects"))
+            required_subjects.extend([npc["name"] for npc in scene_npcs])
+            required_subjects.extend([clue["title"] for clue in scene_clues])
+            if scene_npcs:
+                required_subjects.append("人物与场景一体生成")
+            if scene_clues:
+                required_subjects.append("可点击线索物件")
+            asset["required_subjects"] = self._dedupe_strings(required_subjects)
+            enriched.append(asset)
+
+        return enriched
 
     def _asset_from_raw(self, item: dict[str, Any], asset_type: str, location_ids: list[str], npc_ids: list[str], clue_ids: list[str], dynasty_id: str) -> dict[str, Any]:
         raw_id = self._field(item, "asset_id", "id")
@@ -608,56 +769,20 @@ class ScriptPackageNormalizer:
                 normalized[stage_key] = str(value)
         return normalized or {"intro": "只谈公开事实。"}
 
-    def _ensure_minimum_locations(self, raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        result = deepcopy(raw)
-        while len(result) < 5:
-            index = len(result)
-            result.append({"id": f"loc_{index}", "name": f"案发场景{index + 1}", "description": "这里留有与案件有关的痕迹。"})
-        return result
-
-    def _ensure_minimum_npcs(self, raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        result = deepcopy(raw)
-        while len(result) < 4:
-            index = len(result)
-            result.append({"id": f"npc_{index}", "name": f"相关人物{index + 1}", "description": "与案情有关的人。"})
-        return result
-
-    def _ensure_minimum_clues(self, raw: list[dict[str, Any]], raw_locations: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        result = deepcopy(raw)
-        while len(result) < 6:
-            index = len(result)
-            location = raw_locations[min(index, len(raw_locations) - 1)]
-            result.append(
-                {
-                    "id": f"clue_{index}",
-                    "name": f"补足线索{index + 1}",
-                    "description": "用于补足真相链的关键痕迹。",
-                    "location": self._field(location, "location_id", "id") or f"loc_{min(index, 4)}",
-                    "stage": "stage2" if index else "stage1",
-                }
+    def _require_minimum_items(self, raw: Any, *, min_count: int, field_name: str) -> list[dict[str, Any]]:
+        items = self._list_of_dicts(raw)
+        if len(items) < min_count:
+            raise ScriptNormalizationError(
+                f"SCRIPT_CONTENT_INCOMPLETE: {field_name} 至少需要 {min_count} 项，DeepSeek 只返回 {len(items)} 项。"
             )
-        return result
+        return items
 
-    def _ensure_assets_for(self, asset_type: str, owners: list[str], assets: list[dict[str, Any]], raw_items: list[dict[str, Any]], dynasty_id: str) -> None:
+    def _require_assets_for(self, asset_type: str, owners: list[str], assets: list[dict[str, Any]]) -> None:
         existing = {(asset["asset_type"], asset["owner_id"]) for asset in assets}
-        for index, owner_id in enumerate(owners):
-            if (asset_type, owner_id) in existing:
-                continue
-            raw = raw_items[index] if index < len(raw_items) else {}
-            asset_id = f"asset_{asset_type}_{index}"
-            assets.append(
-                {
-                    "asset_id": asset_id,
-                    "asset_type": asset_type,
-                    "owner_id": owner_id,
-                    "title": self._text(raw.get("name"), raw.get("title"), default=asset_id),
-                    "prompt": self._visual_prompt(raw.get("description"), asset_type, dynasty_id),
-                    "negative_prompt": "现代物件、文字水印、空白图、占位图、错朝代服饰",
-                    "required_subjects": self._default_subjects(asset_type),
-                    "era_feature_checklist": self._era_features(dynasty_id),
-                    "generation_status": "pending",
-                    "quality_gate": {"status": "pending", "attempts": 0, "issues": []},
-                }
+        missing = [owner_id for owner_id in owners if (asset_type, owner_id) not in existing]
+        if missing:
+            raise ScriptNormalizationError(
+                f"SCRIPT_VISUAL_ASSETS_INCOMPLETE: visual_assets 缺少 {asset_type} 资产映射：{', '.join(missing)}。"
             )
 
     def _dedupe_assets(self, assets: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -749,6 +874,16 @@ class ScriptPackageNormalizer:
             parts = re.split(r"[，,、;\n]+", value)
             return [part.strip() for part in parts if part.strip()]
         return [str(value).strip()] if str(value).strip() else []
+
+    def _dedupe_strings(self, values: list[str]) -> list[str]:
+        result: list[str] = []
+        seen: set[str] = set()
+        for value in values:
+            text = str(value).strip()
+            if text and text not in seen:
+                seen.add(text)
+                result.append(text)
+        return result
 
     def _list_of_dicts(self, value: Any) -> list[dict[str, Any]]:
         if isinstance(value, list):

@@ -1,0 +1,59 @@
+- main [ref=e4]:
+  - generic [ref=e7]:
+    - heading "选择朝代 / 关键词" [level=1] [ref=e8]
+    - paragraph [ref=e9]: 步骤 1/3 · 明代直达固定 Demo，北宋与晚唐进入真实 AI 生成
+  - region "朝代选择界面" [ref=e11]:
+    - generic [ref=e12]:
+      - heading "选择朝代" [level=2] [ref=e15]
+      - generic [ref=e17]:
+        - button "✓ 明 晚明书坊雨夜 明代 · 文稿风险、焚稿疑云与封口压力 固定 Demo" [ref=e18] [cursor=pointer]:
+          - text: ✓
+          - strong [ref=e21]: 明
+          - generic [ref=e22]: 晚明书坊雨夜
+          - generic [ref=e23]: 明代 · 文稿风险、焚稿疑云与封口压力
+          - emphasis [ref=e24]: 固定 Demo
+        - button "宋 AI 剧本生成 北宋 · 关键词生成案件 AI 生成" [ref=e25] [cursor=pointer]:
+          - strong [ref=e28]: 宋
+          - generic [ref=e29]: AI 剧本生成
+          - generic [ref=e30]: 北宋 · 关键词生成案件
+          - emphasis [ref=e31]: AI 生成
+        - button "唐 AI 剧本生成 晚唐 · 关键词生成案件 AI 生成" [ref=e32] [cursor=pointer]:
+          - strong [ref=e35]: 唐
+          - generic [ref=e36]: AI 剧本生成
+          - generic [ref=e37]: 晚唐 · 关键词生成案件
+          - emphasis [ref=e38]: AI 生成
+    - complementary [ref=e39]:
+      - heading "关键词" [level=2] [ref=e42]
+      - generic [ref=e44]:
+        - generic [ref=e45]: 明
+        - generic [ref=e46]:
+          - paragraph [ref=e47]: 当前入口
+          - heading "明代" [level=2] [ref=e48]
+      - paragraph [ref=e49]: 明代为稳定路演剧本，将直接进入书坊焚稿案。
+      - generic "关键词示例" [ref=e50]:
+        - generic [ref=e51]: 雨夜
+        - generic [ref=e52]: 密信
+        - generic [ref=e53]: 书坊
+        - generic [ref=e54]: 火痕
+        - generic [ref=e55]: 旧案
+      - generic [ref=e56]:
+        - generic [ref=e57]: 关键词（明代 Demo 可不填）
+        - textbox "关键词（明代 Demo 可不填）" [disabled] [ref=e58]:
+          - /placeholder: 例如：驿站、军报、雨夜、粮草
+      - button "开始游戏" [ref=e59] [cursor=pointer]
+  - region "已保存生成 Demo" [ref=e60]:
+    - generic [ref=e61]:
+      - generic [ref=e62]: 已生成 Demo
+      - strong [ref=e63]: 1 个可直接游玩
+    - button "雨夜驿符 主场景 雨夜驿符 驿站、军报、雨夜、粮草 8 景 · 30 线索 · 5 结局" [ref=e65] [cursor=pointer]:
+      - img "雨夜驿符 主场景" [ref=e66]
+      - generic [ref=e67]:
+        - strong [ref=e68]: 雨夜驿符
+        - generic [ref=e69]: 驿站、军报、雨夜、粮草
+        - emphasis [ref=e70]: 8 景 · 30 线索 · 5 结局
+  - navigation "主流程" [ref=e71]:
+    - generic [ref=e72]: 开始游戏
+    - generic [ref=e74]: 选择朝代 / 关键词
+    - generic [ref=e76]: 剧本生成
+    - generic [ref=e78]: 身份选择与概览
+    - generic [ref=e80]: 开始游戏
