@@ -100,7 +100,7 @@ class ScriptJobStore:
             except (json.JSONDecodeError, ValueError):
                 continue
             job = jobs_by_script_id.get(package.script_id)
-            playability = self.script_playability(package, job=job)
+            playability = self.script_playability(package, job=job, stable_demo_listing=True)
             approved_counts = playability["visual_quality"]
             playable = bool(playability["playable"])
             if playable_only and not playable:
@@ -137,15 +137,30 @@ class ScriptJobStore:
             )
         return sorted(demos, key=lambda item: str(item.get("updated_at") or item.get("generated_at") or ""), reverse=True)
 
-    def script_playability(self, package: ScriptPackage, *, job: ScriptJob | None = None) -> dict[str, Any]:
+    def script_playability(
+        self,
+        package: ScriptPackage,
+        *,
+        job: ScriptJob | None = None,
+        stable_demo_listing: bool = False,
+    ) -> dict[str, Any]:
         completed = job is not None and job.status == "completed" and job.ready_for_overview
-        gate_status = self.script_package_gate_status(package)
+        gate_status = self.script_demo_gate_status(package) if stable_demo_listing else self.script_package_gate_status(package)
         playable = completed and all(gate_status.values())
         return {
             "completed": completed,
             "playable": playable,
             "gate_status": gate_status,
             "visual_quality": self._approved_asset_counts(package),
+        }
+
+    def script_demo_gate_status(self, package: ScriptPackage) -> dict[str, bool]:
+        approved_counts = self._approved_asset_counts(package)
+        return {
+            "script_supervisor": script_supervisor.review(package).passed,
+            "script_volume_gate": script_volume_gate.review(package).passed,
+            "required_images": self._required_images_ready(package, approved_counts),
+            "saved_visual_assets": self._saved_visual_assets_ready(package),
         }
 
     def package_passes_demo_gates(self, package: ScriptPackage) -> bool:
@@ -210,6 +225,21 @@ class ScriptJobStore:
                 script_id=package.script_id,
             )
             if result.status != "approved":
+                return False
+        return True
+
+    def _saved_visual_assets_ready(self, package: ScriptPackage) -> bool:
+        for asset in package.visual_assets:
+            if asset.asset_type not in {"scene", "npc", "clue"}:
+                continue
+            if asset.quality_gate.status != "approved" or not asset.url or not asset.generated_path:
+                return False
+            path = self._visual_file_path(asset.generated_path)
+            if path is None or not path.exists():
+                return False
+            if path.suffix.lower() == ".svg" or "fallback" in path.as_posix().lower():
+                return False
+            if path.stat().st_size < 128 or not image_quality_gate._looks_like_raster(path):
                 return False
         return True
 

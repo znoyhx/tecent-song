@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-05-25T09:34:04",
+  "updated_at": "2026-05-27T08:27:10",
   "provider": "tianpuyue",
   "generation_api": "instrumental.generate",
   "query_api": "instrumental.query",
@@ -20,8 +20,8 @@
       "asset_available": true,
       "generated_path": "assets/generated/music/pre_game_entry.wav",
       "status": "generated",
-      "task_id": "t2m_dPMZdZbPzFDDgRDyG",
-      "item_id": "t2m_dPMZdZbPzFDDgRDyG",
+      "task_id": "t2m_YPtZO1EgCecNLawgd",
+      "item_id": "t2m_YPtZO1EgCecNLawgd",
       "volume": 0.32,
       "fade_ms": 1800,
       "duration_seconds": 80,

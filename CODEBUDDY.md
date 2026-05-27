@@ -261,7 +261,11 @@ Generated scripts add a higher-level `ScriptSupervisor`. It must reject or repai
 
 Visual generation is P0. The visual style is low-saturation Chinese historical suspense, dark visual-novel UI, rain/fire/smoke atmosphere, and no modern or wrong-dynasty elements.
 
+The current image generation provider is the `gpt-image-2` API documented in `docs/help/ImageGenerate.md`, not SiliconFlow/Kolors. Backend image calls must read the secret from `NEW_IMAGE_API_KEY` only. Keep this key in local `.env` or deployment secrets; never expose it to frontend code, logs, generated job JSON, or committed documentation. Backend generation should use the domestic node by default: `POST https://grsai.dakka.com.cn/v1/api/generate`. The global node `POST https://grsaiapi.com/v1/api/generate` is fallback-only after domestic-node failure or outage. Use `model: "gpt-image-2"` for standard generation and `model: "gpt-image-2-vip"` only when the requested resolution requires the VIP constraints from the API document.
+
 Current visual decision: the main game scene should be generated as one integrated image per location, with the active NPC(s), historical place, and clue-bearing objects in the same prompt and the same rendered perspective. Do not treat the main stage as a background with large NPC cutouts pasted on top. Example intent: "generate Xu the bookshop owner in the Ming bookshop front hall, with bookcases, shelves, the ledger desk, old book box, red seal paper corner, and doorpost watch mark visible as clue-bearing scene elements." The clickable game layer should sit over this integrated image as hotspot/NPC hit targets.
+
+Scene prompts for generated scripts must be concise and concrete. Prefer an English-first or bilingual prompt that names the dynasty, exact location, camera perspective, active NPCs, and every required clue object with rough placement. Because this API only exposes `prompt`, negative constraints must be embedded directly in the prompt: no mountains, lakes, cabins, deer, western scenery, modern objects, readable UI/text, or watermarks unless the script explicitly requires them. A scene image cannot pass the visual gate unless the required clue objects are visibly present and roughly match their expected positions.
 
 Phaser should make those visual assets feel like a game stage:
 
@@ -279,6 +283,8 @@ Generated script visuals must additionally include:
 - `era_feature_checklist` for every generated scene;
 - structured hotspot positioning using normalized `anchor_point` and `bbox`;
 - `ImageQualityGate` approval before an image counts as complete.
+
+For `gpt-image-2`, scene assets should request wide game-stage ratios such as `16:9`; clue and NPC assets may use square or portrait-compatible sizes according to the model constraints. Store only generated image URLs or downloaded local asset paths, never raw API credentials.
 
 Placeholder images, blank images, fallback images, old cached images, wrong-style images, wrong-dynasty images, missing-clue images, or character-inconsistent images must not pass Stage 15 acceptance. They should trigger prompt repair and image regeneration. If required images cannot pass after retries, mark the job `visual_blocked` or failed rather than entering formal gameplay.
 

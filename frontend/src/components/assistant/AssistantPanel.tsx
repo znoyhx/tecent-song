@@ -15,8 +15,8 @@ type AssistantPanelProps = {
 };
 
 const starterQuestions = [
-  '目前哪条线索最值得复查？',
-  '谁的说法和物证冲突最大？',
+  '这案子的关键真相是什么？',
+  '谁最可疑，证据是什么？',
   '我接下来该去哪个地点？',
 ];
 
@@ -25,7 +25,7 @@ export function AssistantPanel({ snapshot, compact = false }: AssistantPanelProp
   const [messages, setMessages] = useState<AssistantMessage[]>([
     {
       role: 'system',
-      text: '助手只会依据当前已发现线索给出提示，不会替你决定结局。',
+      text: '助手已接入完整剧本，可依据人物、地点、线索、推理和结局回答。',
     },
   ]);
   const [busy, setBusy] = useState(false);
@@ -73,7 +73,7 @@ export function AssistantPanel({ snapshot, compact = false }: AssistantPanelProp
     <section className={compact ? 'assistant-panel compact' : 'assistant-panel'} aria-label="智能助手">
       <header className="assistant-panel-head">
         <p className="meta-label">智能助手</p>
-        <h3>只看当前案卷的提示</h3>
+        <h3>完整剧本问答</h3>
         <span>当前地点：{snapshot.scene.name} · 已发现：{discoveredSummary}</span>
       </header>
 
@@ -108,7 +108,7 @@ export function AssistantPanel({ snapshot, compact = false }: AssistantPanelProp
         <textarea
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder="问助手当前证据链，不要让它替你下结论。"
+          placeholder="问人物、线索、真相、结局或下一步。"
           rows={compact ? 2 : 3}
           disabled={busy}
         />

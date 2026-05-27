@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.routers import scripts as scripts_router
 from app.models.script_models import ScriptGenerateRequest, ScriptPackage
+from app.services.script_visual_contract import SCENE_STYLE_GUIDE_CONTRACT
 from app.services.script_job_store import script_job_store, ScriptJobStore
 from script_generation_fixtures import sample_script_payload, stage15_script_payload
 
@@ -52,6 +53,21 @@ def test_generate_api_preserves_valid_chinese_keywords(monkeypatch) -> None:
     assert job.keywords == keywords
 
 
+def test_seed_prompt_requires_case_bound_deduction_blueprints() -> None:
+    prompt = scripts_router.script_generation_service._seed_prompt(
+        "song",
+        ["粮仓"],
+        {"pitch": "粮仓失火牵出官粮转运。"},
+    )
+
+    assert "deduction_blueprints" in prompt
+    assert "结合本剧本真相链" in prompt
+    assert "禁止使用“第几个疑点”" in prompt
+    assert "correct_clue_titles 必须引用现有 clue_themes 标题" in prompt
+    assert "clue_themes 视觉要求" in prompt
+    assert "禁止把 title 写成“时间线”" in prompt
+
+
 def test_generate_api_creates_failed_job_when_deepseek_unavailable(monkeypatch) -> None:
     def fake_run_job(job_id: str) -> None:
         job = script_job_store.get_job(job_id)
@@ -97,6 +113,32 @@ def test_generated_demo_library_lists_completed_playable_scripts(tmp_path, monke
     assert demos[0]["playable"] is True
     assert demos[0]["default_identity_id"] == "identity_inspector"
     assert demos[0]["thumbnail_url"] == "/api/scripts/script_demo_library/assets/asset_scene_0"
+
+
+def test_generated_demo_library_keeps_saved_approved_scripts_after_prompt_contract_changes(tmp_path, monkeypatch) -> None:
+    store = ScriptJobStore(tmp_path)
+    monkeypatch.setattr(scripts_router, "script_job_store", store)
+
+    package = ScriptPackage.model_validate(stage15_script_payload("script_demo_legacy_visual_contract"))
+    for asset in package.visual_assets:
+        if asset.asset_type == "scene":
+            asset.prompt = asset.prompt.replace(SCENE_STYLE_GUIDE_CONTRACT, "")
+    _write_approved_asset_files(package, tmp_path)
+    store.save_script(package)
+    job = store.create_job(ScriptGenerateRequest(dynasty_id="song", keywords=package.keywords))
+    job.status = "completed"
+    job.progress = 100
+    job.current_step = "completed"
+    job.ready_for_overview = True
+    job.script_id = package.script_id
+    store.save_job(job)
+
+    response = client.get("/api/scripts/demos")
+
+    assert response.status_code == 200
+    demos = response.json()["demos"]
+    assert [demo["script_id"] for demo in demos] == [package.script_id]
+    assert demos[0]["gate_status"]["saved_visual_assets"] is True
 
 
 def _write_approved_asset_files(package: ScriptPackage, root) -> None:

@@ -1,0 +1,4762 @@
+{
+  "script_id": "p0_song_5ea8d3",
+  "job_id": "job_a703815ea8d3",
+  "dynasty_id": "song",
+  "keywords": [
+    "朝廷"
+  ],
+  "generation_source": "deepseek",
+  "generated_at": "2026-05-25T22:03:41",
+  "script_overview": {
+    "title": "秘阁残卷",
+    "logline": "《推背图》残卷失窃，秘阁暗藏党争杀机，谁在伪造天机？",
+    "case_summary": "北宋汴京，朝廷秘阁失窃《推背图》残卷。表面为盗贼夜闯，实则牵涉朝中党争。调查发现，残卷被调包，真本藏于翰林学士府中，而枢密院暗线欲借此诬陷政敌，引发朝局动荡。",
+    "opening_location": "秘阁",
+    "public_objective": "查明《推背图》残卷失窃真相，追回真本。",
+    "major_locations": [
+      "秘阁",
+      "翰林学士府",
+      "枢密院",
+      "汴京夜市",
+      "东华门",
+      "王洙书房暗格",
+      "张尧佐密室",
+      "秘阁值房"
+    ],
+    "major_npcs": [
+      "王洙",
+      "张尧佐",
+      "赵佶",
+      "陈婆"
+    ],
+    "player_briefing": "你可以查验现场、询问相关人物、整理线索并在最后作出取舍。"
+  },
+  "playable_identities": [
+    {
+      "identity_id": "identity_clerk",
+      "display_name": "随行文吏",
+      "description": "北宋地方文吏，熟悉文书、印记和交接规程。",
+      "social_rank": "middle",
+      "relation_to_case": "有权查验案发现场与相关簿册。",
+      "motive": "厘清文书失误背后的责任，避免无辜者被牵连。",
+      "permissions": [
+        "查验现场",
+        "询问相关人物",
+        "整理线索",
+        "提交推理"
+      ],
+      "limitations": [
+        "不能越权定罪",
+        "不能提前公开未证实的真相"
+      ],
+      "background": "你随官署入场，既要顾及规程，也要找出真正能站住脚的证据。",
+      "tags": [
+        "文书",
+        "调查",
+        "谨慎"
+      ],
+      "is_default": true
+    },
+    {
+      "identity_id": "identity_runner",
+      "display_name": "驿路差人",
+      "description": "北宋驿路差人，熟悉行旅、马匹与夜间出入痕迹。",
+      "social_rank": "low",
+      "relation_to_case": "能接触驿路、仓房、后门与差役口供。",
+      "motive": "证明自己没有卷入案中，同时找出真正破坏规程的人。",
+      "permissions": [
+        "查验驿路痕迹",
+        "询问差役",
+        "辨认行旅物件"
+      ],
+      "limitations": [
+        "身份低微，不能强逼高阶人物认罪"
+      ],
+      "background": "你在驿路上见过太多仓促交接，知道细节比响亮口供更可靠。",
+      "tags": [
+        "驿路",
+        "现场",
+        "民间"
+      ],
+      "is_default": false
+    }
+  ],
+  "world": {
+    "dynasty_id": "song",
+    "dynasty_name": "北宋",
+    "era_name": "北宋仁宗庆历年间",
+    "year_hint": "庆历四年，春",
+    "location_region": "汴京皇城及内城",
+    "rules": [
+      "文书、印记、口供与现场物证需要相互印证。",
+      "人物只会透露自己在当前阶段能够合理知道的内容。"
+    ],
+    "forbidden_terms": [
+      "手机",
+      "电话",
+      "电报",
+      "火车",
+      "报纸",
+      "公司",
+      "警察",
+      "现代"
+    ]
+  },
+  "story": {
+    "surface_event": "秘阁《推背图》残卷被盗，现场留有撬锁痕迹与一枚铜符。",
+    "hidden_truth": "残卷并未失窃，而是被翰林学士王洙暗中调换，欲以伪本献媚圣上，真本藏于其书房暗格。枢密院暗线张尧佐得知后，派刺客夜闯秘阁，制造失窃假象，欲嫁祸王洙。",
+    "themes": [
+      "文书",
+      "证言",
+      "权责"
+    ],
+    "culprit_boundary": "真凶和包庇者必须通过完整证据链确认，任何单一口供都不足以下结论。",
+    "truth_chain_clue_ids": [
+      "clue_00",
+      "clue_01",
+      "clue_02",
+      "clue_03",
+      "clue_04",
+      "clue_05"
+    ]
+  },
+  "stages": [
+    {
+      "stage_id": "intro",
+      "name": "入局",
+      "order": 0,
+      "goal": "确认表面事件与第一批可见证据。",
+      "entry_location_id": "loc_00",
+      "unlock_conditions": [],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_00",
+        "clue_01",
+        "clue_02",
+        "clue_03",
+        "clue_04"
+      ]
+    },
+    {
+      "stage_id": "investigation",
+      "name": "查证",
+      "order": 1,
+      "goal": "扩大现场范围，串联文书、物件与口供。",
+      "entry_location_id": "loc_01",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_05",
+        "clue_06",
+        "clue_07",
+        "clue_08",
+        "clue_09",
+        "clue_10"
+      ]
+    },
+    {
+      "stage_id": "reversal",
+      "name": "转折",
+      "order": 2,
+      "goal": "识破早期说法中的漏洞，逼近隐藏动机。",
+      "entry_location_id": "loc_02",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_18",
+        "clue_19",
+        "clue_20",
+        "clue_21",
+        "clue_22",
+        "clue_23"
+      ]
+    },
+    {
+      "stage_id": "choice",
+      "name": "抉择",
+      "order": 3,
+      "goal": "根据证据决定如何呈报或处理真相。",
+      "entry_location_id": "loc_03",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": [
+        "clue_26",
+        "clue_27",
+        "clue_28",
+        "clue_29"
+      ]
+    },
+    {
+      "stage_id": "ending",
+      "name": "收束",
+      "order": 4,
+      "goal": "查看选择造成的历史余波。",
+      "entry_location_id": "loc_04",
+      "unlock_conditions": [
+        "完成上一阶段核心线索"
+      ],
+      "available_location_ids": [
+        "loc_00",
+        "loc_01",
+        "loc_02",
+        "loc_03",
+        "loc_04",
+        "loc_05",
+        "loc_06",
+        "loc_07"
+      ],
+      "key_clue_ids": []
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "loc_00",
+      "name": "秘阁",
+      "description": "皇城藏书重地，案发现场，门锁被撬，书架倾倒",
+      "scene_text": "阁内书卷散落，烛影摇曳，空气中弥漫着陈年纸墨的气味。地上有一枚铜符，在昏暗光线中泛着冷光。",
+      "stage_ids": [
+        "intro",
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_00",
+        "npc_01"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_00",
+          "label": "铜符",
+          "description": "一处与“铜符”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_00"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“铜符”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_08",
+          "label": "赵佶记录记录口供记录",
+          "description": "一处与“赵佶记录口供记录”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_08"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“赵佶记录口供记录”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_16",
+          "label": "伪本书页",
+          "description": "一处与“伪本书页”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_16"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“伪本书页”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_24",
+          "label": "铜符",
+          "description": "一处与“铜符”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_24"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“铜符”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.65,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.605,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_00"
+    },
+    {
+      "location_id": "loc_01",
+      "name": "翰林学士府",
+      "description": "王洙宅邸，书房暗藏玄机",
+      "scene_text": "庭院深深，书房内书案上摊着半卷《推背图》，笔迹尚新。墙角博古架后隐约有暗格痕迹。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_01",
+          "label": "撬锁痕迹",
+          "description": "一处与“撬锁痕迹”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_01"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“撬锁痕迹”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_09",
+          "label": "陈婆手记残页",
+          "description": "一处与“陈婆手记残页”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_09"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“陈婆手记残页”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_17",
+          "label": "暗格痕迹",
+          "description": "一处与“暗格痕迹”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_17"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“暗格痕迹”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_25",
+          "label": "撬锁痕迹",
+          "description": "一处与“撬锁痕迹”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_25"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“撬锁痕迹”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.65,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.605,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_01"
+    },
+    {
+      "location_id": "loc_02",
+      "name": "枢密院",
+      "description": "军机重地，张尧佐办公之处",
+      "scene_text": "院中肃穆，侍卫林立。张尧佐的案头放着一封未封口的密信，信纸一角露出‘推背’二字。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_02",
+          "label": "车辙印",
+          "description": "一处与“车辙印”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_02"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“车辙印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_10",
+          "label": "药渣",
+          "description": "一处与“药渣”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_10"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“药渣”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_18",
+          "label": "密信残角",
+          "description": "一处与“密信残角”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_18"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“密信残角”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_26",
+          "label": "车辙印",
+          "description": "一处与“车辙印”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_26"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“车辙印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.65,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.605,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_02"
+    },
+    {
+      "location_id": "loc_03",
+      "name": "汴京夜市",
+      "description": "繁华街市，暗藏情报交易",
+      "scene_text": "灯火如昼，人声鼎沸。一处书摊后，有人低声交谈，递出一卷泛黄的书页。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_03",
+          "label": "残茶盏",
+          "description": "一处与“残茶盏”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_03"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“残茶盏”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_11",
+          "label": "真本残卷",
+          "description": "一处与“真本残卷”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_11"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“真本残卷”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_19",
+          "label": "灰烬纸角",
+          "description": "一处与“灰烬纸角”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_19"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“灰烬纸角”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_27",
+          "label": "残茶盏",
+          "description": "一处与“残茶盏”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_27"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“残茶盏”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.65,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.605,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_03"
+    },
+    {
+      "location_id": "loc_04",
+      "name": "东华门",
+      "description": "皇城东门，案发当夜有可疑车马出入",
+      "scene_text": "门洞幽深，守门士卒回忆，那夜有一辆青呢马车匆匆出城，车辙印深于常车。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_04",
+          "label": "伪本书页",
+          "description": "一处与“伪本书页”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_04"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“伪本书页”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_12",
+          "label": "铜符",
+          "description": "一处与“铜符”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_12"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“铜符”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_20",
+          "label": "赵佶记录记录口供记录",
+          "description": "一处与“赵佶记录口供记录”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_20"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“赵佶记录口供记录”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_28",
+          "label": "伪本书页",
+          "description": "一处与“伪本书页”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_28"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“伪本书页”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.65,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.605,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_04"
+    },
+    {
+      "location_id": "loc_05",
+      "name": "王洙书房暗格",
+      "description": "隐藏真本的所在",
+      "scene_text": "暗格开启，内藏一紫檀木匣，匣中正是《推背图》残卷真本，纸张古旧，墨迹斑驳。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_05",
+          "label": "暗格痕迹",
+          "description": "一处与“暗格痕迹”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_05"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“暗格痕迹”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_13",
+          "label": "撬锁痕迹",
+          "description": "一处与“撬锁痕迹”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_13"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“撬锁痕迹”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_21",
+          "label": "陈婆手记残页",
+          "description": "一处与“陈婆手记残页”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_21"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“陈婆手记残页”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_29",
+          "label": "暗格痕迹",
+          "description": "一处与“暗格痕迹”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_29"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“暗格痕迹”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.65,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.605,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_05"
+    },
+    {
+      "location_id": "loc_06",
+      "name": "张尧佐密室",
+      "description": "藏有密信与伪本证据",
+      "scene_text": "密室中，火盆灰烬里残留未烧尽的纸角，上书‘伪本已就’字样。一旁架上有数卷仿古书册。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_06",
+          "label": "密信残角",
+          "description": "一处与“密信残角”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_06"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“密信残角”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_14",
+          "label": "车辙印",
+          "description": "一处与“车辙印”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_14"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“车辙印”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_22",
+          "label": "药渣",
+          "description": "一处与“药渣”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_22"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“药渣”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_06"
+    },
+    {
+      "location_id": "loc_07",
+      "name": "秘阁值房",
+      "description": "当夜值班官员休息处",
+      "scene_text": "值房简陋，桌上有一壶残茶，茶盏边缘有褐色痕迹。墙角发现一枚与现场相同的铜符。",
+      "stage_ids": [
+        "investigation",
+        "reversal",
+        "choice"
+      ],
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspots": [
+        {
+          "hotspot_id": "hotspot_07",
+          "label": "灰烬纸角",
+          "description": "一处与“灰烬纸角”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_07"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“灰烬纸角”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.2,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.155,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_15",
+          "label": "残茶盏",
+          "description": "一处与“残茶盏”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_15"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“残茶盏”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.35,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.305,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        },
+        {
+          "hotspot_id": "hotspot_23",
+          "label": "真本残卷",
+          "description": "一处与“真本残卷”相关的可疑痕迹。",
+          "clue_ids": [
+            "clue_23"
+          ],
+          "required_stage": null,
+          "required_clue_ids": [],
+          "investigation_text": "你细查此处，发现了“真本残卷”。",
+          "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
+          "anchor_point": {
+            "x": 0.5,
+            "y": 0.34
+          },
+          "bbox": {
+            "x": 0.455,
+            "y": 0.295,
+            "width": 0.09,
+            "height": 0.09
+          }
+        }
+      ],
+      "visual_asset_id": "asset_scene_07"
+    }
+  ],
+  "npcs": [
+    {
+      "npc_id": "npc_00",
+      "name": "王洙",
+      "public_identity": "翰林学士",
+      "appearance": "中年文士，蓄长须，着紫袍",
+      "personality": "谨慎多谋，城府深",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "秘阁失窃残卷的保管者，案发后称病不出",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "欲以伪本献媚，掩盖自己私藏真本之事",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_00",
+        "clue_04",
+        "clue_08",
+        "clue_12",
+        "clue_16",
+        "clue_20"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_00"
+    },
+    {
+      "npc_id": "npc_01",
+      "name": "张尧佐",
+      "public_identity": "枢密副使",
+      "appearance": "武将身材，面有刀疤，着绯袍",
+      "personality": "刚愎自用，野心勃勃",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "案发前曾派人秘访秘阁，案发后积极追查",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "欲借失窃案扳倒王洙，扶植己方势力",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_01",
+        "clue_05",
+        "clue_09",
+        "clue_13",
+        "clue_17",
+        "clue_21"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_01"
+    },
+    {
+      "npc_id": "npc_02",
+      "name": "赵佶",
+      "public_identity": "秘阁校书郎",
+      "appearance": "年轻书生，面容清秀，着青衫",
+      "personality": "机敏正直，但略显急躁",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "当夜值宿秘阁，第一个发现失窃",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "曾无意中撞见王洙深夜出入秘阁，心生疑虑",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_02",
+        "clue_06",
+        "clue_10",
+        "clue_14",
+        "clue_18",
+        "clue_22"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_02"
+    },
+    {
+      "npc_id": "npc_03",
+      "name": "陈婆",
+      "public_identity": "王洙府中老仆",
+      "appearance": "年约五旬，布衣荆钗，面容慈祥",
+      "personality": "沉默寡言，忠心护主",
+      "background_suspicion": "对关键时间和物件说法含糊。",
+      "case_connection": "负责打扫书房，曾见王洙深夜在书房翻找",
+      "event_behavior": "声称自己只看见表面经过。",
+      "public_goal": "保全自身名声和差事。",
+      "hidden_motive": "受王洙恩惠，为其隐瞒暗格之事",
+      "known_info": [
+        "知道案发时序的一部分"
+      ],
+      "unknown_info": [
+        "不知道完整幕后安排"
+      ],
+      "forbidden_disclosure": [
+        "不得提前说出最终真相",
+        "不得替玩家完成核心推理"
+      ],
+      "speaking_style": "短句，克制，避重就轻",
+      "initial_trust": 0,
+      "emotion_state": "guarded",
+      "releasable_clue_ids": [
+        "clue_03",
+        "clue_07",
+        "clue_11",
+        "clue_15",
+        "clue_19",
+        "clue_23"
+      ],
+      "stage_limits": {
+        "intro": "只谈公开事实，不说幕后安排。",
+        "investigation": "可在证据提示下补充见闻。",
+        "reversal": "可以承认先前说法中的漏洞。"
+      },
+      "visual_asset_id": "asset_npc_03"
+    }
+  ],
+  "relationships": [
+    {
+      "source_id": "npc_00",
+      "target_id": "npc_01",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    },
+    {
+      "source_id": "npc_01",
+      "target_id": "npc_02",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    },
+    {
+      "source_id": "npc_02",
+      "target_id": "npc_03",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    },
+    {
+      "source_id": "npc_03",
+      "target_id": "npc_00",
+      "relation": "互相认识",
+      "public_state": "表面上只是案发前后的普通往来。",
+      "hidden_state": "彼此对关键时间的说法并不完全一致。"
+    }
+  ],
+  "clues": [
+    {
+      "clue_id": "clue_00",
+      "title": "铜符",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "铜符",
+      "display_text": "秘阁现场发现的铜制令牌，刻有‘枢密’字样",
+      "detail": "此铜符为枢密院夜间通行凭证，数量有限，可追查持有人。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_00"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_01",
+      "title": "撬锁痕迹",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "撬锁痕迹",
+      "display_text": "秘阁门锁上的金属划痕",
+      "detail": "痕迹方向由外向内，但锁簧完好，疑似用钥匙开锁后伪造。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_01"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_00"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_02",
+      "title": "车辙印",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "车辙印",
+      "display_text": "东华门外深陷的车辙",
+      "detail": "车辙宽度与枢密院马车相符，且辙印深于常车，显示载重物。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_02"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_01"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_03",
+      "title": "残茶盏",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "残茶盏",
+      "display_text": "秘阁值房桌上的茶盏",
+      "detail": "茶盏边缘有褐色痕迹，经查验为安神药残渣，暗示当夜有人下药。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_03"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_02"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_04",
+      "title": "伪本书页",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "伪本书页",
+      "display_text": "王洙书房书案上摊开的半卷《推背图》",
+      "detail": "纸张较新，墨迹未干，与真本年代不符，且内容有篡改。",
+      "stage_available": [
+        "intro"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_04"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_03"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_05",
+      "title": "暗格痕迹",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "暗格痕迹",
+      "display_text": "王洙书房博古架后的细微划痕",
+      "detail": "划痕呈方形，与暗格边缘吻合，显示此处近期被开启。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_05"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_04"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_06",
+      "title": "密信残角",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_06",
+      "source_npc_id": null,
+      "highlight_text": "密信残角",
+      "display_text": "张尧佐案头未封口的密信",
+      "detail": "信上写有‘推背’二字，内容提及‘伪本已就，可行动矣’。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_06"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_05"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_07",
+      "title": "灰烬纸角",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_07",
+      "source_npc_id": null,
+      "highlight_text": "灰烬纸角",
+      "display_text": "张尧佐密室火盆中的未燃尽纸片",
+      "detail": "纸片上书‘伪本已就’，与密信笔迹相同。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_07"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_06"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_08",
+      "title": "赵佶记录口供记录",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "赵佶记录记录口供记录",
+      "display_text": "赵佶关于当夜情况的陈述笔录",
+      "detail": "赵佶称自己当晚曾见王洙独自进入秘阁，约半个时辰后离开。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_08"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_07"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_09",
+      "title": "陈婆手记残页",
+      "type": "物证",
+      "is_key": true,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "陈婆手记残页",
+      "display_text": "陈婆私下记录的王府杂事",
+      "detail": "残页上写有‘老爷夜入书房，开暗格，取一木匣’等字。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_09"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_08"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_10",
+      "title": "药渣",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "药渣",
+      "display_text": "值房茶壶中残留的药渣",
+      "detail": "经查验为曼陀罗花籽，有致昏作用，与残茶盏中的安神药相符。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_10"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_09"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_11",
+      "title": "真本残卷",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "真本残卷",
+      "display_text": "王洙书房暗格中的紫檀木匣内所藏",
+      "detail": "纸张古旧，墨迹自然，与秘阁藏书目录记载相符，确为真本。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_11"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_10"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_12",
+      "title": "铜符",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "铜符",
+      "display_text": "秘阁现场发现的铜制令牌，刻有‘枢密’字样",
+      "detail": "此铜符为枢密院夜间通行凭证，数量有限，可追查持有人。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_12"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_11"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_13",
+      "title": "撬锁痕迹",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "撬锁痕迹",
+      "display_text": "秘阁门锁上的金属划痕",
+      "detail": "痕迹方向由外向内，但锁簧完好，疑似用钥匙开锁后伪造。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_13"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_12"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_14",
+      "title": "车辙印",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_06",
+      "source_npc_id": null,
+      "highlight_text": "车辙印",
+      "display_text": "东华门外深陷的车辙",
+      "detail": "车辙宽度与枢密院马车相符，且辙印深于常车，显示载重物。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_14"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_13"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_15",
+      "title": "残茶盏",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_07",
+      "source_npc_id": null,
+      "highlight_text": "残茶盏",
+      "display_text": "秘阁值房桌上的茶盏",
+      "detail": "茶盏边缘有褐色痕迹，经查验为安神药残渣，暗示当夜有人下药。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_15"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_14"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_16",
+      "title": "伪本书页",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "伪本书页",
+      "display_text": "王洙书房书案上摊开的半卷《推背图》",
+      "detail": "纸张较新，墨迹未干，与真本年代不符，且内容有篡改。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_16"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_15"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_17",
+      "title": "暗格痕迹",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "暗格痕迹",
+      "display_text": "王洙书房博古架后的细微划痕",
+      "detail": "划痕呈方形，与暗格边缘吻合，显示此处近期被开启。",
+      "stage_available": [
+        "investigation"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_17"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_16"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_18",
+      "title": "密信残角",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "密信残角",
+      "display_text": "张尧佐案头未封口的密信",
+      "detail": "信上写有‘推背’二字，内容提及‘伪本已就，可行动矣’。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_18"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_17"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_19",
+      "title": "灰烬纸角",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "灰烬纸角",
+      "display_text": "张尧佐密室火盆中的未燃尽纸片",
+      "detail": "纸片上书‘伪本已就’，与密信笔迹相同。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_19"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_18"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_20",
+      "title": "赵佶记录口供记录",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "赵佶记录记录口供记录",
+      "display_text": "赵佶关于当夜情况的陈述笔录",
+      "detail": "赵佶称自己当晚曾见王洙独自进入秘阁，约半个时辰后离开。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_20"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_19"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_21",
+      "title": "陈婆手记残页",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "陈婆手记残页",
+      "display_text": "陈婆私下记录的王府杂事",
+      "detail": "残页上写有‘老爷夜入书房，开暗格，取一木匣’等字。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_21"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_20"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_22",
+      "title": "药渣",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_06",
+      "source_npc_id": null,
+      "highlight_text": "药渣",
+      "display_text": "值房茶壶中残留的药渣",
+      "detail": "经查验为曼陀罗花籽，有致昏作用，与残茶盏中的安神药相符。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_22"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_21"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_23",
+      "title": "真本残卷",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_07",
+      "source_npc_id": null,
+      "highlight_text": "真本残卷",
+      "display_text": "王洙书房暗格中的紫檀木匣内所藏",
+      "detail": "纸张古旧，墨迹自然，与秘阁藏书目录记载相符，确为真本。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_23"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_22"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    },
+    {
+      "clue_id": "clue_24",
+      "title": "铜符",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_00",
+      "source_npc_id": null,
+      "highlight_text": "铜符",
+      "display_text": "秘阁现场发现的铜制令牌，刻有‘枢密’字样",
+      "detail": "此铜符为枢密院夜间通行凭证，数量有限，可追查持有人。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_24"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_23"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_00"
+    },
+    {
+      "clue_id": "clue_25",
+      "title": "撬锁痕迹",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_01",
+      "source_npc_id": null,
+      "highlight_text": "撬锁痕迹",
+      "display_text": "秘阁门锁上的金属划痕",
+      "detail": "痕迹方向由外向内，但锁簧完好，疑似用钥匙开锁后伪造。",
+      "stage_available": [
+        "reversal"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_25"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_24"
+      ],
+      "ending_tags": [
+        "tag_0"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_01"
+    },
+    {
+      "clue_id": "clue_26",
+      "title": "车辙印",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_02",
+      "source_npc_id": null,
+      "highlight_text": "车辙印",
+      "display_text": "东华门外深陷的车辙",
+      "detail": "车辙宽度与枢密院马车相符，且辙印深于常车，显示载重物。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_26"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_25"
+      ],
+      "ending_tags": [
+        "tag_1"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_02"
+    },
+    {
+      "clue_id": "clue_27",
+      "title": "残茶盏",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_03",
+      "source_npc_id": null,
+      "highlight_text": "残茶盏",
+      "display_text": "秘阁值房桌上的茶盏",
+      "detail": "茶盏边缘有褐色痕迹，经查验为安神药残渣，暗示当夜有人下药。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_27"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_26"
+      ],
+      "ending_tags": [
+        "tag_2"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_03"
+    },
+    {
+      "clue_id": "clue_28",
+      "title": "伪本书页",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_04",
+      "source_npc_id": null,
+      "highlight_text": "伪本书页",
+      "display_text": "王洙书房书案上摊开的半卷《推背图》",
+      "detail": "纸张较新，墨迹未干，与真本年代不符，且内容有篡改。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_28"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_27"
+      ],
+      "ending_tags": [
+        "tag_3"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_04"
+    },
+    {
+      "clue_id": "clue_29",
+      "title": "暗格痕迹",
+      "type": "物证",
+      "is_key": false,
+      "source_location_id": "loc_05",
+      "source_npc_id": null,
+      "highlight_text": "暗格痕迹",
+      "display_text": "王洙书房博古架后的细微划痕",
+      "detail": "划痕呈方形，与暗格边缘吻合，显示此处近期被开启。",
+      "stage_available": [
+        "choice"
+      ],
+      "unlock_conditions": {},
+      "effects": {
+        "flags": [
+          "found_clue_29"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      },
+      "related_clue_ids": [
+        "clue_28"
+      ],
+      "ending_tags": [
+        "tag_4"
+      ],
+      "forbidden_before_stage": null,
+      "visual_asset_id": "asset_clue_05"
+    }
+  ],
+  "clue_graph": [
+    {
+      "rule_id": "combo_00",
+      "required_clue_ids": [
+        "clue_00",
+        "clue_01",
+        "clue_02"
+      ],
+      "result_title": "证据组合1",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_00_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_01",
+      "required_clue_ids": [
+        "clue_01",
+        "clue_02",
+        "clue_03"
+      ],
+      "result_title": "证据组合2",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_01_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_02",
+      "required_clue_ids": [
+        "clue_02",
+        "clue_03",
+        "clue_04"
+      ],
+      "result_title": "证据组合3",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_02_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_03",
+      "required_clue_ids": [
+        "clue_03",
+        "clue_04",
+        "clue_05"
+      ],
+      "result_title": "证据组合4",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_03_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_04",
+      "required_clue_ids": [
+        "clue_04",
+        "clue_05",
+        "clue_06"
+      ],
+      "result_title": "证据组合5",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_04_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "rule_id": "combo_05",
+      "required_clue_ids": [
+        "clue_05",
+        "clue_06",
+        "clue_07"
+      ],
+      "result_title": "证据组合6",
+      "result_text": "这些线索可以相互印证，排除一个表面说法。",
+      "effects": {
+        "flags": [
+          "combo_05_confirmed"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    }
+  ],
+  "deductions": [
+    {
+      "deduction_id": "deduction_00",
+      "question": "秘阁门锁的撬锁痕迹与铜符，揭示了什么矛盾？",
+      "required_clue_ids": [
+        "clue_01"
+      ],
+      "correct_clue_ids": [
+        "clue_01",
+        "clue_00"
+      ],
+      "wrong_feedback": "证据不足，请仔细比对痕迹方向与铜符来源。",
+      "success_text": "撬锁痕迹为伪造，实为用钥匙开门后伪造，而铜符为枢密院所有，暗示内部人员作案。",
+      "effects": {
+        "flags": [
+          "deduction_00_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_01",
+      "question": "值房的残茶盏与药渣，说明了什么？",
+      "required_clue_ids": [
+        "clue_03"
+      ],
+      "correct_clue_ids": [
+        "clue_03",
+        "clue_10"
+      ],
+      "wrong_feedback": "线索不完整，请分析茶盏与药渣的关系。",
+      "success_text": "当夜有人对值宿官员下药致昏，以便潜入秘阁。",
+      "effects": {
+        "flags": [
+          "deduction_01_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_02",
+      "question": "东华门的车辙印与枢密院的密信残角，指向谁？",
+      "required_clue_ids": [
+        "clue_02"
+      ],
+      "correct_clue_ids": [
+        "clue_02",
+        "clue_06"
+      ],
+      "wrong_feedback": "车辙与密信需结合分析，注意时间与内容。",
+      "success_text": "枢密院马车深夜出城，密信提及‘行动’，暗示张尧佐派人制造失窃假象。",
+      "effects": {
+        "flags": [
+          "deduction_02_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_03",
+      "question": "陈婆的手记残页与暗格痕迹，揭示了什么？",
+      "required_clue_ids": [
+        "clue_09"
+      ],
+      "correct_clue_ids": [
+        "clue_09",
+        "clue_05"
+      ],
+      "wrong_feedback": "请确认暗格位置与手记内容的一致性。",
+      "success_text": "王洙书房暗格近期被开启，内藏真本，证实其私藏行为。",
+      "effects": {
+        "flags": [
+          "deduction_03_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_04",
+      "question": "张尧密室中的灰烬纸角与密信残角，有何联系？",
+      "required_clue_ids": [
+        "clue_07"
+      ],
+      "correct_clue_ids": [
+        "clue_07",
+        "clue_06"
+      ],
+      "wrong_feedback": "笔迹比对是关键，请仔细查看。",
+      "success_text": "灰烬纸角与密信笔迹相同，证明张尧佐在销毁证据，密信为行动指令。",
+      "effects": {
+        "flags": [
+          "deduction_04_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_05",
+      "question": "综合所有线索，真本残卷最终藏于何处？谁策划了失窃案？",
+      "required_clue_ids": [
+        "clue_11"
+      ],
+      "correct_clue_ids": [
+        "clue_11",
+        "clue_05",
+        "clue_06"
+      ],
+      "wrong_feedback": "请确认真本位置与幕后主使。",
+      "success_text": "真本藏于王洙书房暗格，失窃案由张尧佐策划，欲嫁祸王洙。",
+      "effects": {
+        "flags": [
+          "deduction_05_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_06",
+      "question": "「铜符」「撬锁痕迹」「车辙印」共同指向案发前后的哪条关键事实？",
+      "required_clue_ids": [
+        "clue_00"
+      ],
+      "correct_clue_ids": [
+        "clue_00",
+        "clue_01",
+        "clue_02"
+      ],
+      "wrong_feedback": "还缺能把「铜符」与另外两条线索连起来的证据。",
+      "success_text": "「铜符」「撬锁痕迹」「车辙印」已经互相印证，可以作为这一问题的完整证据链。",
+      "effects": {
+        "flags": [
+          "deduction_06_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    },
+    {
+      "deduction_id": "deduction_07",
+      "question": "「撬锁痕迹」「车辙印」「残茶盏」共同指向案发前后的哪条关键事实？",
+      "required_clue_ids": [
+        "clue_01"
+      ],
+      "correct_clue_ids": [
+        "clue_01",
+        "clue_02",
+        "clue_03"
+      ],
+      "wrong_feedback": "还缺能把「撬锁痕迹」与另外两条线索连起来的证据。",
+      "success_text": "「撬锁痕迹」「车辙印」「残茶盏」已经互相印证，可以作为这一问题的完整证据链。",
+      "effects": {
+        "flags": [
+          "deduction_07_solved"
+        ],
+        "scores": {
+          "truth": 1
+        }
+      }
+    }
+  ],
+  "chapter_sections": [
+    {
+      "section_id": "section_00",
+      "stage": "intro",
+      "title": "章节1",
+      "trigger_conditions": [],
+      "scene_id": "loc_00",
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspot_ids": [
+        "hotspot_00"
+      ],
+      "clue_ids": [
+        "clue_00"
+      ],
+      "next_section_ids": [
+        "section_01"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_01",
+      "stage": "intro",
+      "title": "章节2",
+      "trigger_conditions": [
+        "section_00 completed"
+      ],
+      "scene_id": "loc_01",
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspot_ids": [
+        "hotspot_01"
+      ],
+      "clue_ids": [
+        "clue_01"
+      ],
+      "next_section_ids": [
+        "section_02"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_02",
+      "stage": "intro",
+      "title": "章节3",
+      "trigger_conditions": [
+        "section_01 completed"
+      ],
+      "scene_id": "loc_02",
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspot_ids": [
+        "hotspot_02"
+      ],
+      "clue_ids": [
+        "clue_02"
+      ],
+      "next_section_ids": [
+        "section_03"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_03",
+      "stage": "investigation",
+      "title": "章节4",
+      "trigger_conditions": [
+        "section_02 completed"
+      ],
+      "scene_id": "loc_03",
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspot_ids": [
+        "hotspot_03"
+      ],
+      "clue_ids": [
+        "clue_03"
+      ],
+      "next_section_ids": [
+        "section_04"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_04",
+      "stage": "investigation",
+      "title": "章节5",
+      "trigger_conditions": [
+        "section_03 completed"
+      ],
+      "scene_id": "loc_04",
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspot_ids": [
+        "hotspot_04"
+      ],
+      "clue_ids": [
+        "clue_04"
+      ],
+      "next_section_ids": [
+        "section_05"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_05",
+      "stage": "investigation",
+      "title": "章节6",
+      "trigger_conditions": [
+        "section_04 completed"
+      ],
+      "scene_id": "loc_05",
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspot_ids": [
+        "hotspot_05"
+      ],
+      "clue_ids": [
+        "clue_05"
+      ],
+      "next_section_ids": [
+        "section_06"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_06",
+      "stage": "reversal",
+      "title": "章节7",
+      "trigger_conditions": [
+        "section_05 completed"
+      ],
+      "scene_id": "loc_06",
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspot_ids": [
+        "hotspot_06"
+      ],
+      "clue_ids": [
+        "clue_06"
+      ],
+      "next_section_ids": [
+        "section_07"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_07",
+      "stage": "reversal",
+      "title": "章节8",
+      "trigger_conditions": [
+        "section_06 completed"
+      ],
+      "scene_id": "loc_07",
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspot_ids": [
+        "hotspot_07"
+      ],
+      "clue_ids": [
+        "clue_07"
+      ],
+      "next_section_ids": [
+        "section_08"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_08",
+      "stage": "reversal",
+      "title": "章节9",
+      "trigger_conditions": [
+        "section_07 completed"
+      ],
+      "scene_id": "loc_00",
+      "npc_ids": [
+        "npc_00"
+      ],
+      "hotspot_ids": [
+        "hotspot_08"
+      ],
+      "clue_ids": [
+        "clue_08"
+      ],
+      "next_section_ids": [
+        "section_09"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_09",
+      "stage": "choice",
+      "title": "章节10",
+      "trigger_conditions": [
+        "section_08 completed"
+      ],
+      "scene_id": "loc_01",
+      "npc_ids": [
+        "npc_01"
+      ],
+      "hotspot_ids": [
+        "hotspot_09"
+      ],
+      "clue_ids": [
+        "clue_09"
+      ],
+      "next_section_ids": [
+        "section_10"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_10",
+      "stage": "choice",
+      "title": "章节11",
+      "trigger_conditions": [
+        "section_09 completed"
+      ],
+      "scene_id": "loc_02",
+      "npc_ids": [
+        "npc_02"
+      ],
+      "hotspot_ids": [
+        "hotspot_10"
+      ],
+      "clue_ids": [
+        "clue_10"
+      ],
+      "next_section_ids": [
+        "section_11"
+      ],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    },
+    {
+      "section_id": "section_11",
+      "stage": "choice",
+      "title": "章节12",
+      "trigger_conditions": [
+        "section_10 completed"
+      ],
+      "scene_id": "loc_03",
+      "npc_ids": [
+        "npc_03"
+      ],
+      "hotspot_ids": [
+        "hotspot_11"
+      ],
+      "clue_ids": [
+        "clue_11"
+      ],
+      "next_section_ids": [],
+      "goal": "推进本节调查并确认新的证据关系。",
+      "display_text": "你把现场细节和人物说法并列记录，新的矛盾开始浮现。"
+    }
+  ],
+  "dialogue_rules": [
+    {
+      "dialogue_id": "dialogue_00_intro",
+      "npc_id": "npc_00",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "王洙避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_00_investigation",
+      "npc_id": "npc_00",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_01"
+      ],
+      "response": "王洙避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_05"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_00_reversal",
+      "npc_id": "npc_00",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_02"
+      ],
+      "response": "王洙避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_06"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_01_intro",
+      "npc_id": "npc_01",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "张尧佐避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_01_investigation",
+      "npc_id": "npc_01",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_02"
+      ],
+      "response": "张尧佐避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_06"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_01_reversal",
+      "npc_id": "npc_01",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_03"
+      ],
+      "response": "张尧佐避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_07"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_02_intro",
+      "npc_id": "npc_02",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "赵佶避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_02_investigation",
+      "npc_id": "npc_02",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_03"
+      ],
+      "response": "赵佶避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_07"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_02_reversal",
+      "npc_id": "npc_02",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_04"
+      ],
+      "response": "赵佶避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_08"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_03_intro",
+      "npc_id": "npc_03",
+      "stage": "intro",
+      "priority": 0,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [],
+      "response": "陈婆避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_03_investigation",
+      "npc_id": "npc_03",
+      "stage": "investigation",
+      "priority": 1,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_04"
+      ],
+      "response": "陈婆避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_08"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    },
+    {
+      "dialogue_id": "dialogue_03_reversal",
+      "npc_id": "npc_03",
+      "stage": "reversal",
+      "priority": 2,
+      "trigger_keywords": [
+        "时辰",
+        "物证",
+        "去向"
+      ],
+      "presented_clue_ids": [
+        "clue_05"
+      ],
+      "response": "陈婆避开最尖锐的问题，只承认自己知道其中一段经过。",
+      "released_clue_ids": [
+        "clue_09"
+      ],
+      "suggested_questions": [
+        "案发时你在哪里？",
+        "这件物证为何会在现场？",
+        "还有谁接触过这里？"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "choice_id": "choice_00",
+      "title": "揭发王洙",
+      "description": "将王洙私藏真本、伪造残卷之事禀报圣上",
+      "effects": {
+        "flags": [
+          "choice_00"
+        ],
+        "scores": {
+          "truth": 1,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_01",
+      "title": "揭发张尧佐",
+      "description": "将张尧佐策划失窃、诬陷王洙之事禀报圣上",
+      "effects": {
+        "flags": [
+          "choice_01"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_02",
+      "title": "调和党争",
+      "description": "暗中促成双方和解，平息事态",
+      "effects": {
+        "flags": [
+          "choice_02"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_03",
+      "title": "私藏真本",
+      "description": "将真本据为己有，销毁证据",
+      "effects": {
+        "flags": [
+          "choice_03"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 0
+        }
+      }
+    },
+    {
+      "choice_id": "choice_04",
+      "title": "上报朝廷",
+      "description": "如实上报所有发现，由圣上裁决",
+      "effects": {
+        "flags": [
+          "choice_04"
+        ],
+        "scores": {
+          "truth": 0,
+          "survival": 1
+        }
+      }
+    }
+  ],
+  "endings": [
+    {
+      "ending_id": "ending_00",
+      "title": "真相大白",
+      "priority": 0,
+      "conditions": {
+        "final_choice_id": "choice_00"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "王洙与张尧佐皆被惩处，真本归还秘阁。",
+      "ending_text": "圣上震怒，王洙以欺君之罪贬谪岭南，张尧佐以诬陷之罪罢官流放。秘阁重修典藏，残卷归位。",
+      "history_echo": "庆历党争暂缓，但朝中暗流未息。",
+      "related_clue_ids": [
+        "clue_00",
+        "clue_01"
+      ],
+      "related_choice_ids": [
+        "choice_00"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_00"
+    },
+    {
+      "ending_id": "ending_01",
+      "title": "党争加剧",
+      "priority": 1,
+      "conditions": {
+        "final_choice_id": "choice_01"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "一方被扳倒，另一方独大，朝局失衡。",
+      "ending_text": "若只揭发王洙，张尧佐得势，更加专横；若只揭发张尧佐，王洙一派独大，党争愈烈。",
+      "history_echo": "此后数年，朝中党同伐异，国事日非。",
+      "related_clue_ids": [
+        "clue_01",
+        "clue_02"
+      ],
+      "related_choice_ids": [
+        "choice_01"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_01"
+    },
+    {
+      "ending_id": "ending_02",
+      "title": "暗中调和",
+      "priority": 2,
+      "conditions": {
+        "final_choice_id": "choice_02"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "双方暂时妥协，但隐患犹存。",
+      "ending_text": "你促成王洙交出真本，张尧佐销毁伪证，二人表面和解。但仇恨的种子已然埋下。",
+      "history_echo": "不久后，王洙遭人弹劾，张尧佐亦被参，朝局再起波澜。",
+      "related_clue_ids": [
+        "clue_02",
+        "clue_03"
+      ],
+      "related_choice_ids": [
+        "choice_02"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_02"
+    },
+    {
+      "ending_id": "ending_03",
+      "title": "私吞真本",
+      "priority": 3,
+      "conditions": {
+        "final_choice_id": "choice_03"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "你独吞真本，成为最大赢家。",
+      "ending_text": "你销毁所有证据，将真本藏于私宅。无人知晓真相，但夜半时分，你常梦见秘阁中散落的书卷。",
+      "history_echo": "数年后，你因他事获罪，真本流落民间，不知所踪。",
+      "related_clue_ids": [
+        "clue_03",
+        "clue_04"
+      ],
+      "related_choice_ids": [
+        "choice_03"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_03"
+    },
+    {
+      "ending_id": "ending_04",
+      "title": "圣裁公允",
+      "priority": 4,
+      "conditions": {
+        "final_choice_id": "choice_04"
+      },
+      "required_flags": [],
+      "blocked_flags": [],
+      "result_summary": "圣上明断，双方各受其罚，真本归位。",
+      "ending_text": "圣上亲审此案，明察秋毫，王洙、张尧佐皆伏法。秘阁增派守卫，残卷重归书阁。",
+      "history_echo": "朝野称颂圣明，党争稍息，但庆历新政仍步履维艰。",
+      "related_clue_ids": [
+        "clue_04",
+        "clue_05"
+      ],
+      "related_choice_ids": [
+        "choice_04"
+      ],
+      "npc_fates": {},
+      "visual_asset_id": "asset_ending_04"
+    }
+  ],
+  "visual_assets": [
+    {
+      "asset_id": "asset_scene_00",
+      "asset_type": "scene",
+      "owner_id": "loc_00",
+      "title": "秘阁主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 王洙 (appearance lock: 王洙：中年文士，蓄长须，着紫袍); 张尧佐 (appearance lock: 张尧佐：武将身材，面有刀疤，着绯袍). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 铜符; 赵佶记录记录口供记录（用于表现抽象线索“赵佶记录口供记录”的具体可见物证）; 伪本书页; 铜符. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 铜符: slot_08, x=50%, y=42%, central table evidence zone; 赵佶记录记录口供记录（用于表现抽象线索“赵佶记录口供记录”的具体可见物证）: slot_12, x=35%, y=50%, center-left mid-ground evidence zone; 伪本书页: slot_14, x=65%, y=50%, center-right mid-ground evidence zone; 铜符: slot_18, x=50%, y=58%, lower central safe evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_00:王洙; scene_npc:npc_01:张尧佐; scene_clue:clue_00:铜符; scene_clue:clue_08:赵佶记录口供记录; scene_clue:clue_16:伪本书页; scene_clue:clue_24:铜符.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "王洙",
+        "张尧佐",
+        "铜符",
+        "赵佶记录口供记录",
+        "伪本书页",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_00:王洙",
+        "scene_npc:npc_01:张尧佐",
+        "scene_clue:clue_00:铜符",
+        "scene_clue:clue_08:赵佶记录口供记录",
+        "scene_clue:clue_16:伪本书页",
+        "scene_clue:clue_24:铜符",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "a59a85597cf9cf3e",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_00.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_00",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:16:59",
+        "attempts": 1,
+        "prompt_hash": "a59a85597cf9cf3e",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_00.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_01",
+      "asset_type": "scene",
+      "owner_id": "loc_01",
+      "title": "翰林学士府主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 张尧佐 (appearance lock: 张尧佐：武将身材，面有刀疤，着绯袍). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 撬锁痕迹; 陈婆手记残页; 暗格痕迹; 撬锁痕迹. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 撬锁痕迹: slot_07, x=35%, y=42%, center-left table evidence zone; 陈婆手记残页: slot_09, x=65%, y=42%, center-right table evidence zone; 暗格痕迹: slot_13, x=50%, y=50%, central mid-ground evidence zone; 撬锁痕迹: slot_17, x=35%, y=58%, lower center-left safe evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_01:张尧佐; scene_clue:clue_01:撬锁痕迹; scene_clue:clue_09:陈婆手记残页; scene_clue:clue_17:暗格痕迹; scene_clue:clue_25:撬锁痕迹.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "张尧佐",
+        "撬锁痕迹",
+        "陈婆手记残页",
+        "暗格痕迹",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_01:张尧佐",
+        "scene_clue:clue_01:撬锁痕迹",
+        "scene_clue:clue_09:陈婆手记残页",
+        "scene_clue:clue_17:暗格痕迹",
+        "scene_clue:clue_25:撬锁痕迹",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "794d2ae3e27c3c56",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_01.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_01",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:17:08",
+        "attempts": 1,
+        "prompt_hash": "794d2ae3e27c3c56",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_01.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_02",
+      "asset_type": "scene",
+      "owner_id": "loc_02",
+      "title": "枢密院主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 赵佶 (appearance lock: 赵佶：年轻书生，面容清秀，着青衫). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 车辙印; 药渣; 密信残角; 车辙印. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 车辙印: slot_06, x=20%, y=42%, left table evidence zone; 药渣: slot_10, x=80%, y=42%, right table evidence zone; 密信残角: slot_13, x=50%, y=50%, central mid-ground evidence zone; 车辙印: slot_19, x=65%, y=58%, lower center-right safe evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_02:赵佶; scene_clue:clue_02:车辙印; scene_clue:clue_10:药渣; scene_clue:clue_18:密信残角; scene_clue:clue_26:车辙印.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "赵佶",
+        "车辙印",
+        "药渣",
+        "密信残角",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_02:赵佶",
+        "scene_clue:clue_02:车辙印",
+        "scene_clue:clue_10:药渣",
+        "scene_clue:clue_18:密信残角",
+        "scene_clue:clue_26:车辙印",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "ddef11d58e4fbc8d",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_02.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_02",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:17:17",
+        "attempts": 1,
+        "prompt_hash": "ddef11d58e4fbc8d",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_02.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_03",
+      "asset_type": "scene",
+      "owner_id": "loc_03",
+      "title": "汴京夜市主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 陈婆 (appearance lock: 陈婆：年约五旬，布衣荆钗，面容慈祥). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 残茶盏; 真本残卷; 灰烬纸角; 残茶盏. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 残茶盏: slot_12, x=35%, y=50%, center-left mid-ground evidence zone; 真本残卷: slot_14, x=65%, y=50%, center-right mid-ground evidence zone; 灰烬纸角: slot_18, x=50%, y=58%, lower central safe evidence zone; 残茶盏: slot_08, x=50%, y=42%, central table evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_03:陈婆; scene_clue:clue_03:残茶盏; scene_clue:clue_11:真本残卷; scene_clue:clue_19:灰烬纸角; scene_clue:clue_27:残茶盏.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "陈婆",
+        "残茶盏",
+        "真本残卷",
+        "灰烬纸角",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_03:陈婆",
+        "scene_clue:clue_03:残茶盏",
+        "scene_clue:clue_11:真本残卷",
+        "scene_clue:clue_19:灰烬纸角",
+        "scene_clue:clue_27:残茶盏",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "498728b9615d346f",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_03.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_03",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:17:28",
+        "attempts": 1,
+        "prompt_hash": "498728b9615d346f",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_03.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_04",
+      "asset_type": "scene",
+      "owner_id": "loc_04",
+      "title": "东华门主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 王洙 (appearance lock: 王洙：中年文士，蓄长须，着紫袍). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 伪本书页; 铜符; 赵佶记录记录口供记录（用于表现抽象线索“赵佶记录口供记录”的具体可见物证）; 伪本书页. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 伪本书页: slot_09, x=65%, y=42%, center-right table evidence zone; 铜符: slot_13, x=50%, y=50%, central mid-ground evidence zone; 赵佶记录记录口供记录（用于表现抽象线索“赵佶记录口供记录”的具体可见物证）: slot_17, x=35%, y=58%, lower center-left safe evidence zone; 伪本书页: slot_07, x=35%, y=42%, center-left table evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_00:王洙; scene_clue:clue_04:伪本书页; scene_clue:clue_12:铜符; scene_clue:clue_20:赵佶记录口供记录; scene_clue:clue_28:伪本书页.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "王洙",
+        "伪本书页",
+        "铜符",
+        "赵佶记录口供记录",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_00:王洙",
+        "scene_clue:clue_04:伪本书页",
+        "scene_clue:clue_12:铜符",
+        "scene_clue:clue_20:赵佶记录口供记录",
+        "scene_clue:clue_28:伪本书页",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "a676f3a68a54393e",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_04.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_04",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:17:37",
+        "attempts": 1,
+        "prompt_hash": "a676f3a68a54393e",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_04.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_05",
+      "asset_type": "scene",
+      "owner_id": "loc_05",
+      "title": "王洙书房暗格主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 张尧佐 (appearance lock: 张尧佐：武将身材，面有刀疤，着绯袍). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 暗格痕迹; 撬锁痕迹; 陈婆手记残页; 暗格痕迹. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 暗格痕迹: slot_07, x=35%, y=42%, center-left table evidence zone; 撬锁痕迹: slot_13, x=50%, y=50%, central mid-ground evidence zone; 陈婆手记残页: slot_19, x=65%, y=58%, lower center-right safe evidence zone; 暗格痕迹: slot_09, x=65%, y=42%, center-right table evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_01:张尧佐; scene_clue:clue_05:暗格痕迹; scene_clue:clue_13:撬锁痕迹; scene_clue:clue_21:陈婆手记残页; scene_clue:clue_29:暗格痕迹.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "张尧佐",
+        "暗格痕迹",
+        "撬锁痕迹",
+        "陈婆手记残页",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_01:张尧佐",
+        "scene_clue:clue_05:暗格痕迹",
+        "scene_clue:clue_13:撬锁痕迹",
+        "scene_clue:clue_21:陈婆手记残页",
+        "scene_clue:clue_29:暗格痕迹",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "026fe4eb1c8d86b2",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_05.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_05",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:17:46",
+        "attempts": 1,
+        "prompt_hash": "026fe4eb1c8d86b2",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_05.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_06",
+      "asset_type": "scene",
+      "owner_id": "loc_06",
+      "title": "张尧佐密室主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 赵佶 (appearance lock: 赵佶：年轻书生，面容清秀，着青衫). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 密信残角; 车辙印; 药渣. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 密信残角: slot_08, x=50%, y=42%, central table evidence zone; 车辙印: slot_14, x=65%, y=50%, center-right mid-ground evidence zone; 药渣: slot_17, x=35%, y=58%, lower center-left safe evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_02:赵佶; scene_clue:clue_06:密信残角; scene_clue:clue_14:车辙印; scene_clue:clue_22:药渣.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "赵佶",
+        "密信残角",
+        "车辙印",
+        "药渣",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_02:赵佶",
+        "scene_clue:clue_06:密信残角",
+        "scene_clue:clue_14:车辙印",
+        "scene_clue:clue_22:药渣",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "b9a5b4062e97f082",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_06.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_06",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:17:55",
+        "attempts": 1,
+        "prompt_hash": "b9a5b4062e97f082",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_06.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_scene_07",
+      "asset_type": "scene",
+      "owner_id": "loc_07",
+      "title": "秘阁值房主舞台图",
+      "prompt": "北宋 historical mystery game main scene, quiet private evidence investigation tableau, wide 16:9 landscape composition for a game stage, not square, not vertical, not portrait format, no black side padding. The image must be staged inside a quiet side chamber or sheltered courtyard around a mid-foreground evidence table, tray, stone step, or ground patch with concrete clue props on it. PRIMARY SUBJECT: exactly one visible adult human NPC in historical clothing stands beside the evidence zone and looks toward the viewer, front-facing or three-quarter front view; full face visible, direct eye contact, eyes nose and mouth visible, full upper body visible, no cropped head, no cropped chin, no oversized torso crop, never rear view, never back-facing, never face-hidden, never looking away. The main person should occupy about 20-32 percent of the frame width so the environment and clue objects remain visible. Use only quiet dynasty-appropriate room or courtyard background architecture, not a literal illustration of the location description and not a distant exterior establishing shot. Human count rule: exactly one main foreground NPC; at most one tiny background attendant; no other people. Do not make a crowd scene, army formation, cavalry scene, battlefield, parade, line of troops, street procession, or guard corridor. Do not draw guard lines, troop formations, massed soldiers, horse teams, city-gate queues, ceremonial entrances, flags, banners, weapons, or military staging even if the story location mentions them. At least one named NPC from this list must be foreground-visible, full-body or waist-up, face and hands visible, occupying 20-32 percent of the frame width, in the same perspective and light: 陈婆 (appearance lock: 陈婆：年约五旬，布衣荆钗，面容慈祥). No additional NPC groups may stand nearby; people must not become rows or silhouettes. Clickable evidence objects must be clear, visible, and close to the center third of the image: 灰烬纸角; 残茶盏; 真本残卷. Top-priority evidence slot contract: place these props as physical objects at the matching normalized image positions and keep them recognizable: 灰烬纸角: slot_12, x=35%, y=50%, center-left mid-ground evidence zone; 残茶盏: slot_18, x=50%, y=58%, lower central safe evidence zone; 真本残卷: slot_09, x=65%, y=42%, center-right table evidence zone. Each evidence object must physically appear in the environment as a concrete prop, not as an abstract idea, not a label, not a timeline, not a diagram. Create a visible evidence zone in the middle third of the scene, such as a small table, tray, stone step, or ground patch near the main NPC, containing the named evidence objects as separate recognizable props; do not place evidence on sky, roof, high wall, signboard, plaque, or decorative text area. Keep important evidence away from image edges and away from UI-safe bottom space; leave enough empty air around each evidence object for hotspot markers. Never output an empty room, empty street, empty courtyard, object-only room, landscape-only view, architecture-only view, or horse-only scene; every scene needs a visible named human suspect or witness. NPCs, buildings, furniture, and evidence share one coherent historical light source and dynasty costume system. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. Strictly forbid laboratory glassware, conical flasks, Erlenmeyer flasks, beakers, test tubes, modern glass bottles, plastic, electric lights, printed modern labels, modern furniture, and Western modern clothing. If the location contains a gate, shop, office, room entrance, inn entrance, archive, or hall, keep all lintels and panels blank; no signboard, no plaque, no banner, no readable characters above doors. Style must match NPC portraits and clue cards: grounded Chinese historical mystery illustration, restrained realistic brushwork, no anime, no chibi, no random modern concept-art style. Use a grounded investigation camera and readable silhouettes. No modern objects, no watermark, no generated readable text, no Chinese characters, no calligraphy, no plaques, no banners, no signboards, no text-like decoration. Post-generation self-check: wide landscape ratio; main NPC centered with full face and upper body visible but not oversized; central evidence objects visible at declared slots; dynasty props only; unified style; image successfully generated. Style: 低饱和, 北宋, 历史悬疑. Contract: scene_requires_visible_npcs; scene_requires_visible_clue_objects; scene_requires_centered_full_face_upper_body; scene_requires_centered_clue_objects; scene_requires_declared_safe_hotspot_slots; hotspot_layout_contract_v2; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4. QA markers: scene_npc:npc_03:陈婆; scene_clue:clue_07:灰烬纸角; scene_clue:clue_15:残茶盏; scene_clue:clue_23:真本残卷.",
+      "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，遮脸，只有侧脸，大军阵，人群远景，马队，战场，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶, empty street without people, empty room without people, no visible NPC, tiny distant people only, cropped head, cropped face, back-facing main character, main character turned away, face hidden, profile-only face, extreme close-up portrait, large crowd, army formation, cavalry scene, battle scene, landscape-only, architecture-only, animal-only, object-only, missing clue object, clue object at edge, signboard, plaque, banner, gate sign, entrance sign, sign above gate, calligraphy, Chinese characters, text-like marks, abstract timeline, timeline diagram, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, modern object, watermark, readable generated text, wrong dynasty costume, rear view, from behind, looking away, troop formation, massed soldiers, soldier rows, guard corridor, flags, weapons",
+      "required_subjects": [
+        "陈婆",
+        "灰烬纸角",
+        "残茶盏",
+        "真本残卷",
+        "NPC",
+        "人物与场景一体生成",
+        "线索",
+        "可点击线索物件",
+        "scene_npc:npc_03:陈婆",
+        "scene_clue:clue_07:灰烬纸角",
+        "scene_clue:clue_15:残茶盏",
+        "scene_clue:clue_23:真本残卷",
+        "scene_requires_visible_npcs",
+        "scene_requires_visible_clue_objects",
+        "scene_requires_centered_full_face_upper_body",
+        "scene_requires_centered_clue_objects",
+        "scene_requires_declared_safe_hotspot_slots",
+        "hotspot_layout_contract_v1",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4",
+        "hotspot_layout_contract_v2"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "0e9764c463983f74",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_07.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_scene_07",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:18:04",
+        "attempts": 1,
+        "prompt_hash": "0e9764c463983f74",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_07.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_00",
+      "asset_type": "npc",
+      "owner_id": "npc_00",
+      "title": "王洙人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 王洙, public identity: 翰林学士. Appearance lock: 王洙：中年文士，蓄长须，着紫袍. Personality: 谨慎多谋，城府深. Show the person clearly as a usable character portrait, historically grounded clothing, front-facing or three-quarter view, face centered and complete, upper body complete, consistent with the main scene style, restrained realistic Chinese historical mystery illustration, no anime, no chibi, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; npc_identity:npc_00:王洙.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代，裁头，裁脸，动漫脸，Q版，夸张卡通, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume, anime, cartoon, chibi, cropped head, cropped face",
+      "required_subjects": [
+        "王洙",
+        "翰林学士",
+        "时代服饰",
+        "npc_identity:npc_00:王洙",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "0cf5ffb7fdd1a2cf",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_00.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_npc_00",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:18:48",
+        "attempts": 2,
+        "prompt_hash": "0cf5ffb7fdd1a2cf",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_00.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_01",
+      "asset_type": "npc",
+      "owner_id": "npc_01",
+      "title": "张尧佐人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 张尧佐, public identity: 枢密副使. Appearance lock: 张尧佐：武将身材，面有刀疤，着绯袍. Personality: 刚愎自用，野心勃勃. Show the person clearly as a usable character portrait, historically grounded clothing, front-facing or three-quarter view, face centered and complete, upper body complete, consistent with the main scene style, restrained realistic Chinese historical mystery illustration, no anime, no chibi, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; npc_identity:npc_01:张尧佐.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代，裁头，裁脸，动漫脸，Q版，夸张卡通, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume, anime, cartoon, chibi, cropped head, cropped face",
+      "required_subjects": [
+        "张尧佐",
+        "枢密副使",
+        "时代服饰",
+        "npc_identity:npc_01:张尧佐",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "3f44b0e95c9671ad",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_01.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_npc_01",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:19:33",
+        "attempts": 2,
+        "prompt_hash": "3f44b0e95c9671ad",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_01.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_02",
+      "asset_type": "npc",
+      "owner_id": "npc_02",
+      "title": "赵佶人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 赵佶, public identity: 秘阁校书郎. Appearance lock: 赵佶：年轻书生，面容清秀，着青衫. Personality: 机敏正直，但略显急躁. Show the person clearly as a usable character portrait, historically grounded clothing, front-facing or three-quarter view, face centered and complete, upper body complete, consistent with the main scene style, restrained realistic Chinese historical mystery illustration, no anime, no chibi, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; npc_identity:npc_02:赵佶.",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代，裁头，裁脸，动漫脸，Q版，夸张卡通, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume, anime, cartoon, chibi, cropped head, cropped face",
+      "required_subjects": [
+        "赵佶",
+        "秘阁校书郎",
+        "时代服饰",
+        "npc_identity:npc_02:赵佶",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "4e5b2d196f6e0602",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_02.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_npc_02",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:19:42",
+        "attempts": 1,
+        "prompt_hash": "4e5b2d196f6e0602",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_02.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_npc_03",
+      "asset_type": "npc",
+      "owner_id": "npc_03",
+      "title": "陈婆人物图",
+      "prompt": "北宋 historical mystery NPC portrait for 陈婆, public identity: 王洙府中老仆. Appearance lock: 陈婆：年约五旬，布衣荆钗，面容慈祥. Personality: 沉默寡言，忠心护主. Show the person clearly as a usable character portrait, historically grounded clothing, front-facing or three-quarter view, face centered and complete, upper body complete, consistent with the main scene style, restrained realistic Chinese historical mystery illustration, no anime, no chibi, no modern object, no watermark, no readable text. Style: 低饱和, 北宋, 历史悬疑. Contract: npc_portrait_identity_lock; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; npc_identity:npc_03:陈婆.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代服饰，水印，空白背景，错误朝代，裁头，裁脸，动漫脸，Q版，夸张卡通, modern clothing, modern object, watermark, readable generated text, empty background only, wrong dynasty costume, anime, cartoon, chibi, cropped head, cropped face",
+      "required_subjects": [
+        "陈婆",
+        "王洙府中老仆",
+        "时代服饰",
+        "npc_identity:npc_03:陈婆",
+        "npc_portrait_identity_lock",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "5420864d067aa7d4",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_03.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_npc_03",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:20:25",
+        "attempts": 2,
+        "prompt_hash": "5420864d067aa7d4",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_npc_03.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_00",
+      "asset_type": "clue",
+      "owner_id": "clue_00",
+      "title": "铜符线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one concrete core object fills the frame: 铜符. Evidence note: 秘阁现场发现的铜制令牌，刻有‘枢密’字样. The clue image must show a tangible object, trace, document exterior, seal, residue, tool, fabric, footprint, rope, token, or damaged material. Never visualize abstract clues such as timeline, motive, relationship, suspicion, action chain, truth, contradiction, or evidence chain as charts or diagrams. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, timeline, diagram, relationship graph, flow chart, watermark, or modern object. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. For liquid, medicine, poison, or wine clues, use ceramic cups, ceramic jars, lacquer boxes, gourds, paper packets, or cloth wraps only; never use conical flasks, Erlenmeyer flasks, beakers, test tubes, laboratory glassware, or modern bottles. The object must be clear, near-camera, useful as a clue-card thumbnail. Post-generation self-check: one concrete object only; no abstract chart; no readable text; unified style; image successfully generated. Contract: clue_object_closeup_no_readable_text; clue_requires_concrete_object_not_abstract_diagram; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; clue_owner:clue_00:铜符.",
+      "negative_prompt": "现代物件，水印，空白图，错朝代，时间线，时间轴，关系图，流程图，抽象图表，可读文字，乱码, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, timeline, timeline diagram, abstract diagram, relationship graph, flow chart, concept map, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, watermark, modern object",
+      "required_subjects": [
+        "铜符",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_00:铜符",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "clue_requires_concrete_object_not_abstract_diagram",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "081c6d179583dcb8",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_00.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_clue_00",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:20:35",
+        "attempts": 1,
+        "prompt_hash": "081c6d179583dcb8",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_00.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_01",
+      "asset_type": "clue",
+      "owner_id": "clue_01",
+      "title": "撬锁痕迹线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one concrete core object fills the frame: 撬锁痕迹. Evidence note: 秘阁门锁上的金属划痕. The clue image must show a tangible object, trace, document exterior, seal, residue, tool, fabric, footprint, rope, token, or damaged material. Never visualize abstract clues such as timeline, motive, relationship, suspicion, action chain, truth, contradiction, or evidence chain as charts or diagrams. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, timeline, diagram, relationship graph, flow chart, watermark, or modern object. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. For liquid, medicine, poison, or wine clues, use ceramic cups, ceramic jars, lacquer boxes, gourds, paper packets, or cloth wraps only; never use conical flasks, Erlenmeyer flasks, beakers, test tubes, laboratory glassware, or modern bottles. The object must be clear, near-camera, useful as a clue-card thumbnail. Post-generation self-check: one concrete object only; no abstract chart; no readable text; unified style; image successfully generated. Contract: clue_object_closeup_no_readable_text; clue_requires_concrete_object_not_abstract_diagram; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; clue_owner:clue_01:撬锁痕迹.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代物件，水印，空白图，错朝代，时间线，时间轴，关系图，流程图，抽象图表，可读文字，乱码, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, timeline, timeline diagram, abstract diagram, relationship graph, flow chart, concept map, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, watermark, modern object",
+      "required_subjects": [
+        "撬锁痕迹",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_01:撬锁痕迹",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "clue_requires_concrete_object_not_abstract_diagram",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "516ece05eb9fbbb7",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_01.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_clue_01",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:21:19",
+        "attempts": 2,
+        "prompt_hash": "516ece05eb9fbbb7",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_01.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_02",
+      "asset_type": "clue",
+      "owner_id": "clue_02",
+      "title": "车辙印线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one concrete core object fills the frame: 车辙印. Evidence note: 东华门外深陷的车辙. The clue image must show a tangible object, trace, document exterior, seal, residue, tool, fabric, footprint, rope, token, or damaged material. Never visualize abstract clues such as timeline, motive, relationship, suspicion, action chain, truth, contradiction, or evidence chain as charts or diagrams. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, timeline, diagram, relationship graph, flow chart, watermark, or modern object. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. For liquid, medicine, poison, or wine clues, use ceramic cups, ceramic jars, lacquer boxes, gourds, paper packets, or cloth wraps only; never use conical flasks, Erlenmeyer flasks, beakers, test tubes, laboratory glassware, or modern bottles. The object must be clear, near-camera, useful as a clue-card thumbnail. Post-generation self-check: one concrete object only; no abstract chart; no readable text; unified style; image successfully generated. Contract: clue_object_closeup_no_readable_text; clue_requires_concrete_object_not_abstract_diagram; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; clue_owner:clue_02:车辙印.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代物件，水印，空白图，错朝代，时间线，时间轴，关系图，流程图，抽象图表，可读文字，乱码, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, timeline, timeline diagram, abstract diagram, relationship graph, flow chart, concept map, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, watermark, modern object",
+      "required_subjects": [
+        "车辙印",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_02:车辙印",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "clue_requires_concrete_object_not_abstract_diagram",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "34ba9db69775e742",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_02.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_clue_02",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:22:04",
+        "attempts": 2,
+        "prompt_hash": "34ba9db69775e742",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_02.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_03",
+      "asset_type": "clue",
+      "owner_id": "clue_03",
+      "title": "残茶盏线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one concrete core object fills the frame: 残茶盏. Evidence note: 秘阁值房桌上的茶盏. The clue image must show a tangible object, trace, document exterior, seal, residue, tool, fabric, footprint, rope, token, or damaged material. Never visualize abstract clues such as timeline, motive, relationship, suspicion, action chain, truth, contradiction, or evidence chain as charts or diagrams. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, timeline, diagram, relationship graph, flow chart, watermark, or modern object. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. For liquid, medicine, poison, or wine clues, use ceramic cups, ceramic jars, lacquer boxes, gourds, paper packets, or cloth wraps only; never use conical flasks, Erlenmeyer flasks, beakers, test tubes, laboratory glassware, or modern bottles. The object must be clear, near-camera, useful as a clue-card thumbnail. Post-generation self-check: one concrete object only; no abstract chart; no readable text; unified style; image successfully generated. Contract: clue_object_closeup_no_readable_text; clue_requires_concrete_object_not_abstract_diagram; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; clue_owner:clue_03:残茶盏.",
+      "negative_prompt": "现代物件，水印，空白图，错朝代，时间线，时间轴，关系图，流程图，抽象图表，可读文字，乱码, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, timeline, timeline diagram, abstract diagram, relationship graph, flow chart, concept map, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, watermark, modern object",
+      "required_subjects": [
+        "残茶盏",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_03:残茶盏",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "clue_requires_concrete_object_not_abstract_diagram",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "580134466b56dbe1",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_03.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_clue_03",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:22:13",
+        "attempts": 1,
+        "prompt_hash": "580134466b56dbe1",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_03.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_04",
+      "asset_type": "clue",
+      "owner_id": "clue_04",
+      "title": "伪本书页线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one concrete core object fills the frame: 伪本书页. Evidence note: 王洙书房书案上摊开的半卷《推背图》. The clue image must show a tangible object, trace, document exterior, seal, residue, tool, fabric, footprint, rope, token, or damaged material. Never visualize abstract clues such as timeline, motive, relationship, suspicion, action chain, truth, contradiction, or evidence chain as charts or diagrams. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, timeline, diagram, relationship graph, flow chart, watermark, or modern object. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. For liquid, medicine, poison, or wine clues, use ceramic cups, ceramic jars, lacquer boxes, gourds, paper packets, or cloth wraps only; never use conical flasks, Erlenmeyer flasks, beakers, test tubes, laboratory glassware, or modern bottles. The object must be clear, near-camera, useful as a clue-card thumbnail. Post-generation self-check: one concrete object only; no abstract chart; no readable text; unified style; image successfully generated. Contract: clue_object_closeup_no_readable_text; clue_requires_concrete_object_not_abstract_diagram; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; clue_owner:clue_04:伪本书页.\n重试要求 2: 明确呈现核心物件，避免空白、占位、现代物件、错朝代服饰和文字水印。",
+      "negative_prompt": "现代物件，水印，空白图，错朝代，时间线，时间轴，关系图，流程图，抽象图表，可读文字，乱码, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, timeline, timeline diagram, abstract diagram, relationship graph, flow chart, concept map, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, watermark, modern object",
+      "required_subjects": [
+        "伪本书页",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_04:伪本书页",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "clue_requires_concrete_object_not_abstract_diagram",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "4969a3d4c9d134f0",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_04.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_clue_04",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:22:56",
+        "attempts": 2,
+        "prompt_hash": "4969a3d4c9d134f0",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_04.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_clue_05",
+      "asset_type": "clue",
+      "owner_id": "clue_05",
+      "title": "暗格痕迹线索图",
+      "prompt": "北宋 historical mystery evidence close-up, one concrete core object fills the frame: 暗格痕迹. Evidence note: 王洙书房博古架后的细微划痕. The clue image must show a tangible object, trace, document exterior, seal, residue, tool, fabric, footprint, rope, token, or damaged material. Never visualize abstract clues such as timeline, motive, relationship, suspicion, action chain, truth, contradiction, or evidence chain as charts or diagrams. Zero visible writing marks or symbols. For any paper, ledger, register, note, or document clue, show only a closed cover, folded blank edge, cord, seal, wax, burn, tear, stain, or smudged blank surface. Show material detail only: fold marks, damaged edge, blood trace, mud trace, burn mark, seal, fiber, or broken surface as appropriate. If the clue is a document, draw the folded, rolled, sealed, torn, or burned exterior and material surface only; do not show an open page, columns, character-like strokes, symbols, or any marks that resemble text. Do not draw a street scene, crowd, portrait, large environment, readable body text, garbled text, Chinese characters, calligraphy, symbols, timeline, diagram, relationship graph, flow chart, watermark, or modern object. Dynasty material audit: Northern Song props only: ceramic wine cups and jars, lacquered wood, bamboo, silk, hemp cloth, bronze or iron tools, paper documents shown closed or sealed, oil lamps, wooden furniture, tiled roofs, and period robes. For liquid, medicine, poison, or wine clues, use ceramic cups, ceramic jars, lacquer boxes, gourds, paper packets, or cloth wraps only; never use conical flasks, Erlenmeyer flasks, beakers, test tubes, laboratory glassware, or modern bottles. The object must be clear, near-camera, useful as a clue-card thumbnail. Post-generation self-check: one concrete object only; no abstract chart; no readable text; unified style; image successfully generated. Contract: clue_object_closeup_no_readable_text; clue_requires_concrete_object_not_abstract_diagram; visual_style_unified_across_scene_npc_clue; post_generation_visual_self_check_required; script_visual_contract_v4; clue_owner:clue_05:暗格痕迹.",
+      "negative_prompt": "现代物件，水印，空白图，错朝代，时间线，时间轴，关系图，流程图，抽象图表，可读文字，乱码, wide street scene, crowd scene, portrait, readable text, Chinese characters, calligraphy, legible writing, character-like marks, symbols, open document text, garbled text, timeline, timeline diagram, abstract diagram, relationship graph, flow chart, concept map, laboratory glassware, conical flask, Erlenmeyer flask, beaker, test tube, modern glass bottle, watermark, modern object",
+      "required_subjects": [
+        "暗格痕迹",
+        "线索物件",
+        "材质细节",
+        "clue_owner:clue_05:暗格痕迹",
+        "evidence close-up",
+        "material detail",
+        "clue_object_closeup_no_readable_text",
+        "clue_requires_concrete_object_not_abstract_diagram",
+        "visual_style_unified_across_scene_npc_clue",
+        "post_generation_visual_self_check_required",
+        "script_visual_contract_v4"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "6c3dd1f19c2bd488",
+      "generated_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_05.png",
+      "url": "/api/scripts/p0_song_5ea8d3/assets/asset_clue_05",
+      "provider": "siliconflow",
+      "model": "Kwai-Kolors/Kolors",
+      "generation_status": "approved",
+      "quality_gate": {
+        "status": "approved",
+        "checked_at": "2026-05-26T00:23:06",
+        "attempts": 1,
+        "prompt_hash": "6c3dd1f19c2bd488",
+        "issues": [],
+        "approved_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_clue_05.png",
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_00",
+      "asset_type": "ending",
+      "owner_id": "ending_00",
+      "title": "真相大白结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_01",
+      "asset_type": "ending",
+      "owner_id": "ending_01",
+      "title": "党争加剧结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_02",
+      "asset_type": "ending",
+      "owner_id": "ending_02",
+      "title": "暗中调和结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_03",
+      "asset_type": "ending",
+      "owner_id": "ending_03",
+      "title": "私吞真本结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    },
+    {
+      "asset_id": "asset_ending_04",
+      "asset_type": "ending",
+      "owner_id": "ending_04",
+      "title": "圣裁公允结局图",
+      "prompt": "北宋历史悬疑结局氛围图，表现选择后的余波，不含现代物件。",
+      "negative_prompt": "现代物件，水印，空白图",
+      "required_subjects": [
+        "结局氛围",
+        "历史场景"
+      ],
+      "era_feature_checklist": [
+        "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+        "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+        "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+      ],
+      "prompt_hash": "48cecdf561f7a74e",
+      "generated_path": null,
+      "url": null,
+      "provider": null,
+      "model": null,
+      "generation_status": "pending",
+      "quality_gate": {
+        "status": "pending",
+        "checked_at": null,
+        "attempts": 0,
+        "prompt_hash": "48cecdf561f7a74e",
+        "issues": [],
+        "approved_path": null,
+        "rejected_paths": [],
+        "regenerated_count": 0
+      }
+    }
+  ],
+  "visual_style_guide": {
+    "style_keywords": [
+      "低饱和",
+      "北宋",
+      "历史悬疑"
+    ],
+    "forbidden_visuals": [
+      "现代电线",
+      "塑料",
+      "水印",
+      "空白背景",
+      "错误朝代服饰",
+      "动漫脸",
+      "夸张卡通",
+      "抽象时间线",
+      "关系图",
+      "实验室玻璃器皿",
+      "锥形瓶",
+      "烧杯",
+      "试管",
+      "现代玻璃瓶"
+    ],
+    "color_script": "以赭石、墨青、牙白为主色，秘阁内景偏冷灰，夜市灯火偏暖黄，暗藏血色暗示。",
+    "camera": "多用固定镜头与缓慢推拉，强调细节与氛围；关键线索特写，如铜符、茶盏。",
+    "era_feature_checklist": [
+      "服饰：官员着圆领袍服，佩鱼袋；士人着直裰",
+      "建筑：秘阁为歇山顶，朱红立柱；民居为青砖灰瓦",
+      "器物：铜符、紫檀木匣、青瓷茶盏、宣纸书卷"
+    ],
+    "appearance_lock": {
+      "npc_00": "王洙：中年文士，蓄长须，着紫袍",
+      "npc_01": "张尧佐：武将身材，面有刀疤，着绯袍",
+      "npc_02": "赵佶：年轻书生，面容清秀，着青衫",
+      "npc_03": "陈婆：年约五旬，布衣荆钗，面容慈祥"
+    }
+  },
+  "hotspot_positioning": [
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_00",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_00",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_08",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_08",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_16",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_16",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_00",
+      "hotspot_id": "hotspot_24",
+      "visual_asset_id": "asset_scene_00",
+      "clue_id": "clue_24",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_00.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_01",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_01",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_09",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_09",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_17",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_17",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_01",
+      "hotspot_id": "hotspot_25",
+      "visual_asset_id": "asset_scene_01",
+      "clue_id": "clue_25",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_01.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_02",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_02",
+      "anchor_point": {
+        "x": 0.2,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.155,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_10",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_10",
+      "anchor_point": {
+        "x": 0.8,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.755,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_18",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_18",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_02",
+      "hotspot_id": "hotspot_26",
+      "visual_asset_id": "asset_scene_02",
+      "clue_id": "clue_26",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_02.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_03",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_03",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_11",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_11",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_19",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_19",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_03",
+      "hotspot_id": "hotspot_27",
+      "visual_asset_id": "asset_scene_03",
+      "clue_id": "clue_27",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_03.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_04",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_04",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_12",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_12",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_20",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_20",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_04",
+      "hotspot_id": "hotspot_28",
+      "visual_asset_id": "asset_scene_04",
+      "clue_id": "clue_28",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_04.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_05",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_05",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_13",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_13",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_21",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_21",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_05",
+      "hotspot_id": "hotspot_29",
+      "visual_asset_id": "asset_scene_05",
+      "clue_id": "clue_29",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_05.png"
+    },
+    {
+      "location_id": "loc_06",
+      "hotspot_id": "hotspot_06",
+      "visual_asset_id": "asset_scene_06",
+      "clue_id": "clue_06",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_06.png"
+    },
+    {
+      "location_id": "loc_06",
+      "hotspot_id": "hotspot_14",
+      "visual_asset_id": "asset_scene_06",
+      "clue_id": "clue_14",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_06.png"
+    },
+    {
+      "location_id": "loc_06",
+      "hotspot_id": "hotspot_22",
+      "visual_asset_id": "asset_scene_06",
+      "clue_id": "clue_22",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_06.png"
+    },
+    {
+      "location_id": "loc_07",
+      "hotspot_id": "hotspot_07",
+      "visual_asset_id": "asset_scene_07",
+      "clue_id": "clue_07",
+      "anchor_point": {
+        "x": 0.35,
+        "y": 0.5
+      },
+      "bbox": {
+        "x": 0.305,
+        "y": 0.455,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_07.png"
+    },
+    {
+      "location_id": "loc_07",
+      "hotspot_id": "hotspot_15",
+      "visual_asset_id": "asset_scene_07",
+      "clue_id": "clue_15",
+      "anchor_point": {
+        "x": 0.5,
+        "y": 0.58
+      },
+      "bbox": {
+        "x": 0.455,
+        "y": 0.535,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_07.png"
+    },
+    {
+      "location_id": "loc_07",
+      "hotspot_id": "hotspot_23",
+      "visual_asset_id": "asset_scene_07",
+      "clue_id": "clue_23",
+      "anchor_point": {
+        "x": 0.65,
+        "y": 0.42
+      },
+      "bbox": {
+        "x": 0.605,
+        "y": 0.375,
+        "width": 0.09,
+        "height": 0.09
+      },
+      "calibration_status": "approved",
+      "calibrated_against_path": "D:/SomeFunnyProjFromGithub/HistoryGame/assets/generated/visuals/generated/p0_song_5ea8d3/asset_scene_07.png"
+    }
+  ],
+  "quality_gate": {
+    "required_scene_count": 8,
+    "required_npc_count": 4,
+    "required_clue_count": 6,
+    "scene_approved": 8,
+    "npc_approved": 4,
+    "clue_approved": 6,
+    "rejected": 6,
+    "regenerated": 6,
+    "blocked": 0
+  }
+}

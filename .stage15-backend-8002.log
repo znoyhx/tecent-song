@@ -1,4 +1,0 @@
-INFO:     127.0.0.1:60052 - "GET /api/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60081 - "POST /api/scripts/generate HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60131 - "GET /api/scripts/jobs/job_dd2aaf8619c9 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57029 - "GET /api/scripts/jobs/job_dd2aaf8619c9 HTTP/1.1" 200 OK

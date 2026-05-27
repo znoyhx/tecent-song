@@ -8,7 +8,7 @@ from app.services.image_generation_service import image_generation_service
 
 
 
-def test_real_siliconflow_image_generation_or_explicit_blocked() -> None:
+def test_real_gpt_image_generation_or_explicit_blocked() -> None:
 
     if not image_generation_service._has_api_key():
         pytest.skip("未检测到图片生成 Key")

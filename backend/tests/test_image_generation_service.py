@@ -39,10 +39,13 @@ class FakeHttpClient:
 
     def post(self, url: str, *, headers: dict[str, str], json: dict[str, Any]) -> FakeResponse:  # noqa: A002
         FakeHttpClient.posted_headers = headers
-        assert url.endswith("/v1/images/generations")
-        assert json["model"] == "Kwai-Kolors/Kolors"
+        assert url == "https://grsai.dakka.com.cn/v1/api/generate"
+        assert json["model"] == "gpt-image-2"
+        assert json["images"] == []
+        assert json["replyType"] == "json"
+        assert "aspectRatio" in json
         assert "Authorization" in headers
-        return FakeResponse({"images": [{"url": "https://example.invalid/generated.png"}], "seed": 123})
+        return FakeResponse({"status": "succeeded", "results": [{"url": "https://example.invalid/generated.png"}]})
 
     def get(self, url: str) -> FakeResponse:
         assert url == "https://example.invalid/generated.png"
@@ -80,9 +83,8 @@ def test_generate_without_key_returns_blocked_fallback(tmp_path, monkeypatch) ->
 
 def test_image_key_can_be_loaded_from_workspace_env_without_status_leak(tmp_path, monkeypatch) -> None:
     service = make_service(tmp_path)
-    monkeypatch.delenv("SILICONFLOW_API_KEY", raising=False)
-    monkeypatch.delenv("IMAGE_GENERATION_API_KEY", raising=False)
-    (tmp_path / ".env").write_text("SILICONFLOW_API_KEY=unit-test-root-image-key\n", encoding="utf-8")
+    monkeypatch.delenv("NEW_IMAGE_API_KEY", raising=False)
+    (tmp_path / ".env").write_text("NEW_IMAGE_API_KEY=unit-test-root-image-key\n", encoding="utf-8")
 
     assert service._load_api_key() == "unit-test-root-image-key"
     assert service._has_api_key() is True
@@ -119,7 +121,7 @@ def test_generate_success_saves_local_file_without_leaking_headers(tmp_path, mon
 def test_octet_stream_png_download_is_accepted(tmp_path) -> None:
     service = make_service(tmp_path)
     image_bytes = service._extract_image_bytes(
-        {"images": [{"url": "https://example.invalid/generated.png"}]},
+        {"results": [{"url": "https://example.invalid/generated.png"}]},
         FakeHttpClient(),
     )
 

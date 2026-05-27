@@ -1,449 +1,154 @@
-# SiliconFlow 图片生成接口文档整理
-
-基于 SiliconFlow 官方文档页面整理。该接口用于根据 `prompt` 创建图片生成请求，生成结果中的图片 URL 有效期为 **1 小时**，需要及时下载保存。([SiliconFlow][1])
-
----
-
-## 1. 接口基本信息
-
-```http
-POST https://api.siliconflow.cn/v1/images/generations
-```
-
-用途：创建图片生成请求，即 Text-to-Image / Image Generation。
-
-请求方式：`POST`
-
-认证方式：在请求头中携带 API Key。
-
-```http
-Authorization: Bearer YOUR-API-KEY
-Content-Type: application/json
-```
-
----
-
-## 2. cURL 示例
-
-```bash
-curl --request POST \
-  --url https://api.siliconflow.cn/v1/images/generations \
-  --header 'Authorization: Bearer YOUR-API-KEY' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "model": "Kwai-Kolors/Kolors",
-    "prompt": "an island near sea, with seagulls, moon shining over the sea, light house, boats in the background, fish flying over the sea",
-    "image_size": "1024x1024",
-    "batch_size": 1,
-    "num_inference_steps": 20,
-    "guidance_scale": 7.5
-  }'
-```
-
----
-
-## 3. 请求体参数
-
-### `model`
-
-类型：`string`
-
-是否必填：是
-
-说明：指定使用的图片生成模型。SiliconFlow 说明模型列表可能会随服务调整而变化，完整可用模型需要以平台模型列表为准。([SiliconFlow][1])
-
-示例：
-
-```json
-"model": "Kwai-Kolors/Kolors"
-```
-
-也可以使用页面中给出的示例模型：
-
-```json
-"model": "Qwen/Qwen-Image-Edit-2509"
-```
-
----
-
-### `prompt`
-
-类型：`string`
-
-是否必填：是
-
-说明：图片生成提示词，用于描述希望生成的画面内容。
-
-示例：
-
-```json
-"prompt": "an island near sea, with seagulls, moon shining over the sea, light house, boats in the background"
-```
-
----
-
-### `negative_prompt`
-
-类型：`string`
-
-是否必填：否
-
-说明：负向提示词，用于描述不希望出现在图片中的元素。
-
-示例：
-
-```json
-"negative_prompt": "low quality, blurry, distorted"
-```
-
----
-
-### `image_size`
-
-类型：`string`
-
-是否必填：通常必填
-
-说明：图片分辨率，格式为：
-
-```text
-宽度x高度
-```
-
-例如：
-
-```json
-"image_size": "1024x1024"
-```
-
-注意：文档中特别说明，`Qwen/Qwen-Image-Edit-2509` 和 `Qwen/Qwen-Image-Edit` 不支持该字段。([SiliconFlow][1])
-
-#### Kolors 推荐尺寸
-
-```text
-1024x1024  1:1
-960x1280   3:4
-768x1024   3:4
-720x1440   1:2
-720x1280   9:16
-```
-
-#### Qwen-Image 推荐尺寸
-
-```text
-1328x1328  1:1
-1664x928   16:9
-928x1664   9:16
-1472x1140  4:3
-1140x1472  3:4
-1584x1056  3:2
-1056x1584  2:3
-```
-
----
-
-### `batch_size`
-
-类型：`integer`
-
-默认值：`1`
-
-取值范围：
-
-```text
-1 <= batch_size <= 4
-```
-
-说明：一次请求生成的图片数量。文档说明该参数仅适用于 `Kwai-Kolors/Kolors`。([SiliconFlow][1])
-
-示例：
-
-```json
-"batch_size": 1
-```
-
----
-
-### `seed`
-
-类型：`integer`
-
-取值范围：
-
-```text
-0 <= seed <= 9999999999
-```
-
-说明：随机种子。通常用于控制生成结果的可复现性。
-
-示例：
-
-```json
-"seed": 123456
-```
-
----
-
-### `num_inference_steps`
-
-类型：`integer`
-
-默认值：`20`
-
-取值范围：
-
-```text
-1 <= num_inference_steps <= 100
-```
-
-说明：推理步数。一般来说，步数越高，生成过程越充分，但耗时可能更长。([SiliconFlow][1])
-
-示例：
-
-```json
-"num_inference_steps": 20
-```
-
----
-
-### `guidance_scale`
-
-类型：`number`
-
-默认值：`7.5`
-
-取值范围：
-
-```text
-0 <= guidance_scale <= 20
-```
-
-说明：控制生成图片与提示词的匹配程度。值越高，模型越倾向于严格遵循提示词；值越低，生成结果越自由，可能出现更多变化。文档说明该参数仅适用于 `Kwai-Kolors/Kolors`。([SiliconFlow][1])
-
-示例：
-
-```json
-"guidance_scale": 7.5
-```
-
----
-
-### `image`
-
-类型：`string`
-
-是否必填：否
-
-说明：上传参考图片，可以使用 Base64 或图片 URL。
-
-支持形式：
-
-```text
-data:image/png;base64, XXX
-```
-
-或：
-
-```text
-图片 URL
-```
-
-示例：
-
-```json
-"image": "https://example.com/image.png"
-```
-
----
-
-### `image2`
-
-类型：`string`
-
-是否必填：否
-
-说明：第二张输入图片。文档说明该字段仅适用于 `Qwen/Qwen-Image-Edit-2509`。([SiliconFlow][1])
-
-支持形式同 `image`：
-
-```text
-data:image/png;base64, XXX
-```
-
-或：
-
-```text
-图片 URL
-```
-
----
-
-### `image3`
-
-类型：`string`
-
-是否必填：否
-
-说明：第三张输入图片。文档说明该字段仅适用于 `Qwen/Qwen-Image-Edit-2509`。([SiliconFlow][1])
-
-支持形式同 `image`：
-
-```text
-data:image/png;base64, XXX
-```
-
-或：
-
-```text
-图片 URL
-```
-
----
-
-## 4. 返回结果
-
-成功请求返回 `200`，响应格式为 JSON。
-
+# gpt-image-2 接口文档
+发布时间：2026-05-17 18:32:16
+
+## 接口基础信息
+- 接口名称：gpt-image-2 图像生成接口
+- 请求方式：POST
+- 请求地址：`https://{base_url}/v1/api/generate`
+- 节点地址
+  - 全球节点：`https://grsaiapi.com`
+  - 国内节点：`https://grsai.dakka.com.cn`
+- 完整示例地址
+  - 全球：`https://grsaiapi.com/v1/api/generate`
+  - 国内：`https://grsai.dakka.com.cn/v1/api/generate`
+- 异步结果查询接口：https://qmy27nhsd9.apifox.cn/452409577e0
+
+> 史隙项目默认优先使用国内节点 `https://grsai.dakka.com.cn/v1/api/generate`，全球节点 `https://grsaiapi.com/v1/api/generate` 只作为失败后的备用节点。
+
+## 请求参数
+### Path 参数
+| 参数名 | 类型 | 是否必需 | 说明 |
+|--------|------|----------|------|
+| base_url | string | 必需 | 基础节点地址 |
+
+### Header 参数
+| 参数名 | 类型 | 是否必需 | 说明 |
+|--------|------|----------|------|
+| Authorization | string | 可选 | 身份认证；APIKEY获取地址：https://grsai.ai/zh/dashboard/api-keys<br>示例：`Bearer sk-xxxxxxxxxxx` |
+
+### Body 参数（Content-Type：application/json）
+| 参数名 | 类型 | 是否必需 | 说明 |
+|--------|------|----------|------|
+| model | string | 必需 | 模型名称，可选：`gpt-image-2`、`gpt-image-2-vip` |
+| prompt | string | 必需 | 生成提示词 |
+| images | array[string] | 可选 | 参考图，支持base64格式、url链接 |
+| aspectRatio | string | 可选 | 图片比例/分辨率 |
+| replyType | string | 可选 | 回复类型：`json`、`stream`、`async`（异步轮询） |
+
+## 分辨率参数说明
+### gpt-image-2 普通版
+1. 支持比例格式（如 `16:9`）或1K像素值（如 `1024x1024`）
+2. 固定尺寸参考
+| 比例 | 分辨率 |
+|------|--------|
+| 1:1 | 1024x1024 |
+| 16:9 | 1672 x941 |
+| 9:16 | 941x1672 |
+| 4:3 | 1443x1090 |
+| 3:4 | 1090x1443 |
+| 3:2 | 1536x1024 |
+| 2:3 | 1024x1536 |
+| 5:4 | 1408x1120 |
+| 4:5 | 1120x1408 |
+| 21:9 | 1920x832 |
+| 9:21 | 832x1920 |
+| 1:2 | 896x1792 |
+| 2:1 | 1792x896 |
+
+### gpt-image-2-vip 尊享版
+1. 支持1K/2K/4K像素值，**不支持比例格式**
+2. 自定义像素约束规则
+   - 最大边长 ≤ 3840px
+   - 两边均为16的倍数
+   - 长边/短边之比不超过 3:1
+   - 总像素：655,360 ~ 8,294,400
+3. 固定尺寸参考
+| 比例 | 1K | 2K | 4K |
+|------|----|----|----|
+| 1:1 | 1024x1024 | 2048x2048 | 2880x2880 |
+| 16:9 | 1280x720 | 2048x1152 | 3840x2160 |
+| 9:16 | 720x1280 | 1152x2048 | 2160x3840 |
+| 4:3 | 1152x864 | 2304x1728 | 3264x2448 |
+| 3:4 | 864x1152 | 1728x2304 | 2448x3264 |
+| 3:2 | 1536x1024 | 2048x1360 | 3504x2336 |
+| 2:3 | 1024x1536 | 1360x2048 | 2336x3504 |
+| 5:4 | 1120x896 | 2240x1792 | 3200x2560 |
+| 4:5 | 896x1120 | 1792x2240 | 2560x3200 |
+| 21:9 | 1456x624 | 2912x1248 | 3840x1648 |
+| 9:21 | 624x1456 | 1248x2912 | 1648x3840 |
+| 1:3 | 688x2048 | 1280x3840 | - |
+| 3:1 | 2048x688 | 3840x1280 | - |
+| 2:1 | 1536x768 | 3072x1536 | 3840x1920 |
+| 1:2 | 768x1536 | 1536x3072 | 1920x3840 |
+
+## 请求体示例
 ```json
 {
-  "images": [
-    {
-      "url": "<string>"
-    }
-  ],
-  "timings": {
-    "inference": 123
-  },
-  "seed": 123
+    "model": "gpt-image-2",
+    "prompt": "生成一张边牧与古牧正在抖音直播间直播带货截图",
+    "images": [],
+    "aspectRatio": "1024x1024",
+    "replyType": "json"
 }
 ```
 
-字段说明：
+## cURL 请求示例
+```bash
+curl --location 'https://v1/api/generate' \
+--header 'Authorization: Bearer sk-xxxxxxxxxxx' \
+--header 'Content-Type: application/json' \
+--data '{
+    "model": "gpt-image-2",
+    "prompt": "生成一张边牧与古牧正在抖音直播间直播带货截图",
+    "images": [],
+    "aspectRatio": "1024x1024",
+    "replyType": "json"
+}'
+```
+支持语言：Shell、JavaScript、Java、Swift、Go、PHP、Python、HTTP、C、C#、Objective-C、Ruby、OCaml、Dart、R
 
-### `images`
+## 接口返回
+### 成功状态码：200
+#### 通用返回字段
+| 字段名 | 类型 | 是否必需 | 说明 |
+|--------|------|----------|------|
+| id | string | 必需 | 任务ID |
+| status | string | 必需 | 任务状态：running(进行中)、violation(违规)、succeeded(生成成功)、failed(任务失败) |
+| progress | integer | 可选 | 生成进度 0~100 |
+| results | array[object] | 可选 | 结果数组 |
+| error | string | 可选 | 报错信息 |
 
-类型：`object[]`
+#### results 对象字段
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| url | string | 图片/视频链接 |
 
-说明：生成图片列表。每个对象中包含图片 URL。
-
+#### 成功响应示例
 ```json
-"images": [
-  {
-    "url": "<string>"
-  }
-]
-```
-
-注意：生成图片的 URL 有效期为 1 小时，需要及时下载保存。([SiliconFlow][1])
-
----
-
-### `timings`
-
-类型：`object`
-
-说明：推理耗时信息。
-
-示例：
-
-```json
-"timings": {
-  "inference": 123
+{
+    "id": "14-5f3cf761-a4bb-486a-8016-77f490998f80",
+    "status": "succeeded",
+    "results": [
+        {
+            "url": "https://file1.aitohumanize.com/file/fcdd2d07449d438d9d69d450f5626976.png"
+        }
+    ]
 }
 ```
 
----
+### 状态码说明
+- 200：请求成功（同步/异步均返回）
+- 400：请求参数错误/业务报错
 
-### `seed`
+## 史隙项目使用规范
 
-类型：`integer`
-
-说明：本次生成使用的随机种子。
-
-示例：
-
-```json
-"seed": 123
-```
-
----
-
-## 5. 可能的状态码
-
-页面列出的状态码包括：
-
-```text
-200  请求成功
-400  请求参数错误
-401  未认证或 API Key 错误
-403  无权限
-404  资源不存在
-429  请求过于频繁
-503  服务不可用
-504  请求超时
-```
-
----
-
-## 6. Python 请求示例
-
-```python
-import requests
-
-url = "https://api.siliconflow.cn/v1/images/generations"
-
-headers = {
-    "Authorization": "Bearer YOUR-API-KEY",
-    "Content-Type": "application/json"
-}
-
-payload = {
-    "model": "Kwai-Kolors/Kolors",
-    "prompt": "an island near sea, with seagulls, moon shining over the sea, light house, boats in the background",
-    "image_size": "1024x1024",
-    "batch_size": 1,
-    "num_inference_steps": 20,
-    "guidance_scale": 7.5
-}
-
-response = requests.post(url, headers=headers, json=payload)
-print(response.json())
-```
-
----
-
-## 7. JavaScript 请求示例
-
-```javascript
-const response = await fetch("https://api.siliconflow.cn/v1/images/generations", {
-  method: "POST",
-  headers: {
-    "Authorization": "Bearer YOUR-API-KEY",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    model: "Kwai-Kolors/Kolors",
-    prompt: "an island near sea, with seagulls, moon shining over the sea, light house, boats in the background",
-    image_size: "1024x1024",
-    batch_size: 1,
-    num_inference_steps: 20,
-    guidance_scale: 7.5
-  })
-});
-
-const data = await response.json();
-console.log(data);
-```
-
----
-
-## 8. 使用时的关键注意事项
-
-1. `Authorization` 必须使用 `Bearer YOUR-API-KEY` 格式。
-2. 图片 URL 只保留 1 小时，生成后要立即下载或转存。
-3. 不同模型支持的参数不同，例如 `guidance_scale` 和 `batch_size` 只适用于 `Kwai-Kolors/Kolors`。
-4. `Qwen/Qwen-Image-Edit-2509` 支持多图输入字段，如 `image`、`image2`、`image3`。
-5. `image_size` 需要使用模型推荐尺寸，不同模型推荐分辨率不同。
-6. 实际可用模型应以 SiliconFlow 模型列表为准。
-
-[1]: https://docs.siliconflow.cn/cn/api-reference/images/images-generations "创建图片生成请求 - SiliconFlow"
+- 后端图片生成服务必须统一接入本 API，密钥只读取环境变量 `NEW_IMAGE_API_KEY`。
+- 默认调用国内节点：`POST https://grsai.dakka.com.cn/v1/api/generate`。
+- 全球节点：`POST https://grsaiapi.com/v1/api/generate` 仅作为国内节点网络失败、API 失败或服务不可用后的 fallback。
+- 默认模型使用 `gpt-image-2`；只有需要 2K/4K 或严格自定义像素尺寸时，才使用 `gpt-image-2-vip`，且必须满足 VIP 尺寸约束。
+- 场景图使用 `16:9` 或等价宽屏尺寸；NPC 图可使用 `1:1` 或竖向尺寸；线索图优先使用 `1:1` 近景。
+- 生成剧本的场景 prompt 必须同时包含朝代、具体地点、镜头视角、当前 NPC、全部关键线索物件和大致位置。有尸体就必须出现尸体，有空盒子就必须出现盒子，不允许只生成空背景。
+- 建议使用简洁英文优先或中英双语 prompt。因为接口没有独立 negative prompt 字段，负面约束必须写进同一个 `prompt`：禁止山景、湖泊、木屋、鹿、西式风景、现代物品、可读文字、水印，除非剧本明确需要。
+- 仅当 API 返回 `status=succeeded` 且 `results[0].url` 可下载时，图片才允许进入本地保存与 `ImageQualityGate`。
+- 视觉门禁必须检查图片是否空白/损坏/占位、是否错朝代/错风格、是否缺少线索物件、线索是否能与热点大致定位匹配。不通过时进入 prompt repair 和重新生成；多次失败后标记 `visual_blocked` 或 failed。
+- 不得把 `NEW_IMAGE_API_KEY` 写入前端代码、日志、生成任务 JSON、提交记录或公开文档。

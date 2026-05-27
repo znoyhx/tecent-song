@@ -2,8 +2,12 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime
+import hashlib
 import re
 from typing import Any
+
+from app.services.hotspot_layout_contract import anchor_for_index, bbox_from_anchor
+from app.services.visual_clue_sanitizer import concrete_clue_title, concrete_clue_visual_subject
 
 
 STAGE_SEQUENCE = ["intro", "investigation", "reversal", "choice", "ending"]
@@ -111,7 +115,7 @@ class ScriptPackageNormalizer:
             "relationships": self._normalize_relationships(source.get("relationships")),
             "clues": clues,
             "clue_graph": self._normalize_clue_graph(source.get("clue_graph"), story["truth_chain_clue_ids"]),
-            "deductions": self._normalize_deductions(source.get("deductions")),
+            "deductions": self._normalize_deductions(source.get("deductions"), clues=clues),
             "chapter_sections": self._normalize_chapter_sections(
                 source.get("chapter_sections"),
                 stage_map=stage_map,
@@ -300,14 +304,13 @@ class ScriptPackageNormalizer:
             for clue in clues_by_location.get(location_id, []):
                 hotspot_id = f"hotspot_{hotspot_index}"
                 hotspot_index += 1
-                required_stage = clue["stage_available"][0] if clue.get("stage_available") else "investigation"
                 hotspots.append(
                     {
                         "hotspot_id": hotspot_id,
                         "label": clue["highlight_text"],
                         "description": f"与“{clue['title']}”有关的可疑痕迹。",
                         "clue_ids": [clue["clue_id"]],
-                        "required_stage": required_stage,
+                        "required_stage": None,
                         "required_clue_ids": [],
                         "investigation_text": f"你仔细查验后，发现了“{clue['title']}”。",
                         "repeat_text": "这里已经查验过，痕迹仍与先前判断一致。",
@@ -378,15 +381,18 @@ class ScriptPackageNormalizer:
             stages = [self._stage_mapped(value, stage_map) for value in raw_stage_values if value]
             stages = [stage for stage in stages if stage in STAGE_SEQUENCE] or ["intro", "investigation", "reversal", "choice"]
             source_npc = self._slug(item.get("source_npc_id"), "")
+            raw_title = self._text(item.get("title"), item.get("name"), default=f"线索{index + 1}")
+            title = concrete_clue_title(raw_title, index=index, location_name=source_location)
+            raw_highlight = self._text(item.get("highlight_text"), item.get("name"), default=title)
             normalized.append(
                 {
                     "clue_id": clue_id,
-                    "title": self._text(item.get("title"), item.get("name"), default=f"线索{index + 1}"),
+                    "title": title,
                     "type": self._text(item.get("type"), default="物证"),
                     "is_key": bool(item.get("is_key", index < 6)),
                     "source_location_id": source_location,
                     "source_npc_id": source_npc if source_npc in npc_ids else None,
-                    "highlight_text": self._text(item.get("highlight_text"), item.get("name"), default=f"线索{index + 1}"),
+                    "highlight_text": concrete_clue_title(raw_highlight, index=index, location_name=source_location)[:18],
                     "display_text": self._text(item.get("display_text"), item.get("description"), default="一条可用于推理的证据。"),
                     "detail": self._text(item.get("detail"), item.get("description"), default="这条线索能帮助还原案发过程。"),
                     "stage_available": stages,
@@ -461,15 +467,37 @@ class ScriptPackageNormalizer:
             )
         return normalized
 
-    def _normalize_deductions(self, raw: Any) -> list[dict[str, Any]]:
+    def _is_generic_deduction_question(self, question: str) -> bool:
+        compact = question.replace(" ", "")
+        return (
+            ("疑点" in compact and "证据" in compact and ("哪组" in compact or "支撑" in compact))
+            or (compact.startswith("第") and "个疑点" in compact)
+        )
+
+    def _deduction_question_from_clues(self, clue_ids: list[str], clue_titles: dict[str, str]) -> str:
+        titles = [clue_titles[clue_id] for clue_id in clue_ids if clue_titles.get(clue_id)]
+        if not titles:
+            return ""
+        evidence = "」「".join(titles[:3])
+        suffix = "等" if len(titles) > 3 else ""
+        return f"「{evidence}」{suffix}共同指向案发前后的哪条关键事实？"
+
+    def _normalize_deductions(self, raw: Any, *, clues: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
         items = self._list_of_dicts(raw)
         normalized: list[dict[str, Any]] = []
+        clue_titles = {
+            str(clue.get("clue_id", "")).strip(): str(clue.get("title", "")).strip()
+            for clue in (clues or [])
+            if isinstance(clue, dict)
+        }
         for index, item in enumerate(items):
             question = self._text(item.get("question"), item.get("title"), item.get("description"), default="")
             required = self._string_list(item.get("required_clue_ids"))
             correct = self._string_list(item.get("correct_clue_ids")) or required
             if not question or not correct:
                 continue
+            if self._is_generic_deduction_question(question):
+                question = self._deduction_question_from_clues(correct, clue_titles) or question
             deduction_id = self._slug(self._field(item, "deduction_id", "id"), f"deduction_{index}")
             normalized.append(
                 {
@@ -633,17 +661,20 @@ class ScriptPackageNormalizer:
                 f"{npc['name']}（{npc['public_identity']}，{appearance_lock.get(npc['npc_id']) or npc['appearance']}）"
                 for npc in scene_npcs
             )
-            clue_phrase = "、".join(clue["title"] for clue in scene_clues)
+            clue_phrase = "、".join(
+                concrete_clue_visual_subject(clue["title"], index=clue_index, location_name=location.get("name", ""))
+                for clue_index, clue in enumerate(scene_clues)
+            )
             prompt_parts = [
-                "这是一张人物与场景一体生成的完整主舞台图，不是空场景，也不是背景图加后期立绘。",
+                "这是一张人物与场景一体生成的完整主舞台图，不是空场景，也不是背景图加后期立绘；画面必须完整展示场景，不要裁掉人物头部、脸或上半身。",
                 f"地点：{location['name']}；{location['description']}",
                 f"统一风格：{'、'.join(style_keywords)}；{color_script}；{camera}",
             ]
             if npc_phrase:
-                prompt_parts.append(f"画面中必须自然出现可交互人物：{npc_phrase}。人物要融入同一透视、同一光源和同一时代服饰。")
+                prompt_parts.append(f"画面中必须自然出现可交互人物：{npc_phrase}。主人物靠近画面中部，完整露出整脸和上半身，融入同一透视、同一光源和同一时代服饰。")
             if clue_phrase:
-                prompt_parts.append(f"画面中必须清楚出现可点击线索物件：{clue_phrase}。线索物件要可定位、无遮挡、不能只是装饰。")
-            prompt_parts.append("保留低饱和中国历史悬疑气质，主体清晰，符合时代建筑、服饰、器物，不含现代物件、文字水印、空白背景。")
+                prompt_parts.append(f"画面中必须清楚出现可点击线索物件：{clue_phrase}。线索物件要靠近画面中部、可定位、无遮挡、留出热点标注空间，不能只是装饰。")
+            prompt_parts.append("在人物附近的中景设置可见证物区，例如小桌、托盘、台阶或地面痕迹区，把核心线索作为分开的具体物件放进去。线索必须是具体物件或痕迹，不要抽象时间线、关系图、流程图或漂浮文字。保留低饱和中国历史悬疑气质，主体清晰，符合时代建筑、服饰、器物，不含现代物件、文字水印、空白背景、牌匾、横幅、书法、可读文字、乱码或任何像文字的装饰。生成后自查：人物居中且完整、线索出现且靠中、风格统一、图片成功。")
 
             current_prompt = self._text(asset.get("prompt"), default=f"{dynasty_name}历史悬疑调查场景")
             if "人物与场景一体生成" not in current_prompt:
@@ -694,10 +725,10 @@ class ScriptPackageNormalizer:
         dynasty_name = DYNASTY_NAMES.get(dynasty_id, dynasty_id)
         appearance_lock = item.get("appearance_lock") if isinstance(item.get("appearance_lock"), dict) else {npc["npc_id"]: npc["appearance"] for npc in npcs[:4]}
         return {
-            "style_keywords": self._string_list(item.get("style_keywords")) or [dynasty_name, "写实", "悬疑", "可调查场景"],
-            "forbidden_visuals": self._string_list(item.get("forbidden_visuals")) or ["现代电线", "塑料", "水印", "空白背景", "错朝代服饰"],
+            "style_keywords": self._string_list(item.get("style_keywords")) or [dynasty_name, "写实工笔", "低饱和", "悬疑", "可调查场景", "统一角色风格"],
+            "forbidden_visuals": self._string_list(item.get("forbidden_visuals")) or ["现代电线", "塑料", "水印", "空白背景", "错朝代服饰", "动漫脸", "夸张卡通", "抽象时间线", "关系图", "牌匾文字", "书法乱码", "实验室玻璃器皿", "锥形瓶", "烧杯", "试管", "现代玻璃瓶"],
             "color_script": self._text(item.get("color_script"), item.get("lighting"), default="冷色雨夜与暖色灯火对照。"),
-            "camera": self._text(item.get("camera"), default="平视调查视角，核心物件清楚可辨。"),
+            "camera": self._text(item.get("camera"), default="平视调查视角，人物完整露出整脸上半身，核心线索物件靠近画面中部且清楚可辨。"),
             "era_feature_checklist": self._string_list(item.get("era_feature_checklist")) or self._era_features(dynasty_id),
             "appearance_lock": appearance_lock,
         }
@@ -713,19 +744,24 @@ class ScriptPackageNormalizer:
         raw_items = self._list_of_dicts(raw)
         location_ids = [location["location_id"] for location in locations]
         result: list[dict[str, Any]] = []
+        local_counts: dict[str, int] = {}
         for index, generated in enumerate(generated_hotspots[: max(6, len(generated_hotspots))]):
             raw_item = raw_items[index] if index < len(raw_items) else {}
             location_id = self._slug(self._field(raw_item, "location_id", "location"), generated["location_id"])
             if location_id not in location_ids:
                 location_id = generated["location_id"]
+            local_index = local_counts.get(location_id, 0)
+            local_counts[location_id] = local_index + 1
+            anchor_point = self._generated_hotspot_point(generated, local_index)
+            bbox = self._bbox_from_anchor(anchor_point)
             result.append(
                 {
                     "location_id": location_id,
                     "hotspot_id": generated["hotspot_id"],
                     "visual_asset_id": asset_by_owner_type.get(("scene", location_id), locations[0]["visual_asset_id"]),
                     "clue_id": generated.get("clue_id"),
-                    "anchor_point": self._point(raw_item.get("anchor_point"), index),
-                    "bbox": self._bbox(raw_item.get("bbox"), index),
+                    "anchor_point": anchor_point,
+                    "bbox": bbox,
                     "calibration_status": "pending",
                     "calibrated_against_path": None,
                 }
@@ -824,6 +860,12 @@ class ScriptPackageNormalizer:
             return {"x": self._clamp(raw[0], 0.5), "y": self._clamp(raw[1], 0.5)}
         return {"x": self._clamp(0.25 + (index % 4) * 0.15, 0.5), "y": self._clamp(0.38 + (index % 3) * 0.12, 0.5)}
 
+    def _generated_hotspot_point(self, generated: dict[str, Any], index: int) -> dict[str, float]:
+        return anchor_for_index(index, str(generated.get("location_id") or ""))
+
+    def _bbox_from_anchor(self, anchor: dict[str, float]) -> dict[str, float]:
+        return bbox_from_anchor(anchor)
+
     def _bbox(self, raw: Any, index: int) -> dict[str, float]:
         if isinstance(raw, dict):
             x = self._clamp(raw.get("x"), 0.2)
@@ -919,7 +961,21 @@ class ScriptPackageNormalizer:
     def _visual_prompt(self, raw: Any, asset_type: str, dynasty_id: str) -> str:
         dynasty_name = DYNASTY_NAMES.get(dynasty_id, dynasty_id)
         subject = self._text(raw, default="核心物件清楚可见")
-        return f"{dynasty_name}历史悬疑调查场景，写实风格，{subject}，主体清晰，符合时代建筑、服饰、器物，不含现代物件。"
+        if asset_type == "clue":
+            clue_subject = concrete_clue_visual_subject(subject)
+            return (
+                f"{dynasty_name}历史悬疑线索物件特写，一个具体可见物证：{clue_subject}，材质细节清晰。"
+                "禁止抽象时间线、时间轴、动机图、关系图、流程图、概念图、可读正文、乱码和水印。"
+            )
+        if asset_type == "npc":
+            return (
+                f"{dynasty_name}历史悬疑人物图，{subject}，整脸居中完整，上半身完整可见，"
+                "统一写实工笔低饱和风格，不要动漫脸，不含现代物件。"
+            )
+        return (
+            f"{dynasty_name}历史悬疑调查场景，写实工笔风格，{subject}，人物与场景一体生成，"
+            "人物整脸和上半身完整可见，线索物件靠近画面中部且清楚可辨，符合时代建筑、服饰、器物，不含现代物件。"
+        )
 
     def _default_subjects(self, asset_type: str) -> list[str]:
         if asset_type == "scene":

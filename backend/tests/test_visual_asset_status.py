@@ -6,6 +6,7 @@ import re
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.services.image_generation_service import image_generation_service
 from app.services.game_engine import engine
 from app.services.visual_prompt_agent import visual_prompt_agent
 
@@ -52,7 +53,7 @@ def test_visual_status_returns_stage8_asset_manifest_without_secrets() -> None:
     payload = response.json()
     assets = {asset["asset_id"]: asset for asset in payload["assets"]}
 
-    assert payload["provider"] == "siliconflow"
+    assert payload["provider"] == "gpt-image-2"
     assert REQUIRED_ASSET_IDS.issubset(assets.keys())
     assert payload["asset_count"] >= len(REQUIRED_ASSET_IDS)
 
@@ -87,6 +88,33 @@ def test_session_snapshot_contains_visual_asset_urls() -> None:
     assert payload["scene"]["visual_status"] in {"generated", "fallback"}
     assert payload["available_scenes"][0]["visual_asset_url"].startswith("/api/visual/assets/")
     assert payload["scene_npcs"][0]["visual_asset_url"].startswith("/api/visual/assets/")
+
+
+def test_existing_demo_scene_png_survives_prompt_version_changes(tmp_path, monkeypatch) -> None:
+    assets_root = tmp_path / "assets" / "generated" / "visuals"
+    scene_path = assets_root / "scenes" / "scene_bookshop_front_hall.png"
+    scene_path.parent.mkdir(parents=True)
+    scene_path.write_bytes(b"\x89PNG\r\n\x1a\n" + b"0" * 128)
+
+    monkeypatch.setattr(image_generation_service, "workspace_dir", tmp_path)
+    monkeypatch.setattr(image_generation_service, "assets_root", assets_root)
+    monkeypatch.setattr(image_generation_service, "manifest_path", assets_root / "asset_manifest.json")
+    monkeypatch.setattr(
+        image_generation_service,
+        "_manifest",
+        {
+            "version": 1,
+            "assets": {
+                "scene_bookshop_front_hall": {
+                    "status": "generated",
+                    "prompt_version": "scene_integrated_npc_clues_v1",
+                },
+            },
+        },
+    )
+
+    assert image_generation_service.asset_file_path("scene_bookshop_front_hall") == scene_path
+    assert image_generation_service._asset_status("scene_bookshop_front_hall")["status"] == "generated"
 
 
 def test_all_ming_bookshop_scenes_have_visual_asset_routes() -> None:

@@ -24,6 +24,7 @@ from app.models.game_models import (
 from app.models.script_models import PlayableIdentity, ScriptPackage
 from app.services.game_engine import GameError, engine
 from app.services.script_job_store import script_job_store
+from app.services.visual_clue_sanitizer import concrete_clue_title
 
 
 class ScriptImportService:
@@ -180,6 +181,85 @@ class ScriptImportService:
             and len(approved) == len(required)
         )
 
+    def _normalize_hotspot_label(self, value: str) -> str:
+        return "".join(str(value or "").split()).strip("「」《》[]【】")
+
+    def _dedupe_location_hotspots(self, hotspots: list) -> list:
+        seen_labels: set[str] = set()
+        seen_clue_sets: set[tuple[str, ...]] = set()
+        result: list = []
+        for hotspot in hotspots:
+            label_key = self._normalize_hotspot_label(getattr(hotspot, "label", ""))
+            clue_key = tuple(getattr(hotspot, "clue_ids", []) or [])
+            if label_key and label_key in seen_labels:
+                continue
+            if clue_key and clue_key in seen_clue_sets:
+                continue
+            if label_key:
+                seen_labels.add(label_key)
+            if clue_key:
+                seen_clue_sets.add(clue_key)
+            result.append(hotspot)
+        return result
+
+    def _replace_label(self, text: str, raw_label: str, display_label: str) -> str:
+        if not text:
+            return text
+        if raw_label and raw_label != display_label:
+            return text.replace(raw_label, display_label)
+        return text
+
+    def _clamp_unit(self, value: float, low: float = 0.12, high: float = 0.88) -> float:
+        return max(low, min(high, value))
+
+    def _semantic_hotspot_base(self, text: str) -> tuple[float, float]:
+        if any(term in text for term in ("脚", "印", "辙", "泥", "灰", "血", "拖", "地", "痕")):
+            return 0.48, 0.7
+        if any(term in text for term in ("门", "窗", "墙", "匾", "帘", "栏", "井")):
+            return 0.74, 0.46
+        if any(term in text for term in ("书", "信", "册", "账", "令", "文", "图", "纸", "符", "印")):
+            return 0.42, 0.54
+        if any(term in text for term in ("杯", "盏", "药", "茶", "碗", "瓶", "袋", "箱", "柜")):
+            return 0.58, 0.58
+        if any(term in text for term in ("尸", "衣", "手", "人", "证言", "口供")):
+            return 0.34, 0.52
+        return 0.5, 0.56
+
+    def _runtime_hotspot_anchor(
+        self,
+        *,
+        location_id: str,
+        hotspot_id: str,
+        label: str,
+        description: str,
+        clue_id: str | None,
+        local_index: int,
+        used_points: list[tuple[float, float]],
+    ) -> dict[str, float]:
+        text = f"{label}{description}{clue_id or ''}"
+        base_x, base_y = self._semantic_hotspot_base(text)
+        digest = hashlib.sha1(f"{location_id}:{hotspot_id}:{text}".encode("utf-8")).hexdigest()
+        seed = int(digest[:8], 16)
+        ring = local_index % 7
+        jitter_x = (((seed % 1000) / 999) - 0.5) * 0.24
+        jitter_y = ((((seed // 1000) % 1000) / 999) - 0.5) * 0.18
+        x = self._clamp_unit(base_x + jitter_x + ((ring % 3) - 1) * 0.055)
+        y = self._clamp_unit(base_y + jitter_y + ((ring // 3) - 1) * 0.055, 0.22, 0.8)
+
+        for attempt in range(8):
+            if all((x - prev_x) ** 2 + (y - prev_y) ** 2 >= 0.012 for prev_x, prev_y in used_points):
+                break
+            x = self._clamp_unit(x + (0.07 if attempt % 2 == 0 else -0.05))
+            y = self._clamp_unit(y + (0.055 if attempt % 3 == 0 else -0.045), 0.22, 0.8)
+        used_points.append((x, y))
+        return {"x": round(x, 4), "y": round(y, 4)}
+
+    def _runtime_hotspot_bbox(self, anchor: dict[str, float]) -> dict[str, float]:
+        size = 0.11
+        x = self._clamp_unit(anchor["x"] - size / 2, 0.04, 0.94)
+        y = self._clamp_unit(anchor["y"] - size / 2, 0.08, 0.88)
+        return {"x": round(x, 4), "y": round(y, 4), "width": size, "height": size}
+
     def build_catalog(self, *, package: ScriptPackage, identity: PlayableIdentity) -> dict:
         dynasty = DynastyProfile(
             dynasty_id=package.dynasty_id,
@@ -223,28 +303,50 @@ class ScriptImportService:
             scene_hotspots: list[SceneHotspot] = []
             highlights: list[SceneHighlight] = []
             asset = assets.get(location.visual_asset_id)
-            for hotspot in location.hotspots:
+            used_points: list[tuple[float, float]] = []
+            for hotspot in self._dedupe_location_hotspots(location.hotspots):
                 positioning = hotspot_map.get((location.location_id, hotspot.hotspot_id))
                 first_clue_id = hotspot.clue_ids[0] if hotspot.clue_ids else None
+                display_label = concrete_clue_title(hotspot.label, index=len(scene_hotspots), location_name=location.name)
+                display_description = self._replace_label(hotspot.description, hotspot.label, display_label)
+                display_investigation_text = self._replace_label(hotspot.investigation_text, hotspot.label, display_label)
+                display_repeat_text = self._replace_label(hotspot.repeat_text or hotspot.investigation_text, hotspot.label, display_label)
+                if positioning is not None and positioning.anchor_point:
+                    anchor_point = dict(positioning.anchor_point)
+                    used_points.append((float(anchor_point.get("x", 0.5)), float(anchor_point.get("y", 0.5))))
+                    bbox = dict(positioning.bbox) if positioning.bbox else self._runtime_hotspot_bbox(anchor_point)
+                    calibration_status = positioning.calibration_status or "approved"
+                else:
+                    anchor_point = self._runtime_hotspot_anchor(
+                        location_id=location.location_id,
+                        hotspot_id=hotspot.hotspot_id,
+                        label=display_label,
+                        description=display_description,
+                        clue_id=first_clue_id,
+                        local_index=len(scene_hotspots),
+                        used_points=used_points,
+                    )
+                    bbox = self._runtime_hotspot_bbox(anchor_point)
+                    calibration_status = "approved"
                 scene_hotspots.append(
                     SceneHotspot(
                         hotspot_id=hotspot.hotspot_id,
-                        label=hotspot.label,
+                        label=display_label,
                         clue_ids=hotspot.clue_ids,
-                        description=hotspot.description,
-                        required_stage=hotspot.required_stage,
-                        required_clue_ids=hotspot.required_clue_ids,
-                        repeat_text=hotspot.repeat_text,
-                        anchor_point=positioning.anchor_point.model_dump() if positioning else None,
-                        bbox=positioning.bbox.model_dump() if positioning else None,
-                        calibration_status=positioning.calibration_status if positioning else None,
+                        description=display_description,
+                        required_stage=None,
+                        required_clue_ids=[],
+                        repeat_text=display_repeat_text,
+                        anchor_point=anchor_point,
+                        bbox=bbox,
+                        calibration_status=calibration_status,
                     )
                 )
                 if first_clue_id:
-                    highlights.append(SceneHighlight(text=hotspot.label, hotspot_id=hotspot.hotspot_id, clue_id=first_clue_id))
+                    highlights.append(SceneHighlight(text=display_label, hotspot_id=hotspot.hotspot_id, clue_id=first_clue_id))
                 scene_responses[f"{location.location_id}:{hotspot.hotspot_id}"] = {
-                    "text": hotspot.investigation_text,
-                    "repeat_text": hotspot.repeat_text or hotspot.investigation_text,
+                    "text": display_investigation_text,
+                    "repeat_text": display_repeat_text,
                     "clue_ids": hotspot.clue_ids,
                 }
 
@@ -292,12 +394,12 @@ class ScriptImportService:
         clues = {
             clue.clue_id: Clue(
                 clue_id=clue.clue_id,
-                title=clue.title,
+                title=concrete_clue_title(clue.title, index=index, location_name=clue.source_location_id),
                 type=clue.type,
                 is_key=clue.is_key,
                 source_scene_id=clue.source_location_id,
                 source_npc_id=clue.source_npc_id,
-                highlight_text=clue.highlight_text,
+                highlight_text=concrete_clue_title(clue.highlight_text or clue.title, index=index, location_name=clue.source_location_id)[:18],
                 display_text=clue.display_text,
                 detail=clue.detail,
                 stage_available=clue.stage_available,
@@ -310,7 +412,7 @@ class ScriptImportService:
                 visual_asset_url=assets.get(clue.visual_asset_id).url if assets.get(clue.visual_asset_id) else None,
                 visual_status=assets.get(clue.visual_asset_id).quality_gate.status if assets.get(clue.visual_asset_id) else "fallback",
             )
-            for clue in package.clues
+            for index, clue in enumerate(package.clues)
         }
 
         choices = {choice.choice_id: ChoiceCard(choice_id=choice.choice_id, title=choice.title, description=choice.description, effects=choice.effects) for choice in package.choices}

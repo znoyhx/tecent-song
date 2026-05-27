@@ -175,6 +175,11 @@ export function ClueSidebar({
     () => snapshot.available_deductions.find((item) => item.deduction_id === selectedDeductionId) ?? snapshot.available_deductions[0],
     [selectedDeductionId, snapshot.available_deductions],
   );
+  const requiredEvidenceCount = Math.max(1, activeDeduction?.required_clue_count ?? 1);
+  const discoveredEvidenceCount = activeDeduction?.discovered_evidence_count ?? 0;
+  const selectedEvidenceCount = selectedClueIds.length;
+  const missingEvidenceCount = Math.max(requiredEvidenceCount - selectedEvidenceCount, 0);
+  const canSubmitDeduction = Boolean(activeDeduction) && selectedEvidenceCount >= requiredEvidenceCount && !busy;
 
   useEffect(() => {
     if (!snapshot.available_deductions.length) {
@@ -191,7 +196,9 @@ export function ClueSidebar({
   const toggleClue = (clueId: string) => {
     setDeductionNotice('');
     setSelectedClueIds((current) => (
-      current.includes(clueId) ? current.filter((item) => item !== clueId) : [...current, clueId].slice(-5)
+      current.includes(clueId)
+        ? current.filter((item) => item !== clueId)
+        : [...current, clueId].slice(-Math.max(5, requiredEvidenceCount))
     ));
   };
 
@@ -199,8 +206,8 @@ export function ClueSidebar({
     if (!activeDeduction) {
       return;
     }
-    if (selectedClueIds.length === 0) {
-      setDeductionNotice('请先选择至少一条证据。');
+    if (selectedClueIds.length < requiredEvidenceCount) {
+      setDeductionNotice(`这道推理需要 ${requiredEvidenceCount} 条证据，还差 ${requiredEvidenceCount - selectedClueIds.length} 条。`);
       return;
     }
     setDeductionNotice('推理已提交，结果会在底部对话框中显示。');
@@ -284,11 +291,22 @@ export function ClueSidebar({
                       }}
                       disabled={busy}
                     >
-                      {deduction.question}
+                      <span>{deduction.question}</span>
+                      <small>需 {deduction.required_clue_count ?? 1} 条证据</small>
                     </button>
                   ))}
                 </div>
-                <p className="side-note">选择能支撑「{activeDeduction.question}」的证据。</p>
+                <div className="deduction-requirement">
+                  <strong>{activeDeduction.question}</strong>
+                  <span>{activeDeduction.evidence_hint ?? `需要提交 ${requiredEvidenceCount} 条相关线索`}</span>
+                  <div className="deduction-progress-line">
+                    <span>已选 {selectedEvidenceCount} / {requiredEvidenceCount}</span>
+                    <em>{missingEvidenceCount > 0 ? `还差 ${missingEvidenceCount} 条` : '可以提交'}</em>
+                  </div>
+                  {discoveredEvidenceCount < requiredEvidenceCount ? (
+                    <p>当前相关证据已发现 {discoveredEvidenceCount} / {requiredEvidenceCount}，继续调查或盘问可补齐。</p>
+                  ) : null}
+                </div>
                 <div className="deduction-evidence-grid">
                   {snapshot.clues.map((clue) => (
                     <button
@@ -297,12 +315,13 @@ export function ClueSidebar({
                       className={selectedClueIds.includes(clue.clue_id) ? 'active' : ''}
                       onClick={() => toggleClue(clue.clue_id)}
                       disabled={busy}
+                      aria-pressed={selectedClueIds.includes(clue.clue_id)}
                     >
                       {clue.title}
                     </button>
                   ))}
                 </div>
-                <button type="button" className="primary-button panel-primary-action" onClick={submitDeduction} disabled={busy}>
+                <button type="button" className="primary-button panel-primary-action" onClick={submitDeduction} disabled={!canSubmitDeduction}>
                   提交推理
                 </button>
                 {deductionNotice ? <p className="side-note">{deductionNotice}</p> : null}

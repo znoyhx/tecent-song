@@ -3049,11 +3049,65 @@ textarea::placeholder { color: #907e67; }
   background: rgba(38, 27, 21, .7);
 }
 
+.deduction-question-list button {
+  display: grid;
+  gap: 5px;
+}
+
+.deduction-question-list button span {
+  line-height: 1.42;
+}
+
+.deduction-question-list button small {
+  color: #d7a75f;
+  font-size: .82rem;
+}
+
 .deduction-question-list button.active,
 .deduction-evidence-grid button.active {
   border-color: rgba(158, 54, 47, .62);
   color: #fff1d6;
   background: rgba(101, 38, 32, .58);
+}
+
+.deduction-requirement {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(222, 178, 116, .16);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(14, 10, 8, .62);
+}
+
+.deduction-requirement strong {
+  color: #f1d7aa;
+  line-height: 1.45;
+}
+
+.deduction-requirement span,
+.deduction-requirement p {
+  margin: 0;
+  color: #c7b295;
+  line-height: 1.55;
+  font-size: .94rem;
+}
+
+.deduction-progress-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.deduction-progress-line em {
+  border: 1px solid rgba(222, 178, 116, .18);
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #f1d7aa;
+  font-size: .82rem;
+  font-style: normal;
+  white-space: nowrap;
+  background: rgba(83, 54, 36, .42);
 }
 
 .panel-primary-action {

@@ -12,13 +12,37 @@ type ImageSize = { width: number; height: number };
 const defaultImageSize: ImageSize = { width: 1024, height: 1024 };
 
 const hotspotSlots: StagePoint[] = [
-  { x: 0.18, y: 0.4 },
-  { x: 0.42, y: 0.48 },
-  { x: 0.68, y: 0.44 },
-  { x: 0.82, y: 0.58 },
-  { x: 0.28, y: 0.64 },
-  { x: 0.56, y: 0.66 },
-  { x: 0.76, y: 0.34 },
+  { x: 0.2, y: 0.34 },
+  { x: 0.35, y: 0.34 },
+  { x: 0.5, y: 0.34 },
+  { x: 0.65, y: 0.34 },
+  { x: 0.8, y: 0.34 },
+  { x: 0.2, y: 0.42 },
+  { x: 0.35, y: 0.42 },
+  { x: 0.5, y: 0.42 },
+  { x: 0.65, y: 0.42 },
+  { x: 0.8, y: 0.42 },
+  { x: 0.2, y: 0.5 },
+  { x: 0.35, y: 0.5 },
+  { x: 0.5, y: 0.5 },
+  { x: 0.65, y: 0.5 },
+  { x: 0.8, y: 0.5 },
+  { x: 0.2, y: 0.58 },
+  { x: 0.35, y: 0.58 },
+  { x: 0.5, y: 0.58 },
+  { x: 0.65, y: 0.58 },
+  { x: 0.8, y: 0.58 },
+];
+
+const generatedHotspotSlotVariants: number[][] = [
+  [7, 11, 13, 17, 6, 12],
+  [6, 8, 12, 16, 11, 13],
+  [5, 9, 12, 18, 7, 17],
+  [11, 13, 17, 7, 6, 8],
+  [8, 12, 16, 6, 11, 18],
+  [6, 12, 18, 8, 11, 13],
+  [7, 13, 16, 11, 8, 12],
+  [11, 17, 8, 12, 6, 18],
 ];
 
 const hotspotPositionMap: Record<string, Record<string, StagePoint>> = {
@@ -104,6 +128,11 @@ function hashText(value: string): string {
   return hash.toString(36);
 }
 
+function fitContain(image: Phaser.GameObjects.Image, width: number, height: number): void {
+  const scale = Math.min(width / Math.max(image.width, 1), height / Math.max(image.height, 1));
+  image.setPosition(width / 2, height / 2).setScale(scale);
+}
+
 function fitCover(image: Phaser.GameObjects.Image, width: number, height: number): void {
   const scale = Math.max(width / Math.max(image.width, 1), height / Math.max(image.height, 1));
   image.setPosition(width / 2, height / 2).setScale(scale);
@@ -112,7 +141,7 @@ function fitCover(image: Phaser.GameObjects.Image, width: number, height: number
 function imagePointToCanvas(point: StagePoint, width: number, height: number, sourceSize: ImageSize): StagePoint {
   const sourceWidth = Math.max(sourceSize.width, 1);
   const sourceHeight = Math.max(sourceSize.height, 1);
-  const scale = Math.max(width / sourceWidth, height / sourceHeight);
+  const scale = Math.min(width / sourceWidth, height / sourceHeight);
   const renderedWidth = sourceWidth * scale;
   const renderedHeight = sourceHeight * scale;
   return {
@@ -151,6 +180,82 @@ function calibratedHotspotPoint(hotspot: Scene['hotspots'][number]): StagePoint 
     return null;
   }
   return { x: point.x, y: point.y };
+}
+
+function normalizedHotspotLabel(value: string): string {
+  return value.replace(/\s+/g, '').replace(/[「」《》\[\]【】]/g, '');
+}
+
+function dedupedSceneHotspots(hotspots: Scene['hotspots']): Scene['hotspots'] {
+  const seenLabels = new Set<string>();
+  const seenClueSets = new Set<string>();
+  return hotspots.filter((hotspot) => {
+    const labelKey = normalizedHotspotLabel(hotspot.label);
+    const clueKey = [...hotspot.clue_ids].sort().join('|');
+    if (labelKey && seenLabels.has(labelKey)) {
+      return false;
+    }
+    if (clueKey && seenClueSets.has(clueKey)) {
+      return false;
+    }
+    if (labelKey) {
+      seenLabels.add(labelKey);
+    }
+    if (clueKey) {
+      seenClueSets.add(clueKey);
+    }
+    return true;
+  });
+}
+
+function generatedHotspotPoint(sceneId: string, hotspot: Scene['hotspots'][number], index: number): StagePoint {
+  if (index >= 0) {
+    const variant = generatedHotspotSlotVariants[generatedSceneVariantIndex(sceneId)];
+    return hotspotSlots[variant[index % variant.length] % hotspotSlots.length];
+  }
+  const text = `${sceneId}:${hotspot.hotspot_id}:${hotspot.label}:${hotspot.description ?? ''}:${hotspot.clue_ids.join('|')}`;
+  let hash = 2166136261;
+  for (let charIndex = 0; charIndex < text.length; charIndex += 1) {
+    hash ^= text.charCodeAt(charIndex);
+    hash = Math.imul(hash, 16777619) >>> 0;
+  }
+
+  const label = `${hotspot.label}${hotspot.description ?? ''}`;
+  let base: StagePoint = { x: 0.5, y: 0.56 };
+  if (/[脚印辙泥灰血拖地痕]/.test(label)) {
+    base = { x: 0.48, y: 0.7 };
+  } else if (/[门窗墙匾帘栏井]/.test(label)) {
+    base = { x: 0.74, y: 0.46 };
+  } else if (/[书信册账令文图纸符印]/.test(label)) {
+    base = { x: 0.42, y: 0.54 };
+  } else if (/[杯盏药茶碗瓶袋箱柜]/.test(label)) {
+    base = { x: 0.58, y: 0.58 };
+  } else if (/[尸衣手人证言口供]/.test(label)) {
+    base = { x: 0.34, y: 0.52 };
+  }
+
+  const jitterX = (((hash & 0xff) / 255) - 0.5) * 0.24;
+  const jitterY = ((((hash >> 8) & 0xff) / 255) - 0.5) * 0.18;
+  const ringOffsetX = ((index % 3) - 1) * 0.055;
+  const ringOffsetY = ((Math.floor(index / 3) % 3) - 1) * 0.05;
+  return {
+    x: Phaser.Math.Clamp(base.x + jitterX + ringOffsetX, 0.14, 0.86),
+    y: Phaser.Math.Clamp(base.y + jitterY + ringOffsetY, 0.24, 0.78),
+  };
+}
+
+function generatedSceneVariantIndex(sceneId: string): number {
+  const pieces = sceneId.split('_');
+  const tail = pieces[pieces.length - 1] ?? '';
+  const numeric = Number.parseInt(tail, 10);
+  if (Number.isFinite(numeric)) {
+    return numeric % generatedHotspotSlotVariants.length;
+  }
+  let hash = 0;
+  for (let index = 0; index < sceneId.length; index += 1) {
+    hash = (hash + (index + 1) * sceneId.charCodeAt(index)) % generatedHotspotSlotVariants.length;
+  }
+  return hash;
 }
 
 export class MainScene extends Phaser.Scene {
@@ -277,11 +382,15 @@ export class MainScene extends Phaser.Scene {
         width: image.width || defaultImageSize.width,
         height: image.height || defaultImageSize.height,
       };
-      fitCover(image, width, height);
+      fitContain(image, width, height);
+      const backdrop = this.add.image(0, 0, key).setOrigin(0.5);
+      fitCover(backdrop, width, height);
+      backdrop.setTint(0x2b211c).setAlpha(0.48);
+      const matte = this.add.rectangle(width / 2, height / 2, width, height, 0x080709, 1);
       const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x080709, 0.08);
       const lowerShade = this.add.rectangle(width / 2, height * 0.86, width, height * 0.3, 0x080709, 0.18);
       const sideShade = this.add.rectangle(width * 0.52, height / 2, width, height, 0x020202, 0.04);
-      this.backgroundLayer.add([image, overlay, sideShade, lowerShade]);
+      this.backgroundLayer.add([matte, backdrop, image, overlay, sideShade, lowerShade]);
     });
   }
 
@@ -350,15 +459,17 @@ export class MainScene extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
     const minInteractiveX = Math.max(132, width * 0.14);
-    const minInteractiveY = Math.max(152, height * 0.3);
+    const minInteractiveY = Math.max(152, height * 0.24);
     const maxInteractiveY = Math.max(minInteractiveY + 34, height - Math.max(190, height * 0.37));
     const scenePositions = hotspotPositionMap[snapshot.scene.scene_id] ?? {};
-    snapshot.scene.hotspots.forEach((hotspot, index) => {
-      const slot = calibratedHotspotPoint(hotspot) ?? scenePositions[hotspot.hotspot_id] ?? hotspotSlots[index % hotspotSlots.length];
-      const rowOffset = Math.floor(index / hotspotSlots.length) * 28;
+    const generatedScene = snapshot.state.flags.some((flag) => flag.startsWith('generated_script:'));
+    dedupedSceneHotspots(snapshot.scene.hotspots).forEach((hotspot, index) => {
+      const slot = calibratedHotspotPoint(hotspot)
+        ?? scenePositions[hotspot.hotspot_id]
+        ?? (generatedScene ? generatedHotspotPoint(snapshot.scene.scene_id, hotspot, index) : hotspotSlots[index % hotspotSlots.length]);
       const point = imagePointToCanvas(slot, width, height, this.backgroundImageSize);
       const x = Phaser.Math.Clamp(point.x, minInteractiveX, width - 42);
-      const y = Phaser.Math.Clamp(point.y + rowOffset, minInteractiveY, maxInteractiveY);
+      const y = Phaser.Math.Clamp(point.y, minInteractiveY, maxInteractiveY);
       const hotspotObject = new Hotspot(this, x, y, {
         sceneId: snapshot.scene.scene_id,
         hotspot,

@@ -1,5 +1,0 @@
-INFO:     127.0.0.1:63298 - "POST /api/scripts/generate HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63334 - "GET /api/scripts/jobs/job_d1b49be40d1c HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63360 - "GET /api/scripts/jobs/job_d1b49be40d1c HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60378 - "GET /api/scripts/jobs/job_d1b49be40d1c HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61026 - "GET /api/scripts/jobs/job_d1b49be40d1c HTTP/1.1" 200 OK

@@ -304,6 +304,12 @@ class ScriptGenerationService:
                     next_assets.append(current)
                     continue
             for attempt in range(1, 4):
+                job = script_job_store.get_job(job_id) or job
+                script_job_store.set_running(
+                    job,
+                    "visual_generation",
+                    f"正在生成 {current.title}（{current.asset_type}，第 {attempt}/3 次）。",
+                )
                 if attempt > 1:
                     regenerated += 1
                     quality_by_type[current.asset_type]["regenerated"] += 1
@@ -328,6 +334,13 @@ class ScriptGenerationService:
                 blocked += 1
                 quality_by_type[current.asset_type]["blocked"] += 1
             next_assets.append(current)
+            job = self._save_visual_progress(
+                job_id,
+                job,
+                updated,
+                approved=approved,
+                quality_by_type=quality_by_type,
+            )
             self._wait_between_image_assets()
 
         updated.visual_assets = next_assets
@@ -358,6 +371,31 @@ class ScriptGenerationService:
         else:
             script_job_store.pass_step(job, "image_quality_gate", "必需图片已全部 approved。")
         return updated
+
+    def _save_visual_progress(
+        self,
+        job_id: str,
+        job,
+        package: ScriptPackage,
+        *,
+        approved: dict[str, int],
+        quality_by_type: dict[str, dict[str, int]],
+    ):
+        job = script_job_store.get_job(job_id) or job
+        job.visual_quality.scene["required"] = package.quality_gate.required_scene_count
+        job.visual_quality.npc["required"] = package.quality_gate.required_npc_count
+        job.visual_quality.clue["required"] = package.quality_gate.required_clue_count
+        for asset_type in ("scene", "npc", "clue"):
+            getattr(job.visual_quality, asset_type).update(
+                {
+                    "approved": approved[asset_type],
+                    "rejected": quality_by_type[asset_type]["rejected"],
+                    "regenerated": quality_by_type[asset_type]["regenerated"],
+                    "blocked": quality_by_type[asset_type]["blocked"],
+                }
+            )
+        script_job_store.save_job(job)
+        return job
 
     def _rewrite_visual_prompt(self, prompt: str, attempt: int) -> str:
         return (
@@ -431,6 +469,9 @@ class ScriptGenerationService:
     "clue_themes": [
       {{"title": "线索名", "type": "物证", "description": "线索细节", "detail": "它如何指向真相链"}}
     ],
+    "deduction_blueprints": [
+      {{"question": "玩家要回答的具体案件问题，必须写入关键线索名、地点/人物/行动链", "correct_clue_titles": ["线索名A", "线索名B", "线索名C"], "answer_summary": "提交正确证据后揭开的案件判断", "wrong_feedback": "证据不足时的中文提示"}}
+    ],
     "choices": [
       {{"title": "最终选择名", "description": "选择含义"}}
     ],
@@ -446,8 +487,17 @@ class ScriptGenerationService:
   }}
 }}
 
-数量建议：locations 写 8 个，npcs 写 4 个，clue_themes 写 10-12 个，choices 写 5 个，endings 写 5 个。
-不要输出完整 ScriptPackage，不要输出 visual_assets、hotspot_positioning、deductions 或 chapter_sections。
+数量建议：locations 写 8 个，npcs 写 4 个，clue_themes 写 10-12 个，deduction_blueprints 写 8 个，choices 写 5 个，endings 写 5 个。
+clue_themes 视觉要求：
+1. title 必须是能画出来、能点击的具体物证或痕迹，例如封绳、账页、车辙、脚印、药盏、铜符、口供记录、门闩划痕。
+2. 禁止把 title 写成“时间线”“动机”“关系”“疑点”“真相”“行动链”“路线”“证据链”“线索”“证言-某人”等抽象概念；若是人物说法，写成“某人口供记录”或“某人手记残页”这类具体物件。
+3. description/detail 可以解释时间、动机、关系，但画面对象必须是具体物件或痕迹。
+deduction_blueprints 是正式推理设计要求：
+1. 每个 question 必须结合本剧本真相链来写，点名 2-4 个 clue_themes 中已经出现的线索标题，并关联具体地点、人物说法、时间差、行动路线或动机矛盾。
+2. 禁止使用“第几个疑点”“哪组证据支撑”“这些证据说明什么”这类泛泛问题；玩家读题后必须知道正在推理哪件案内事实。
+3. correct_clue_titles 必须引用现有 clue_themes 标题，建议 3 条；第一条会作为解锁该题的锚点，其余线索用于提交推理。
+4. answer_summary 只能揭示这一题对应的局部判断，不要直接泄露最终结局；多个 deduction_blueprints 要逐层逼近 hidden_truth。
+不要输出完整 ScriptPackage，不要输出 visual_assets、hotspot_positioning、完整 deductions 或 chapter_sections。
 不得出现手机、电话、电报、火车、报纸、公司、警察等现代词。
 pitch:
 {json.dumps(pitch, ensure_ascii=False)}
@@ -492,6 +542,15 @@ pitch:
                 for npc in package_payload.get("npcs", [])
             ],
             "truth_chain_clue_ids": package_payload.get("story", {}).get("truth_chain_clue_ids", []),
+            "deductions": [
+                {
+                    "deduction_id": deduction.get("deduction_id"),
+                    "question": deduction.get("question"),
+                    "required_clue_ids": deduction.get("required_clue_ids", []),
+                    "correct_clue_ids": deduction.get("correct_clue_ids", []),
+                }
+                for deduction in package_payload.get("deductions", [])[:10]
+            ],
             "first_clues": [
                 {
                     "clue_id": clue.get("clue_id"),
@@ -511,6 +570,7 @@ pitch:
 {{"repair_notes": [], "blocking_issues": []}}
 
 若没有阻塞问题，blocking_issues 必须是空数组。
+若 deductions 仍出现“第几个疑点 / 哪组证据支撑 / 这些证据说明什么”等泛泛题，必须列为 blocking_issues；合格推理题应结合具体线索、人物/地点和案情判断。
 摘要：
 {json.dumps(package_summary, ensure_ascii=False)}
 编剧审稿：
@@ -536,10 +596,14 @@ pitch:
 5. 至少 6 个 clue_graph 线索组合、8 个 deductions、12 个 chapter_sections、5 个 choices、5 个 endings。
 6. visual_assets 必须是数组，不要分组成 scenes/npcs/clues；至少包含 8 个 scene、4 个 npc、6 个关键 clue。
 7. 每个 scene 类型 visual_asset 的 prompt 必须明确生成“人物与场景一体生成”的完整主舞台图，必须写入该 location.npc_ids 对应人物的姓名、身份、外貌锁定，以及该场景核心线索物件；不能生成空场景，不能把 NPC 留给后期立绘叠加。
-8. 每个 scene 类型 visual_asset 的 required_subjects 必须包含该场景内 NPC 姓名和核心线索物件名称。
-9. hotspot_positioning 至少 24 个，anchor_point 和 bbox 使用对象格式：{{"x":0.5,"y":0.5}}、{{"x":0.4,"y":0.4,"width":0.2,"height":0.2}}。
-10. stages 的 stage_id 只能是 intro、investigation、reversal、choice、ending。
-11. 不得使用明代书坊案内容，不得出现现代词，不得让 NPC 早期泄露 hidden_truth。
+8. scene prompt 必须要求：宽屏 16:9 横向游戏场景，不要方图、不要竖幅、不要黑边；人物靠近画面中部但不能巨大特写，占画面宽度约 20%-32%，完整露出整脸和上半身，不裁头不裁脸；场景完整可见；核心线索物件必须真实出现在场景里、靠近画面中部、清晰可定位、无遮挡，给热点标注留空间；在人物附近中景设置证物区（小桌/托盘/台阶/地面痕迹区）集中呈现核心线索；风格与 NPC 图、线索图统一，禁止动漫脸、Q版、抽象时间线、关系图、流程图、牌匾、横幅、书法、可读文字或乱码；严格按朝代器物生成，宋代只用陶瓷杯盏/陶罐/漆木/竹木/纸封/布帛/铜铁器/油灯，禁止实验室玻璃器皿、锥形瓶、烧杯、试管、现代玻璃瓶、塑料和现代标签。
+9. 每个 clue 类型 visual_asset 的 prompt 必须是具体物证特写，禁止“时间线”“动机图”“关系图”“流程图”“概念图”“可读正文/乱码/水印”；线索标题本身也不能是抽象概念。
+10. 每个 scene 类型 visual_asset 的 required_subjects 必须包含该场景内 NPC 姓名和核心线索物件名称。
+11. hotspot_positioning 至少 24 个，anchor_point 和 bbox 使用对象格式：{{"x":0.5,"y":0.5}}、{{"x":0.4,"y":0.4,"width":0.2,"height":0.2}}；每个地点内热点优先使用 20 个安全槽位循环分配：x 为 0.18/0.34/0.50/0.66/0.82，y 为 0.28/0.38/0.48/0.58，避免边界和底部对话栏；scene prompt 要把对应线索物件写入相同 x/y 百分比区域。
+12. 生成剧本的 hotspots 不得用 required_stage 或 required_clue_ids 锁住玩家调查；required_stage 写 null，required_clue_ids 写空数组，避免出现“当前阶段还不能调查这个位置”。
+13. stages 的 stage_id 只能是 intro、investigation、reversal、choice、ending。
+14. deductions 必须是结合剧本真相链设计的具体推理问题：question 必须点名 2-4 个已有线索标题，并关联具体地点、人物说法、时间差、行动路线或动机矛盾；correct_clue_ids 建议 3 条；required_clue_ids 至少 1 条且必须是 correct_clue_ids 子集；禁止“第几个疑点”“哪组证据支撑”“这些证据说明什么”等泛泛题。
+15. 不得使用明代书坊案内容，不得出现现代词，不得让 NPC 早期泄露 hidden_truth。
 
 pitch:
 {json.dumps(pitch, ensure_ascii=False)}
@@ -547,20 +611,22 @@ pitch:
 
     def _review_prompt(self, package_payload: dict[str, Any]) -> str:
         return f"""
-只输出 JSON。你是编剧审稿人，检查此 ScriptPackage 的人物动机、可玩性、信息边界和概览是否会剧透。
+只输出 JSON。你是编剧审稿人，检查此 ScriptPackage 的人物动机、可玩性、信息边界、推理题设计和概览是否会剧透。
 输出字段必须为：
 {{"review_notes": [], "blocking_issues": [], "repair_instructions": []}}
 请只写中文内容。
+推理题审查标准：deductions.question 必须是案内具体问题，绑定具体线索、人物/地点/行动链；如果仍是“第几个疑点”“哪组证据支撑”“这些证据说明什么”，必须写入 blocking_issues。
 ScriptPackage:
 {json.dumps(package_payload, ensure_ascii=False)}
 """
 
     def _qa_prompt(self, package_payload: dict[str, Any]) -> str:
         return f"""
-只输出 JSON。你是逻辑 QA，检查线索链、阶段可达、结局可达、玩家身份权限、视觉字段和热点坐标。
+只输出 JSON。你是逻辑 QA，检查线索链、推理题、阶段可达、结局可达、玩家身份权限、视觉字段和热点坐标。
 输出字段必须为：
 {{"qa_notes": [], "blocking_issues": [], "repair_instructions": []}}
 请只写中文内容。
+推理题 QA 标准：每个 deduction.correct_clue_ids 必须能在 clues 中找到，question 必须让普通玩家知道要验证的具体案情判断，并且不得直接泄露最终 hidden_truth。
 ScriptPackage:
 {json.dumps(package_payload, ensure_ascii=False)}
 """
@@ -577,7 +643,11 @@ ScriptPackage:
 2. visual_assets 必须是数组，不要改成 scenes/npcs/clues 分组对象。
 3. hotspots、hotspot_positioning 和 clues 的 id 必须互相对应。
 4. 每个 scene visual_asset 必须按 location.npc_ids 把场景内 NPC 的姓名、身份、外貌锁定写进 prompt 和 required_subjects，生成“人物与场景一体”的主舞台图，不能是空场景。
-5. 不得输出 Markdown，不得加入英文用户可见文案。
+5. scene visual_asset 必须要求宽屏 16:9 横向游戏场景，不要方图/竖幅/黑边；人物靠近画面中部但不能巨大特写，占画面宽度约 20%-32%，整脸和上半身完整可见；核心线索物件真实出现、靠近画面中部、清晰可定位，并按 20 个安全槽位写清 x/y 百分比区域；在人物附近中景设置证物区集中呈现核心线索；不得裁头、裁脸、生成抽象时间线/关系图/流程图/牌匾/横幅/书法/可读文字/乱码；严格按朝代器物生成，禁止实验室玻璃器皿、锥形瓶、烧杯、试管、现代玻璃瓶。
+6. clue visual_asset 必须是具体物证特写，不得是“时间线”“动机图”“关系图”“流程图”“概念图”；clues.title 也必须改为可视化物件名；毒酒、药液等只能画陶瓷杯盏/陶罐/葫芦/纸包/布包，不得画实验室玻璃器皿。
+7. hotspots 不得保留阶段锁或前置线索锁；required_stage 修为 null，required_clue_ids 修为空数组。
+8. deductions 必须修成具体案件推理题：question 点名相关线索，并关联人物/地点/时间/行动链；禁止泛泛题，correct_clue_ids 建议 3 条，required_clue_ids 是其子集。
+9. 不得输出 Markdown，不得加入英文用户可见文案。
 
 初稿：
 {json.dumps(package_payload, ensure_ascii=False)}
@@ -598,18 +668,18 @@ script_package = {
   "world": {"dynasty_id": "song|late_tang", "dynasty_name": "", "era_name": "", "year_hint": "", "location_region": "", "rules": [], "forbidden_terms": []},
   "story": {"surface_event": "", "hidden_truth": "", "themes": [], "culprit_boundary": "", "truth_chain_clue_ids": []},
   "stages": [{"stage_id": "intro|investigation|reversal|choice|ending", "name": "", "order": 0, "goal": "", "entry_location_id": "", "unlock_conditions": [], "available_location_ids": [], "key_clue_ids": []}],
-  "locations": [{"location_id": "", "name": "", "description": "", "scene_text": "", "stage_ids": [], "npc_ids": [], "hotspots": [{"hotspot_id": "", "label": "", "description": "", "clue_ids": [], "required_stage": "intro", "required_clue_ids": [], "investigation_text": "", "repeat_text": ""}], "visual_asset_id": ""}],
+  "locations": [{"location_id": "", "name": "", "description": "", "scene_text": "", "stage_ids": [], "npc_ids": [], "hotspots": [{"hotspot_id": "", "label": "", "description": "", "clue_ids": [], "required_stage": null, "required_clue_ids": [], "investigation_text": "", "repeat_text": ""}], "visual_asset_id": ""}],
   "npcs": [{"npc_id": "", "name": "", "public_identity": "", "appearance": "", "personality": "", "background_suspicion": "", "case_connection": "", "event_behavior": "", "public_goal": "", "hidden_motive": "", "known_info": [], "unknown_info": [], "forbidden_disclosure": [], "speaking_style": "", "initial_trust": 0, "emotion_state": "guarded", "releasable_clue_ids": [], "stage_limits": {}, "visual_asset_id": ""}],
   "relationships": [{"source_id": "", "target_id": "", "relation": "", "public_state": "", "hidden_state": ""}],
   "clues": [{"clue_id": "", "title": "", "type": "物证", "is_key": true, "source_location_id": "", "source_npc_id": null, "highlight_text": "", "display_text": "", "detail": "", "stage_available": [], "unlock_conditions": {}, "effects": {}, "related_clue_ids": [], "ending_tags": [], "forbidden_before_stage": null, "visual_asset_id": ""}],
   "clue_graph": [{"rule_id": "", "required_clue_ids": [], "result_title": "", "result_text": "", "effects": {}}],
-  "deductions": [{"deduction_id": "", "question": "", "required_clue_ids": [], "correct_clue_ids": [], "wrong_feedback": "", "success_text": "", "effects": {}}],
+  "deductions": [{"deduction_id": "", "question": "具体案件推理问题，必须点名相关线索并关联人物/地点/时间/行动链，禁止泛泛疑点题", "required_clue_ids": ["correct_clue_ids 的解锁锚点子集"], "correct_clue_ids": ["支撑该问题答案的 2-4 条线索，建议 3 条"], "wrong_feedback": "", "success_text": "正确提交后揭示的局部案情判断", "effects": {}}],
   "chapter_sections": [{"section_id": "", "stage": "intro|investigation|reversal|choice|ending", "title": "", "trigger_conditions": [], "scene_id": "", "npc_ids": [], "hotspot_ids": [], "clue_ids": [], "next_section_ids": [], "goal": "", "display_text": ""}],
   "dialogue_rules": [{"dialogue_id": "", "npc_id": "", "stage": "intro", "priority": 0, "trigger_keywords": [], "presented_clue_ids": [], "response": "", "released_clue_ids": [], "suggested_questions": []}],
   "choices": [{"choice_id": "", "title": "", "description": "", "effects": {}}],
   "endings": [{"ending_id": "", "title": "", "priority": 0, "conditions": {}, "required_flags": [], "blocked_flags": [], "result_summary": "", "ending_text": "", "history_echo": "", "related_clue_ids": [], "related_choice_ids": [], "npc_fates": {}, "visual_asset_id": null}],
-  "visual_assets": [{"asset_id": "", "asset_type": "scene|npc|clue|ending", "owner_id": "", "title": "", "prompt": "scene 必须写入场景内 NPC、外貌锁定和核心线索物件，人物与场景一体生成", "negative_prompt": "", "required_subjects": ["scene 必须包含该场景 NPC 姓名和线索物件"], "era_feature_checklist": []}],
-  "visual_style_guide": {"style_keywords": [], "forbidden_visuals": [], "color_script": "", "camera": "", "era_feature_checklist": [], "appearance_lock": {}},
+  "visual_assets": [{"asset_id": "", "asset_type": "scene|npc|clue|ending", "owner_id": "", "title": "", "prompt": "scene 必须写入场景内 NPC、外貌锁定和核心线索物件；人物与场景一体生成；人物居中完整露出整脸上半身；核心线索物件靠近画面中部并放在可见证物区。clue 必须是具体物证特写，禁止抽象时间线/关系图/流程图/可读文字/乱码", "negative_prompt": "", "required_subjects": ["scene 必须包含该场景 NPC 姓名和线索物件"], "era_feature_checklist": []}],
+  "visual_style_guide": {"style_keywords": ["统一写实工笔历史悬疑风格，不要动漫脸", "宽屏16:9横向游戏场景", "朝代器物严格一致"], "forbidden_visuals": ["裁头", "裁脸", "方图构图", "竖幅人像", "黑边", "抽象时间线", "关系图", "流程图", "牌匾文字", "书法乱码", "实验室玻璃器皿", "锥形瓶", "烧杯", "试管", "现代玻璃瓶"], "color_script": "", "camera": "人物整脸上半身完整但不巨大特写，线索物件靠近画面中部并按安全槽位放置", "era_feature_checklist": [], "appearance_lock": {}},
   "hotspot_positioning": [{"location_id": "", "hotspot_id": "", "visual_asset_id": "", "clue_id": "", "anchor_point": {"x": 0.5, "y": 0.5}, "bbox": {"x": 0.4, "y": 0.4, "width": 0.2, "height": 0.2}, "calibration_status": "pending"}],
   "quality_gate": {"required_scene_count": 5, "required_npc_count": 4, "required_clue_count": 6}
 }

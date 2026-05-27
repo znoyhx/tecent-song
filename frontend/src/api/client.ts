@@ -157,7 +157,7 @@ export const api = {
     });
   },
   askAssistant(payload: { session_id: string; question: string }) {
-    return request<{ answer: string; suggested_focus: string[]; safety_note: string; ai_mode: string; log?: Record<string, unknown> }>('/api/assistant/hint', {
+    return request<{ answer: string; suggested_focus: string[]; safety_note: string; ai_mode: string; context_scope?: string; log?: Record<string, unknown> }>('/api/assistant/hint', {
       method: 'POST',
       body: JSON.stringify(payload),
     });

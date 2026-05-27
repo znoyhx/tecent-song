@@ -16,7 +16,7 @@ from app.services.visual_prompt_agent import VisualAssetPrompt, visual_prompt_ag
 from app.models.script_models import VisualAsset
 
 CLUE_PROMPT_VERSION = "clue_no_text_v3"
-SCENE_PROMPT_VERSION = "scene_integrated_npc_clues_v1"
+SCENE_PROMPT_VERSION = "scene_integrated_npc_clues_v2"
 
 
 GAME_VISUAL_ASSET_MAP = {
@@ -103,8 +103,9 @@ ASSET_TYPE_BY_CATEGORY = {
 
 
 class ImageGenerationService:
-    endpoint = "https://api.siliconflow.cn/v1/images/generations"
-    model = "Kwai-Kolors/Kolors"
+    domestic_endpoint = "https://grsai.dakka.com.cn/v1/api/generate"
+    fallback_endpoint = "https://grsaiapi.com/v1/api/generate"
+    model = "gpt-image-2"
 
     def __init__(self) -> None:
         self.workspace_dir = Path(__file__).resolve().parents[3]
@@ -147,7 +148,7 @@ class ImageGenerationService:
             return self._asset_status(asset_id, cached=True, message="已复用本地生成图片。")
 
         provider = self._image_provider()
-        if provider != "siliconflow":
+        if not self._provider_enabled(provider):
             self._update_manifest(asset_id, prompt, None, status="blocked", error="provider_disabled")
             return self._asset_status(asset_id, message="图片生成服务未启用，已使用本地视觉占位。")
 
@@ -156,23 +157,15 @@ class ImageGenerationService:
             self._update_manifest(asset_id, prompt, None, status="blocked", error="missing_api_key")
             return self._asset_status(asset_id, message="未检测到图片生成 Key，已使用本地视觉占位。")
 
-        payload: dict[str, Any] = {
-            "model": self.model,
-            "prompt": prompt.prompt,
-            "negative_prompt": prompt.negative_prompt,
-            "image_size": image_size or prompt.image_size,
-            "batch_size": 1,
-            "num_inference_steps": 20,
-            "guidance_scale": 7.5,
-        }
+        payload = self._generation_payload(
+            prompt=self._prompt_with_negative(prompt.prompt, prompt.negative_prompt),
+            aspect_ratio=image_size or self._asset_aspect_ratio(prompt.category),
+        )
         headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
         try:
-            with httpx.Client(timeout=self._timeout_seconds(), follow_redirects=True) as client:
-                response = client.post(self.endpoint, headers=headers, json=payload)
-                response.raise_for_status()
-                data = response.json()
-                image_bytes = self._extract_image_bytes(data, client)
+            with httpx.Client(timeout=self._timeout_seconds(), follow_redirects=True, trust_env=False) as client:
+                image_bytes = self._request_image_bytes(client=client, headers=headers, payload=payload)
                 file_path = self._target_file(prompt)
                 file_path.parent.mkdir(parents=True, exist_ok=True)
                 file_path.write_bytes(image_bytes)
@@ -208,7 +201,7 @@ class ImageGenerationService:
         asset.quality_gate.issues = []
         asset.quality_gate.rejected_paths = []
 
-        if asset.provider != "siliconflow":
+        if not self._provider_enabled(asset.provider):
             asset.generation_status = "blocked"
             asset.quality_gate.status = "blocked"
             asset.quality_gate.issues.append("图片生成服务未启用")
@@ -221,23 +214,15 @@ class ImageGenerationService:
             asset.quality_gate.issues.append("未检测到图片生成 Key")
             return asset
 
-        payload: dict[str, Any] = {
-            "model": self.model,
-            "prompt": asset.prompt,
-            "negative_prompt": asset.negative_prompt,
-            "image_size": "1024x1024",
-            "batch_size": 1,
-            "num_inference_steps": 20,
-            "guidance_scale": 7.5,
-        }
+        payload = self._generation_payload(
+            prompt=self._prompt_with_negative(asset.prompt, self._script_asset_negative_prompt(asset)),
+            aspect_ratio=self._script_asset_aspect_ratio(asset),
+        )
         headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
         target_file = self.generated_script_asset_path(script_id=script_id, asset_id=asset.asset_id)
         try:
-            with httpx.Client(timeout=self._timeout_seconds(), follow_redirects=True) as client:
-                response = client.post(self.endpoint, headers=headers, json=payload)
-                response.raise_for_status()
-                data = response.json()
-                image_bytes = self._extract_image_bytes(data, client)
+            with httpx.Client(timeout=self._timeout_seconds(), follow_redirects=True, trust_env=False) as client:
+                image_bytes = self._request_image_bytes(client=client, headers=headers, payload=payload)
                 target_file.parent.mkdir(parents=True, exist_ok=True)
                 target_file.write_bytes(image_bytes)
         except httpx.HTTPStatusError as exc:
@@ -258,6 +243,126 @@ class ImageGenerationService:
         asset.quality_gate.status = "generated"
         return asset
 
+    def _script_asset_aspect_ratio(self, asset: VisualAsset) -> str:
+        if asset.asset_type == "scene":
+            return os.environ.get("HISTORYGAME_SCRIPT_SCENE_IMAGE_SIZE", "16:9")
+        if asset.asset_type == "npc":
+            return os.environ.get("HISTORYGAME_SCRIPT_NPC_IMAGE_SIZE", "1:1")
+        if asset.asset_type == "clue":
+            return os.environ.get("HISTORYGAME_SCRIPT_CLUE_IMAGE_SIZE", "1:1")
+        return os.environ.get("HISTORYGAME_SCRIPT_IMAGE_SIZE", "1:1")
+
+    def _script_asset_negative_prompt(self, asset: VisualAsset) -> str:
+        additions = [
+            "modern object",
+            "plastic",
+            "electric light",
+            "modern label",
+            "watermark",
+            "readable text",
+            "Chinese characters",
+            "garbled text",
+            "wrong dynasty costume",
+            "mountains",
+            "lakes",
+            "cabins",
+            "deer",
+            "western scenery",
+            "anime",
+            "chibi",
+            "cartoon face",
+            "laboratory glassware",
+            "conical flask",
+            "Erlenmeyer flask",
+            "beaker",
+            "test tube",
+            "modern glass bottle",
+        ]
+        if asset.asset_type == "scene":
+            additions.extend(
+                [
+                    "square composition",
+                    "vertical portrait composition",
+                    "black side bars",
+                    "empty background",
+                    "empty street",
+                    "cropped face",
+                    "cropped head",
+                    "back-facing main character",
+                    "rear view",
+                    "from behind",
+                    "main character turned away",
+                    "face hidden",
+                    "looking away",
+                    "profile-only face",
+                    "side profile",
+                    "profile view",
+                    "extra people",
+                    "background person",
+                    "second person",
+                    "distant people",
+                    "oversized torso close-up",
+                    "large crowd",
+                    "army formation",
+                    "troop formation",
+                    "massed soldiers",
+                    "soldier rows",
+                    "guard corridor",
+                    "cavalry scene",
+                    "battle scene",
+                    "flags",
+                    "banners",
+                    "weapons",
+                    "distant exterior establishing shot",
+                    "missing evidence objects",
+                    "evidence at image edge",
+                    "evidence on sky",
+                    "evidence on roof",
+                    "signboard",
+                    "plaque",
+                    "banner",
+                    "gate sign",
+                    "entrance sign",
+                    "sign above gate",
+                    "calligraphy",
+                    "timeline diagram",
+                    "abstract chart",
+                    "背影",
+                    "背对观众",
+                    "从背后看",
+                    "遮脸",
+                    "看向远方",
+                    "侧脸",
+                    "第二个人",
+                    "背景人物",
+                    "远处人物",
+                    "大军阵",
+                    "军阵",
+                    "士兵队列",
+                    "大量人群",
+                    "马队",
+                    "战场",
+                    "旗帜",
+                    "兵器",
+                ]
+            )
+        elif asset.asset_type == "clue":
+            additions.extend(
+                [
+                    "street scene",
+                    "crowd scene",
+                    "portrait",
+                    "open readable document",
+                    "timeline",
+                    "relationship graph",
+                    "flow chart",
+                    "abstract concept diagram",
+                ]
+            )
+        pieces = [piece.strip() for piece in asset.negative_prompt.replace(";", ",").split(",") if piece.strip()]
+        pieces.extend(additions)
+        return ", ".join(dict.fromkeys(pieces))
+
     def generated_script_asset_path(self, *, script_id: str, asset_id: str) -> Path:
         return self.assets_root / "generated" / script_id / f"{asset_id}.png"
 
@@ -268,7 +373,6 @@ class ImageGenerationService:
         return self._find_existing_file(
             prompt,
             asset_id,
-            require_current_prompt=prompt.category == "scenes",
         )
 
     def asset_media_type(self, asset_id: str) -> str:
@@ -276,6 +380,47 @@ class ImageGenerationService:
         if file_path and file_path.suffix.lower() == ".svg":
             return "image/svg+xml; charset=utf-8"
         return "image/png"
+
+    def _generation_payload(self, *, prompt: str, aspect_ratio: str) -> dict[str, Any]:
+        return {
+            "model": self.model,
+            "prompt": prompt,
+            "images": [],
+            "aspectRatio": aspect_ratio,
+            "replyType": "json",
+        }
+
+    def _request_image_bytes(self, *, client: httpx.Client, headers: dict[str, str], payload: dict[str, Any]) -> bytes:
+        last_error: Exception | None = None
+        for endpoint in self._generation_endpoints():
+            try:
+                response = client.post(endpoint, headers=headers, json=payload)
+                response.raise_for_status()
+                return self._extract_image_bytes(response.json(), client)
+            except Exception as exc:  # noqa: BLE001 - retry fallback endpoint, sanitize later if both fail
+                last_error = exc
+        if last_error is not None:
+            raise last_error
+        raise RuntimeError("missing_image_endpoint")
+
+    def _generation_endpoints(self) -> list[str]:
+        domestic = os.getenv("NEW_IMAGE_API_DOMESTIC_ENDPOINT") or self._backend_env_value("NEW_IMAGE_API_DOMESTIC_ENDPOINT") or self.domestic_endpoint
+        fallback = os.getenv("NEW_IMAGE_API_GLOBAL_ENDPOINT") or self._backend_env_value("NEW_IMAGE_API_GLOBAL_ENDPOINT") or self.fallback_endpoint
+        return list(dict.fromkeys([domestic.rstrip("/"), fallback.rstrip("/")]))
+
+    def _asset_aspect_ratio(self, category: str) -> str:
+        if category == "scenes":
+            return "16:9"
+        return "1:1"
+
+    def _prompt_with_negative(self, prompt: str, negative_prompt: str) -> str:
+        negative = ", ".join(piece.strip() for piece in negative_prompt.replace(";", ",").split(",") if piece.strip())
+        if not negative:
+            return prompt
+        return f"{prompt}\nNegative constraints: {negative}."
+
+    def _provider_enabled(self, provider: str) -> bool:
+        return provider in {"gpt-image-2", "grsai", "new_image_api"}
 
     def _extract_image_bytes(self, data: dict[str, Any], client: httpx.Client) -> bytes:
         image_item = self._first_image_item(data)
@@ -311,7 +456,7 @@ class ImageGenerationService:
         )
 
     def _first_image_item(self, data: dict[str, Any]) -> dict[str, Any]:
-        for field_name in ("images", "data"):
+        for field_name in ("results", "images", "data"):
             value = data.get(field_name)
             if isinstance(value, list) and value:
                 first = value[0]
@@ -430,7 +575,6 @@ class ImageGenerationService:
         file_path = self._find_existing_file(
             prompt,
             asset_id,
-            require_current_prompt=prompt.category == "scenes",
         )
         manifest_item = self._manifest.get("assets", {}).get(asset_id, {})
         file_is_generated_png = file_path is not None and file_path.suffix.lower() == ".png"
@@ -471,11 +615,11 @@ class ImageGenerationService:
         return "当前使用本地视觉占位。"
 
     def _load_api_key(self) -> str | None:
-        env_key = os.getenv("SILICONFLOW_API_KEY") or os.getenv("IMAGE_GENERATION_API_KEY")
+        env_key = os.getenv("NEW_IMAGE_API_KEY")
         if env_key:
             return env_key.strip()
 
-        env_file_key = self._backend_env_value("SILICONFLOW_API_KEY") or self._backend_env_value("IMAGE_GENERATION_API_KEY")
+        env_file_key = self._backend_env_value("NEW_IMAGE_API_KEY")
         if env_file_key:
             return env_file_key.strip()
 
@@ -485,7 +629,7 @@ class ImageGenerationService:
         return bool(self._load_api_key())
 
     def _image_provider(self) -> str:
-        return (os.getenv("IMAGE_PROVIDER") or self._backend_env_value("IMAGE_PROVIDER") or "siliconflow").strip().lower()
+        return (os.getenv("IMAGE_PROVIDER") or self._backend_env_value("IMAGE_PROVIDER") or "gpt-image-2").strip().lower()
 
     def _timeout_seconds(self) -> float:
         value = os.getenv("IMAGE_GENERATION_TIMEOUT_SECONDS") or self._backend_env_value("IMAGE_GENERATION_TIMEOUT_SECONDS")

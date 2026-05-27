@@ -307,8 +307,14 @@ class GameEngine:
         scene_npcs = [self._npc_payload(npc_id, catalog) for npc_id in current_scene.npc_ids]
         discovered_clues = [self._clue_payload(clue_id, catalog) for clue_id in state.discovered_clue_ids]
         combo_summaries = [self._combo_payload(combo_id, catalog) for combo_id in state.completed_combo_ids]
-        deduction_summaries = [self._deduction_payload(deduction_id, catalog) for deduction_id in state.completed_deduction_ids]
-        available_deductions = [self._deduction_prompt_payload(deduction_id, catalog) for deduction_id in self._available_deductions(state, catalog)]
+        deduction_summaries = [
+            self._deduction_payload(deduction_id, catalog, state.discovered_clue_ids)
+            for deduction_id in state.completed_deduction_ids
+        ]
+        available_deductions = [
+            self._deduction_prompt_payload(deduction_id, catalog, state.discovered_clue_ids)
+            for deduction_id in self._available_deductions(state, catalog)
+        ]
         available_choices = [
             catalog["choices"][choice_id].model_dump()
             for choice_id in state.available_choice_ids
@@ -370,12 +376,13 @@ class GameEngine:
             hotspot = next((item for item in current_scene.hotspots if item.hotspot_id == request.hotspot_id), None)
             if hotspot is None:
                 raise GameError(code="BAD_REQUEST", message="未找到对应调查点。", status_code=400)
-            stage_order = {"intro": 0, "investigation": 1, "reversal": 2, "choice": 3, "ending": 4}
-            if hotspot.required_stage and stage_order.get(state.current_stage, 0) < stage_order.get(hotspot.required_stage, 0):
-                raise GameError(code="INVALID_STAGE_ACTION", message="当前阶段还不能调查这个位置。", status_code=400)
-            missing_clues = [clue_id for clue_id in hotspot.required_clue_ids if clue_id not in state.discovered_clue_ids]
-            if missing_clues:
-                raise GameError(code="INVALID_STAGE_ACTION", message="还缺少前置线索，暂时看不出这里的问题。", status_code=400)
+            if not catalog.get("generated"):
+                stage_order = {"intro": 0, "investigation": 1, "reversal": 2, "choice": 3, "ending": 4}
+                if hotspot.required_stage and stage_order.get(state.current_stage, 0) < stage_order.get(hotspot.required_stage, 0):
+                    raise GameError(code="INVALID_STAGE_ACTION", message="当前阶段还不能调查这个位置。", status_code=400)
+                missing_clues = [clue_id for clue_id in hotspot.required_clue_ids if clue_id not in state.discovered_clue_ids]
+                if missing_clues:
+                    raise GameError(code="INVALID_STAGE_ACTION", message="还缺少前置线索，暂时看不出这里的问题。", status_code=400)
             key = f"{request.scene_id}:{request.hotspot_id}"
             hotspot_response = catalog["scene_responses"].get(key)
             if hotspot_response is None:
@@ -597,29 +604,52 @@ class GameEngine:
             return {
                 "correct": True,
                 "feedback": "这个疑团已经完成。",
-                "deduction": self._deduction_payload(deduction.deduction_id, catalog),
+                "deduction": self._deduction_payload(deduction.deduction_id, catalog, state.discovered_clue_ids),
                 "state": state.model_dump(),
-                "available_deductions": [self._deduction_prompt_payload(item, catalog) for item in self._available_deductions(state, catalog)],
-            "current_goal": self._current_goal(state.current_stage, catalog),
+                "available_deductions": [
+                    self._deduction_prompt_payload(item, catalog, state.discovered_clue_ids)
+                    for item in self._available_deductions(state, catalog)
+                ],
+                "current_goal": self._current_goal(state.current_stage, catalog),
             }
 
-        correct = set(deduction.correct_clue_ids).issubset(selected)
+        answer_ids = set(self._deduction_answer_clue_ids(deduction))
+        if answer_ids and len(selected) < len(answer_ids):
+            return {
+                "correct": False,
+                "feedback": (
+                    f"{self._display_deduction_wrong_feedback(deduction, catalog)}"
+                    f" 这道推理需要提交 {len(answer_ids)} 条相关证据，你现在只选了 {len(selected)} 条。"
+                ),
+                "deduction": self._deduction_prompt_payload(deduction.deduction_id, catalog, state.discovered_clue_ids),
+                "state": state.model_dump(),
+                "available_deductions": [
+                    self._deduction_prompt_payload(item, catalog, state.discovered_clue_ids)
+                    for item in self._available_deductions(state, catalog)
+                ],
+                "current_goal": self._current_goal(state.current_stage, catalog),
+            }
+
+        correct = answer_ids.issubset(selected)
         if not correct:
             state.turn_count += 1
             self._log_call(
                 record,
                 module="deduction_submit",
-                summary=f"推理未成立 {deduction.question}",
+                summary=f"推理未成立 {self._display_deduction_question(deduction, catalog)}",
                 success=True,
                 fallback_used=False,
                 supervisor_pass=True,
             )
             return {
                 "correct": False,
-                "feedback": deduction.wrong_feedback,
-                "deduction": self._deduction_prompt_payload(deduction.deduction_id, catalog),
+                "feedback": self._display_deduction_wrong_feedback(deduction, catalog),
+                "deduction": self._deduction_prompt_payload(deduction.deduction_id, catalog, state.discovered_clue_ids),
                 "state": state.model_dump(),
-                "available_deductions": [self._deduction_prompt_payload(item, catalog) for item in self._available_deductions(state, catalog)],
+                "available_deductions": [
+                    self._deduction_prompt_payload(item, catalog, state.discovered_clue_ids)
+                    for item in self._available_deductions(state, catalog)
+                ],
                 "current_goal": self._current_goal(state.current_stage, catalog),
             }
 
@@ -630,17 +660,20 @@ class GameEngine:
         self._log_call(
             record,
             module="deduction_submit",
-            summary=f"推理成立 {deduction.question}",
+            summary=f"推理成立 {self._display_deduction_question(deduction, catalog)}",
             success=True,
             fallback_used=False,
             supervisor_pass=True,
         )
         return {
             "correct": True,
-            "feedback": deduction.success_text,
-            "deduction": self._deduction_payload(deduction.deduction_id, catalog),
+            "feedback": self._display_deduction_success_text(deduction, catalog),
+            "deduction": self._deduction_payload(deduction.deduction_id, catalog, state.discovered_clue_ids),
             "state": state.model_dump(),
-            "available_deductions": [self._deduction_prompt_payload(item, catalog) for item in self._available_deductions(state, catalog)],
+            "available_deductions": [
+                self._deduction_prompt_payload(item, catalog, state.discovered_clue_ids)
+                for item in self._available_deductions(state, catalog)
+            ],
             "current_goal": self._current_goal(state.current_stage, catalog),
         }
 
@@ -822,18 +855,130 @@ class GameEngine:
         combo: ComboRule = catalog["combos"][combo_id]
         return combo.model_dump()
 
-    def _deduction_payload(self, deduction_id: str, catalog: dict | None = None) -> dict:
-        catalog = catalog or self._static_catalog()
-        deduction: DeductionRule = catalog["deductions"][deduction_id]
-        return deduction.model_dump()
+    def _deduction_answer_clue_ids(self, deduction: DeductionRule) -> list[str]:
+        clue_ids = deduction.correct_clue_ids or deduction.required_clue_ids
+        unique_ids: list[str] = []
+        for clue_id in clue_ids:
+            if clue_id and clue_id not in unique_ids:
+                unique_ids.append(clue_id)
+        return unique_ids
 
-    def _deduction_prompt_payload(self, deduction_id: str, catalog: dict | None = None) -> dict:
+    def _deduction_clues(self, deduction: DeductionRule, catalog: dict) -> list[Clue]:
+        return [
+            catalog["clues"][clue_id]
+            for clue_id in self._deduction_answer_clue_ids(deduction)
+            if clue_id in catalog["clues"]
+        ]
+
+    def _is_generic_deduction_question(self, question: str) -> bool:
+        compact = question.replace(" ", "")
+        return (
+            ("疑点" in compact and "证据" in compact and ("哪组" in compact or "支撑" in compact))
+            or compact.startswith("第") and "个疑点" in compact
+        )
+
+    def _is_generic_deduction_text(self, text: str) -> bool:
+        compact = text.replace(" ", "")
+        return any(marker in compact for marker in ("这组证据", "这些证据", "该推理", "这个判断", "下一层疑点"))
+
+    def _quoted_deduction_titles(self, deduction: DeductionRule, catalog: dict, limit: int = 3) -> str:
+        titles: list[str] = []
+        for clue in self._deduction_clues(deduction, catalog):
+            if clue.title and clue.title not in titles:
+                titles.append(clue.title)
+        if not titles:
+            return "这组线索"
+        visible = titles[:limit]
+        quoted = "」「".join(visible)
+        suffix = "等" if len(titles) > limit else ""
+        return f"「{quoted}」{suffix}"
+
+    def _display_deduction_question(self, deduction: DeductionRule, catalog: dict) -> str:
+        question = deduction.question.strip()
+        if question and not self._is_generic_deduction_question(question):
+            return question
+
+        clues = self._deduction_clues(deduction, catalog)
+        evidence = self._quoted_deduction_titles(deduction, catalog)
+        npc_names: list[str] = []
+        scene_names: list[str] = []
+        for clue in clues:
+            if clue.source_npc_id and clue.source_npc_id in catalog["npcs"]:
+                name = catalog["npcs"][clue.source_npc_id].name
+                if name not in npc_names:
+                    npc_names.append(name)
+            if clue.source_scene_id and clue.source_scene_id in catalog["scenes"]:
+                name = catalog["scenes"][clue.source_scene_id].name
+                if name not in scene_names:
+                    scene_names.append(name)
+
+        if npc_names:
+            return f"{evidence}揭示了{npc_names[0]}的哪处说法或行动异常？"
+        if len(scene_names) >= 2:
+            return f"{evidence}把{scene_names[0]}与{scene_names[1]}连成了哪条行动链？"
+        if scene_names:
+            return f"{evidence}在{scene_names[0]}共同指向哪条案情判断？"
+        return f"{evidence}共同指向案发前后的哪条关键事实？"
+
+    def _display_deduction_success_text(self, deduction: DeductionRule, catalog: dict) -> str:
+        if deduction.success_text and not self._is_generic_deduction_text(deduction.success_text):
+            return deduction.success_text
+        evidence = self._quoted_deduction_titles(deduction, catalog)
+        count = max(1, len(self._deduction_answer_clue_ids(deduction)))
+        return f"{evidence} 已经形成 {count} 条证据的闭环，可以支撑这个案件判断。"
+
+    def _display_deduction_wrong_feedback(self, deduction: DeductionRule, catalog: dict) -> str:
+        if deduction.wrong_feedback and not self._is_generic_deduction_text(deduction.wrong_feedback):
+            return deduction.wrong_feedback
+        evidence = self._quoted_deduction_titles(deduction, catalog)
+        count = max(1, len(self._deduction_answer_clue_ids(deduction)))
+        return f"这次提交还没有把 {evidence} 串成完整证据链；这个问题需要 {count} 条相关线索。"
+
+    def _deduction_meta_payload(
+        self,
+        deduction: DeductionRule,
+        catalog: dict,
+        discovered_clue_ids: list[str] | set[str] | None = None,
+    ) -> dict:
+        answer_ids = self._deduction_answer_clue_ids(deduction)
+        discovered = set(discovered_clue_ids or [])
+        discovered_count = sum(1 for clue_id in answer_ids if clue_id in discovered)
+        required_count = max(1, len(answer_ids))
+        return {
+            "required_clue_count": required_count,
+            "discovered_evidence_count": discovered_count,
+            "evidence_hint": f"需要提交 {required_count} 条相关线索",
+        }
+
+    def _deduction_payload(
+        self,
+        deduction_id: str,
+        catalog: dict | None = None,
+        discovered_clue_ids: list[str] | set[str] | None = None,
+    ) -> dict:
         catalog = catalog or self._static_catalog()
         deduction: DeductionRule = catalog["deductions"][deduction_id]
-        return {
+        payload = deduction.model_dump()
+        payload.update(self._deduction_meta_payload(deduction, catalog, discovered_clue_ids))
+        payload["question"] = self._display_deduction_question(deduction, catalog)
+        payload["wrong_feedback"] = self._display_deduction_wrong_feedback(deduction, catalog)
+        payload["success_text"] = self._display_deduction_success_text(deduction, catalog)
+        return payload
+
+    def _deduction_prompt_payload(
+        self,
+        deduction_id: str,
+        catalog: dict | None = None,
+        discovered_clue_ids: list[str] | set[str] | None = None,
+    ) -> dict:
+        catalog = catalog or self._static_catalog()
+        deduction: DeductionRule = catalog["deductions"][deduction_id]
+        payload = {
             "deduction_id": deduction.deduction_id,
-            "question": deduction.question,
+            "question": self._display_deduction_question(deduction, catalog),
         }
+        payload.update(self._deduction_meta_payload(deduction, catalog, discovered_clue_ids))
+        return payload
 
     def _available_deductions(self, state: GameState, catalog: dict | None = None) -> list[str]:
         catalog = catalog or self._state_catalog(state)
@@ -858,7 +1003,7 @@ class GameEngine:
                 continue
             if clue_id in state.discovered_clue_ids:
                 continue
-            if not self._can_release_clue(state, clue):
+            if not self._can_release_clue(state, clue, catalog):
                 continue
             state.discovered_clue_ids.append(clue_id)
             self._apply_effect_bundle(state, clue.effects)
@@ -867,7 +1012,10 @@ class GameEngine:
             discovered.append(self._clue_payload(clue_id, catalog))
         return discovered
 
-    def _can_release_clue(self, state: GameState, clue: Clue) -> bool:
+    def _can_release_clue(self, state: GameState, clue: Clue, catalog: dict | None = None) -> bool:
+        catalog = catalog or self._state_catalog(state)
+        if catalog.get("generated"):
+            return True
         if state.current_stage not in clue.stage_available:
             return False
         conditions = clue.unlock_conditions or {}

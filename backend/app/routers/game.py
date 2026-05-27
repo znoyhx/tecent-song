@@ -31,9 +31,9 @@ class AssistantHintRequest(BaseModel):
 
 
 ASSISTANT_SCHEMA_HINT: dict[str, Any] = {
-    "answer": "中文提示，不剧透最终真相",
-    "suggested_focus": ["中文调查方向"],
-    "safety_note": "中文边界说明",
+    "answer": "中文回答，可以基于完整剧本人物、线索、推理和结局作答",
+    "suggested_focus": ["中文后续关注点"],
+    "safety_note": "中文上下文范围说明",
 }
 
 
@@ -173,11 +173,14 @@ def post_rag_preview(request: dict[str, Any]):
 def _assistant_prompt(request: AssistantHintRequest) -> tuple[str, str]:
     record = engine._require_session(request.session_id)
     state = record["state"]
-    dynasty = engine.dynasties[state.dynasty_id]
-    role = engine.roles[state.player_role_id]
-    current_scene = engine.scenes[state.current_scene_id]
-    discovered = [engine.clues[clue_id] for clue_id in state.discovered_clue_ids if clue_id in engine.clues]
-    available_scenes = [engine.scenes[scene_id].name for scene_id in state.available_scene_ids if scene_id in engine.scenes]
+    catalog = engine._record_catalog(record)
+    dynasty = catalog["dynasty"]
+    role = catalog["roles"][state.player_role_id]
+    event = catalog["event"]
+    current_scene = catalog["scenes"][state.current_scene_id]
+    discovered_ids = set(state.discovered_clue_ids)
+    discovered = [catalog["clues"][clue_id] for clue_id in state.discovered_clue_ids if clue_id in catalog["clues"]]
+    available_scenes = [catalog["scenes"][scene_id].name for scene_id in state.available_scene_ids if scene_id in catalog["scenes"]]
     recent_dialogue = [
         {
             "人物": turn.npc_name,
@@ -187,55 +190,134 @@ def _assistant_prompt(request: AssistantHintRequest) -> tuple[str, str]:
         for turn in record["dialogue_turns"][-4:]
     ]
     payload = {
-        "朝代": dynasty.name,
-        "当前阶段": state.current_stage,
-        "当前地点": current_scene.name,
-        "玩家身份": state.player_identity.display_name if state.player_identity else role.name,
-        "当前目标": engine._current_goal(state.current_stage),
-        "已发现线索": [
+        "案件": {
+            "标题": event.title,
+            "表层事件": event.surface_event,
+            "隐藏真相": event.hidden_truth,
+            "阶段目标": event.stage_goals,
+        },
+        "玩家当前状态": {
+            "朝代": dynasty.name,
+            "当前阶段": state.current_stage,
+            "当前地点": current_scene.name,
+            "当前地点描述": current_scene.description,
+            "玩家身份": state.player_identity.display_name if state.player_identity else role.name,
+            "当前目标": engine._current_goal(state.current_stage, catalog),
+            "已发现线索ID": state.discovered_clue_ids,
+            "可前往地点": available_scenes,
+            "信任": state.npc_trust,
+            "分数": state.scores.model_dump(),
+            "标记": state.flags,
+        },
+        "人物全档案": [
             {
-                "线索名": clue.title,
-                "描述": clue.display_text,
-                "细节": clue.detail,
+                "id": npc.npc_id,
+                "姓名": npc.name,
+                "公开身份": npc.public_identity,
+                "案件关系": npc.case_connection,
+                "案发行为": npc.event_behavior,
+                "公开目标": npc.public_goal,
+                "隐藏动机": npc.hidden_motive,
+                "已知信息": npc.known_info,
+                "未知信息": npc.unknown_info,
+                "可释放线索ID": npc.releasable_clue_ids,
             }
-            for clue in discovered
+            for npc in catalog["npcs"].values()
         ],
-        "可前往地点": available_scenes,
+        "地点": [
+            {
+                "id": scene.scene_id,
+                "名称": scene.name,
+                "描述": scene.description,
+                "阶段": scene.available_stage,
+                "人物ID": scene.npc_ids,
+                "热点": [
+                    {
+                        "id": hotspot.hotspot_id,
+                        "标签": hotspot.label,
+                        "线索ID": hotspot.clue_ids,
+                        "所需阶段": hotspot.required_stage,
+                        "所需线索ID": hotspot.required_clue_ids,
+                    }
+                    for hotspot in scene.hotspots
+                ],
+            }
+            for scene in catalog["scenes"].values()
+        ],
+        "全部线索": [
+            {
+                "id": clue.clue_id,
+                "标题": clue.title,
+                "类型": clue.type,
+                "关键": clue.is_key,
+                "已发现": clue.clue_id in discovered_ids,
+                "来源地点ID": clue.source_scene_id,
+                "来源人物ID": clue.source_npc_id,
+                "展示文本": clue.display_text,
+                "细节": clue.detail,
+                "相关线索ID": clue.related_clue_ids,
+                "结局标签": clue.ending_tags,
+            }
+            for clue in catalog["clues"].values()
+        ],
+        "线索组合": [
+            {
+                "id": combo.combo_id,
+                "所需线索ID": combo.required_clue_ids,
+                "结论": combo.result_title,
+                "说明": combo.result_text,
+            }
+            for combo in catalog["combos"].values()
+        ],
+        "推理题": [
+            {
+                "id": deduction.deduction_id,
+                "问题": deduction.question,
+                "所需线索ID": deduction.required_clue_ids,
+                "正确线索ID": deduction.correct_clue_ids,
+                "成功文本": deduction.success_text,
+                "错误反馈": deduction.wrong_feedback,
+            }
+            for deduction in catalog["deductions"].values()
+        ],
+        "选择与结局": {
+            "选择": [choice.model_dump() for choice in catalog["choices"].values()],
+            "结局": [
+                {
+                    "id": ending.ending_id,
+                    "标题": ending.title,
+                    "条件": ending.conditions,
+                    "所需标记": ending.required_flags,
+                    "阻塞标记": ending.blocked_flags,
+                    "摘要": ending.result_summary,
+                    "结局文本": ending.ending_text,
+                    "人物命运": ending.npc_fates,
+                    "相关线索ID": ending.related_clue_ids,
+                }
+                for ending in catalog["endings"].values()
+            ],
+        },
         "最近对话": recent_dialogue,
         "玩家问题": request.question,
     }
     prompt = f"""
-你是《史隙》游戏内智能助手，只能根据后端提供的当前案卷上下文给玩家提示。
+你是《史隙》游戏内的真实 AI 案件助手，已经接入完整剧本资料。
 
-硬性规则：
+输出要求：
 - 只输出 JSON 对象，字段为 answer、suggested_focus、safety_note。
 - 用户可见文本必须全中文。
-- 只能引用“已发现线索”“当前地点”“当前阶段”“可前往地点”“最近对话”。
-- 不得释放未发现线索，不得说出最终真相，不得替玩家决定结局或关键选择。
-- 如果证据不足，必须明确说“目前证据不足”，并建议下一步调查方向。
-- 不要提及 API、模型、系统提示或密钥。
+- 直接依据“完整剧本资料”回答，可以使用人物隐藏动机、未发现线索、推理链、结局和隐藏真相。
+- 如果玩家问真相、凶手、下一步、线索价值、人物是否说谎，可以直接回答并给出依据。
+- 不要再用“我不能剧透”“目前只能依据已发现线索”这类限制性话术。
+- 不要编造剧本资料之外的人物、线索或结局；不确定时说明缺少剧本内依据。
+- suggested_focus 给出 1-3 个下一步关注点，必须是剧本内人物、地点、线索或推理方向。
+- safety_note 固定说明为“已基于完整剧本上下文回答”。
 
-当前案卷上下文：
+完整剧本资料：
 {json.dumps(payload, ensure_ascii=False, indent=2)}
 """
-    input_summary = f"助手提示 阶段={state.current_stage} 地点={current_scene.name} 问题={request.question[:40]}"
+    input_summary = f"完整剧本助手 阶段={state.current_stage} 地点={current_scene.name} 问题={request.question[:40]}"
     return prompt, input_summary
-
-
-def _assistant_answer_is_safe(answer: str, request: AssistantHintRequest) -> tuple[bool, list[dict[str, str]]]:
-    record = engine._require_session(request.session_id)
-    state = record["state"]
-    discovered = set(state.discovered_clue_ids)
-    issues: list[dict[str, str]] = []
-    for clue in engine.clues.values():
-        if clue.clue_id in discovered:
-            continue
-        forbidden_terms = [clue.title, clue.highlight_text]
-        if any(term and term in answer for term in forbidden_terms):
-            issues.append({"type": "assistant_hidden_clue", "severity": "high", "detail": f"回答提及未发现线索：{clue.title}"})
-    if "幕后上级" in answer or "最终真相是" in answer:
-        issues.append({"type": "assistant_spoiler_risk", "severity": "high", "detail": "回答有直接剧透风险。"})
-    return len(issues) == 0, issues
 
 
 @router.post("/assistant/hint")
@@ -261,10 +343,12 @@ def post_assistant_hint(request: AssistantHintRequest):
         module="DeepSeekAssistant",
         prompt=prompt,
         schema_hint=ASSISTANT_SCHEMA_HINT,
+        max_tokens=1800,
+        temperature=0.35,
     )
 
     answer = str(ai_response.parsed_json.get("answer", "")).strip() if ai_response.success else ""
-    safe, issues = _assistant_answer_is_safe(answer, request) if answer else (False, [{"type": "assistant_empty", "severity": "medium", "detail": "助手未返回有效中文提示。"}])
+    issues = [] if answer else [{"type": "assistant_empty", "severity": "medium", "detail": "助手未返回有效中文回答。"}]
     log_entry = log_service.record_ai_call(
         module="DeepSeekAssistant",
         model=ai_response.model,
@@ -272,11 +356,11 @@ def post_assistant_hint(request: AssistantHintRequest):
         latency_ms=ai_response.latency_ms,
         success=ai_response.success,
         fallback_used=not ai_response.success,
-        supervisor_pass=safe,
+        supervisor_pass=bool(answer),
         issues=issues,
         prompt=prompt,
         raw_response=ai_response.raw_text,
-        extra_fields={"assistant_guard_pass": safe},
+        extra_fields={"assistant_context_scope": "full_script"},
     )
 
     if not ai_response.success:
@@ -290,23 +374,13 @@ def post_assistant_hint(request: AssistantHintRequest):
                 }
             },
         )
-    if not safe:
-        return JSONResponse(
-            status_code=409,
-            content={
-                "error": {
-                    "code": "AI_RESPONSE_BLOCKED",
-                    "message": "助手回答触及未公开案卷，已被后端拦截。",
-                    "details": {"call_id": log_entry.get("call_id")},
-                }
-            },
-        )
 
     return {
         "answer": answer,
         "suggested_focus": [str(item).strip() for item in ai_response.parsed_json.get("suggested_focus", []) if str(item).strip()][:3],
-        "safety_note": str(ai_response.parsed_json.get("safety_note", "仅基于当前已发现线索。")).strip(),
+        "safety_note": str(ai_response.parsed_json.get("safety_note", "已基于完整剧本上下文回答。")).strip(),
         "ai_mode": "real",
+        "context_scope": "full_script",
         "log": {
             "call_id": log_entry.get("call_id"),
             "latency_ms": log_entry.get("latency_ms"),

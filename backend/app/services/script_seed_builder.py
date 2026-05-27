@@ -1,7 +1,20 @@
 from __future__ import annotations
 
 from datetime import datetime
+import hashlib
 from typing import Any
+
+from app.services.hotspot_layout_contract import (
+    HOTSPOT_LAYOUT_VERSION,
+    anchor_for_index,
+    bbox_from_anchor,
+    prompt_line,
+)
+from app.services.visual_clue_sanitizer import (
+    concrete_clue_title,
+    concrete_clue_visual_subject,
+    scene_clue_visual_requirement,
+)
 
 
 STAGES = ["intro", "investigation", "reversal", "choice", "ending"]
@@ -86,7 +99,7 @@ class CompactScriptSeedBuilder:
             "relationships": self._build_relationships(npcs),
             "clues": clues,
             "clue_graph": self._build_clue_graph(),
-            "deductions": self._build_deductions(),
+            "deductions": self._build_deductions(clues, seed),
             "chapter_sections": self._build_chapter_sections(locations),
             "dialogue_rules": self._build_dialogue_rules(npcs),
             "choices": choices,
@@ -185,17 +198,18 @@ class CompactScriptSeedBuilder:
         for index in range(30):
             raw = raw_clues[index % len(raw_clues)] if raw_clues else {}
             location = locations[index % len(locations)]
-            title = self._text(raw.get("title"), raw.get("name"), default=f"{keywords[index % len(keywords)]}痕迹{index + 1}")
+            raw_title = self._text(raw.get("title"), raw.get("name"), default=f"{keywords[index % len(keywords)]}痕迹{index + 1}")
+            title = concrete_clue_title(raw_title, index=index, keyword=keywords[index % len(keywords)], location_name=location["name"])
             stage = self._stage_for_clue(index)
             clues.append(
                 {
                     "clue_id": f"clue_{index:02d}",
-                    "title": title if index < len(raw_clues) else f"{title}",
+                    "title": title,
                     "type": self._text(raw.get("type"), default="物证"),
                     "is_key": index < 10,
                     "source_location_id": location["location_id"],
                     "source_npc_id": None,
-                    "highlight_text": self._text(raw.get("highlight_text"), default=title[:18]),
+                    "highlight_text": concrete_clue_title(self._text(raw.get("highlight_text"), default=title[:18]), index=index, keyword=keywords[index % len(keywords)], location_name=location["name"])[:18],
                     "display_text": self._text(raw.get("display_text"), raw.get("description"), default=f"你记录下“{title}”，它能补足案发时序。"),
                     "detail": self._text(raw.get("detail"), raw.get("description"), default=f"{title}与{location['name']}的细节相互印证，指向隐藏的转移路线。"),
                     "stage_available": [stage],
@@ -219,7 +233,7 @@ class CompactScriptSeedBuilder:
                     "label": clue["highlight_text"],
                     "description": f"一处与“{clue['title']}”相关的可疑痕迹。",
                     "clue_ids": [clue["clue_id"]],
-                    "required_stage": clue["stage_available"][0],
+                    "required_stage": None,
                     "required_clue_ids": [],
                     "investigation_text": f"你细查此处，发现了“{clue['title']}”。",
                     "repeat_text": "这里已经查验过，痕迹仍与先前记录一致。",
@@ -303,19 +317,121 @@ class CompactScriptSeedBuilder:
             for index in range(6)
         ]
 
-    def _build_deductions(self) -> list[dict[str, Any]]:
-        return [
-            {
-                "deduction_id": f"deduction_{index:02d}",
-                "question": f"第{index + 1}个疑点最可能由哪组证据支撑？",
-                "required_clue_ids": [f"clue_{index:02d}"],
-                "correct_clue_ids": [f"clue_{index:02d}", f"clue_{index + 1:02d}", f"clue_{index + 2:02d}"],
-                "wrong_feedback": "这些证据还不足以支撑这个判断。",
-                "success_text": "这组证据能够支撑该推理，并打开下一层疑点。",
-                "effects": {"flags": [f"deduction_{index:02d}_solved"], "scores": {"truth": 1}},
-            }
-            for index in range(8)
-        ]
+    def _normalize_key(self, value: Any) -> str:
+        return str(value or "").strip().replace(" ", "").replace("「", "").replace("」", "").replace("《", "").replace("》", "")
+
+    def _clue_ids_for_blueprint(self, blueprint: dict[str, Any], clues: list[dict[str, Any]]) -> list[str]:
+        title_to_ids: dict[str, list[str]] = {}
+        id_to_title: dict[str, str] = {}
+        for clue in clues:
+            clue_id = str(clue.get("clue_id", "")).strip()
+            title = self._normalize_key(clue.get("title"))
+            if not clue_id:
+                continue
+            id_to_title[clue_id] = title
+            if title:
+                title_to_ids.setdefault(title, []).append(clue_id)
+
+        references = (
+            self._string_list(blueprint.get("correct_clue_titles"))
+            or self._string_list(blueprint.get("clue_titles"))
+            or self._string_list(blueprint.get("evidence_titles"))
+            or self._string_list(blueprint.get("correct_clue_ids"))
+        )
+        matched: list[str] = []
+        for reference in references:
+            normalized = self._normalize_key(reference)
+            clue_id = ""
+            if reference in id_to_title:
+                clue_id = reference
+            elif normalized in title_to_ids:
+                clue_id = title_to_ids[normalized][0]
+            else:
+                for title, ids in title_to_ids.items():
+                    if normalized and (normalized in title or title in normalized):
+                        clue_id = ids[0]
+                        break
+            if clue_id and clue_id not in matched:
+                matched.append(clue_id)
+        return matched[:4]
+
+    def _deduction_from_blueprint(
+        self,
+        blueprint: dict[str, Any],
+        *,
+        index: int,
+        clue_ids: list[str],
+        clue_by_id: dict[str, dict[str, Any]],
+    ) -> dict[str, Any]:
+        titles = [self._text(clue_by_id[clue_id].get("title"), default=f"线索{index + 1}") for clue_id in clue_ids]
+        evidence = "」「".join(titles[:3])
+        default_question = f"「{evidence}」共同锁定了哪条案内行动链？"
+        return {
+            "deduction_id": f"deduction_{index:02d}",
+            "question": self._text(blueprint.get("question"), default=default_question),
+            "required_clue_ids": clue_ids[:1],
+            "correct_clue_ids": clue_ids,
+            "wrong_feedback": self._text(
+                blueprint.get("wrong_feedback"),
+                default=f"这几条证据还没有完整回答「{titles[0]}」牵出的案件问题。",
+            ),
+            "success_text": self._text(
+                blueprint.get("answer_summary"),
+                blueprint.get("success_text"),
+                blueprint.get("result_text"),
+                default=f"「{evidence}」已经互相印证，可以作为这一问题的完整证据链。",
+            ),
+            "effects": {"flags": [f"deduction_{index:02d}_solved"], "scores": {"truth": 1}},
+        }
+
+    def _build_deductions(self, clues: list[dict[str, Any]], seed: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+        deductions: list[dict[str, Any]] = []
+        clue_by_id = {str(clue.get("clue_id")): clue for clue in clues if clue.get("clue_id")}
+        used_groups: set[tuple[str, ...]] = set()
+
+        for blueprint in self._list_of_dicts((seed or {}).get("deduction_blueprints")):
+            clue_ids = self._clue_ids_for_blueprint(blueprint, clues)
+            if len(clue_ids) < 2:
+                continue
+            group_key = tuple(clue_ids)
+            if group_key in used_groups:
+                continue
+            deductions.append(
+                self._deduction_from_blueprint(
+                    blueprint,
+                    index=len(deductions),
+                    clue_ids=clue_ids,
+                    clue_by_id=clue_by_id,
+                )
+            )
+            used_groups.add(group_key)
+            if len(deductions) >= 8:
+                return deductions
+
+        max_index = min(len(clues) - 2, 16)
+        for index in range(max_index):
+            if len(deductions) >= 8:
+                break
+            clue_group = clues[index:index + 3]
+            clue_ids = [clue["clue_id"] for clue in clue_group]
+            group_key = tuple(clue_ids)
+            if group_key in used_groups:
+                continue
+            titles = [self._text(clue.get("title"), default=f"线索{index + 1}") for clue in clue_group]
+            evidence = "」「".join(titles)
+            deductions.append(
+                {
+                    "deduction_id": f"deduction_{len(deductions):02d}",
+                    "question": f"「{evidence}」共同指向案发前后的哪条关键事实？",
+                    "required_clue_ids": clue_ids[:1],
+                    "correct_clue_ids": clue_ids,
+                    "wrong_feedback": f"还缺能把「{titles[0]}」与另外两条线索连起来的证据。",
+                    "success_text": f"「{evidence}」已经互相印证，可以作为这一问题的完整证据链。",
+                    "effects": {"flags": [f"deduction_{len(deductions):02d}_solved"], "scores": {"truth": 1}},
+                }
+            )
+            used_groups.add(group_key)
+        return deductions
 
     def _build_chapter_sections(self, locations: list[dict[str, Any]]) -> list[dict[str, Any]]:
         sections: list[dict[str, Any]] = []
@@ -406,10 +522,10 @@ class CompactScriptSeedBuilder:
         for npc in npcs:
             appearance_lock.setdefault(npc["npc_id"], f"{npc['name']}：{npc['appearance']}")
         return {
-            "style_keywords": self._string_list(raw.get("style_keywords")) or [dynasty_name, "低饱和", "历史悬疑", "可调查场景"],
-            "forbidden_visuals": self._string_list(raw.get("forbidden_visuals")) or ["现代电线", "塑料", "水印", "空白背景", "错误朝代服饰"],
+            "style_keywords": self._string_list(raw.get("style_keywords")) or [dynasty_name, "低饱和", "写实工笔", "历史悬疑", "可调查场景", "统一角色风格"],
+            "forbidden_visuals": self._string_list(raw.get("forbidden_visuals")) or ["现代电线", "塑料", "水印", "空白背景", "错误朝代服饰", "动漫脸", "夸张卡通", "抽象时间线", "关系图", "实验室玻璃器皿", "锥形瓶", "烧杯", "试管", "现代玻璃瓶"],
             "color_script": self._text(raw.get("color_script"), default="冷雨、暗木、油灯暖色形成低饱和对比。"),
-            "camera": self._text(raw.get("camera"), default="平视调查视角，核心物件清晰可辨。"),
+            "camera": self._text(raw.get("camera"), default="平视调查视角，人物居中完整露出脸和上半身，核心线索物件靠近画面中部且清晰可辨。"),
             "era_feature_checklist": self._string_list(raw.get("era_feature_checklist")) or [f"{dynasty_name}服饰", "木构建筑", "纸本文书", "油灯烛火"],
             "appearance_lock": appearance_lock,
         }
@@ -433,7 +549,22 @@ class CompactScriptSeedBuilder:
             scene_npcs = [npc_by_id[npc_id] for npc_id in location["npc_ids"] if npc_id in npc_by_id]
             scene_clues = clues_by_location.get(location["location_id"], [])[:4]
             npc_names = "、".join(npc["name"] for npc in scene_npcs) or "相关人物"
-            clue_titles = "、".join(clue["title"] for clue in scene_clues) or "关键线索物件"
+            clue_titles = "、".join(
+                concrete_clue_visual_subject(clue["title"], index=clue_index, location_name=location["name"])
+                for clue_index, clue in enumerate(scene_clues)
+            ) or "关键线索物件"
+            clue_requirements = "；".join(
+                scene_clue_visual_requirement(clue, index=clue_index, location_name=location["name"])
+                for clue_index, clue in enumerate(scene_clues)
+            ) or "关键线索必须作为具体可见物件或痕迹出现在场景中"
+            clue_slot_lines = "; ".join(
+                prompt_line(
+                    clue_index,
+                    concrete_clue_visual_subject(clue["title"], index=clue_index, location_name=location["name"]),
+                    location["location_id"],
+                )
+                for clue_index, clue in enumerate(scene_clues)
+            ) or "use the declared safe hotspot slots"
             assets.append(
                 {
                     "asset_id": f"asset_scene_{index:02d}",
@@ -441,13 +572,25 @@ class CompactScriptSeedBuilder:
                     "owner_id": location["location_id"],
                     "title": f"{location['name']}主舞台图",
                     "prompt": (
-                        f"{dynasty_name}历史悬疑调查主舞台图，人物与场景一体生成，NPC自然处在同一透视和同一光源中。"
-                        f"地点：{location['name']}。场景内必须出现人物：{npc_names}。"
-                        f"可点击线索物件必须清晰可定位：{clue_titles}。"
+                        f"{dynasty_name}历史悬疑调查主舞台图，遵循本剧本 visual_style_guide 的统一历史悬疑插画风格。"
+                        "人物、地点和线索必须一体生成，NPC自然处在同一透视和同一光源中。"
+                        "画面必须完整展现场景，不要裁掉人物头部或脸；主人物靠近画面中部，完整露出整脸和上半身，不要巨大胸像裁切。"
+                        f"地点：{location['name']}。地点描述：{location['description']}。场景文字：{location['scene_text']}。场景内必须出现人物：{npc_names}。"
+                        f"可点击线索物件必须真实出现在场景里并靠近画面中部，清晰可定位、无遮挡、留出热点标注空间：{clue_titles}。"
+                        f"线索画面硬要求：{clue_requirements}。有尸体就画尸体或覆布尸身；有空盒就画打开的空木盒；有暗格就画打开暗格；有刀伤就画在尸身衣物和验尸痕迹上，不能只画一把刀。"
+                        f"Wide 16:9 private investigation tableau based on the actual named location, not the same generic courtyard each time; one primary living NPC is preferred, but a corpse required by clues must appear as evidence; never side profile, never back-facing; top-priority evidence slot contract {HOTSPOT_LAYOUT_VERSION}: {clue_slot_lines}. "
+                        "Do not draw background people, second person, rows of soldiers, guard corridors, horse teams, flags, banners, weapons, military staging, parade, or distant exterior establishing shot. "
+                        "Place evidence as physical props on natural scene surfaces such as a desk, counter, hidden compartment, floor, stone step, dock ground, body area, shelf, tray, or wall niche; never on sky, roof, high wall, plaque, banner, signboard, or text area. "
+                        "Dynasty prop audit: no mountains, no lakes, no cabins, no deer, no western scenery, no lab glassware, no conical flask, no beaker, no test tube, no modern glass bottle; use ceramic, lacquered wood, bamboo, cloth, bronze, iron, sealed paper, and oil lamps only. "
+                        "在人物附近的中景设置多个自然证物区，例如小桌、托盘、台阶、地面痕迹区、暗格、柜台或尸身旁，把这些线索作为分开的具体物件放进去。"
+                        "线索必须是具体物件或痕迹，不要抽象时间线、关系图、流程图或漂浮文字。"
+                        "统一遵循本剧本的历史悬疑插画/工笔混合风格，不要丑陋塑料感、廉价写实渲染、动漫脸、Q版、现代概念图或风格跳变。"
+                        "不要牌匾、横幅、竖幅、书法、可读文字、乱码或任何像文字的装饰。"
+                        "生成后自查：地点是否像该地点；人物是否整脸上半身完整可见；每个线索要素是否按标题和细节出现且靠近中部；风格是否遵循本剧本 visual_style_guide；图片是否成功。"
                         f"风格：{', '.join(style_guide['style_keywords'])}。"
                     ),
-                    "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度",
-                    "required_subjects": [*([npc["name"] for npc in scene_npcs]), *([clue["title"] for clue in scene_clues]), "NPC", "人物与场景一体生成", "线索", "可点击线索物件"],
+                    "negative_prompt": "现代物件，文字水印，空白背景，错误朝代服饰，低清晰度，裁头，裁脸，背身主角，背影，从背后看，遮脸，看向远方，侧脸，只有侧脸，第二个人，背景人物，远处人物，大军阵，士兵队列，大量人群，人群远景，马队，战场，旗帜，兵器，巨大胸像，方图构图，竖幅人像，黑边，抽象时间线，关系图，流程图，动漫脸，Q版，牌匾，门匾，横幅，书法，文字，乱码，山景，湖泊，木屋，鹿，西式风景，实验室玻璃器皿，锥形瓶，烧杯，试管，现代玻璃瓶",
+                    "required_subjects": [*([npc["name"] for npc in scene_npcs]), *([clue["title"] for clue in scene_clues]), *([scene_clue_visual_requirement(clue, index=clue_index, location_name=location["name"]) for clue_index, clue in enumerate(scene_clues)]), "NPC", "人物与场景一体生成", "线索", "可点击线索物件", "遵循本剧本visual_style_guide"],
                     "era_feature_checklist": style_guide["era_feature_checklist"],
                 }
             )
@@ -459,8 +602,8 @@ class CompactScriptSeedBuilder:
                     "asset_type": "npc",
                     "owner_id": npc["npc_id"],
                     "title": f"{npc['name']}人物图",
-                    "prompt": f"{dynasty_name}历史悬疑人物图，{npc['name']}，{npc['public_identity']}，{npc['appearance']}，低饱和写实。",
-                    "negative_prompt": "现代服饰，水印，空白背景，错误朝代",
+                    "prompt": f"{dynasty_name}历史悬疑人物图，{npc['name']}，{npc['public_identity']}，{npc['appearance']}，整脸居中完整，上半身完整可见，统一写实工笔低饱和风格，不要动漫脸。",
+                    "negative_prompt": "现代服饰，水印，空白背景，错误朝代，裁头，裁脸，动漫脸，Q版，夸张卡通",
                     "required_subjects": [npc["name"], npc["public_identity"], "时代服饰"],
                     "era_feature_checklist": style_guide["era_feature_checklist"],
                 }
@@ -468,15 +611,20 @@ class CompactScriptSeedBuilder:
 
         for index in range(6):
             clue = clues[index]
+            clue_subject = concrete_clue_visual_subject(clue["title"], index=index)
             assets.append(
                 {
                     "asset_id": f"asset_clue_{index:02d}",
                     "asset_type": "clue",
                     "owner_id": clue["clue_id"],
                     "title": f"{clue['title']}线索图",
-                    "prompt": f"{dynasty_name}历史悬疑线索物件特写，{clue['title']}，材质细节清晰，没有文字水印。",
-                    "negative_prompt": "现代物件，水印，空白图，错朝代",
-                    "required_subjects": [clue["title"], "线索物件", "材质细节"],
+                    "prompt": (
+                        f"{dynasty_name}历史悬疑线索物件特写，画面只表现一个具体可见物证：{clue_subject}。"
+                        "材质细节清晰，可作为线索卡缩略图；禁止把抽象线索画成时间线、时间轴、动机图、关系图、流程图或概念图；"
+                        "没有文字水印，没有可读正文，没有乱码。"
+                    ),
+                    "negative_prompt": "现代物件，水印，空白图，错朝代，时间线，时间轴，关系图，流程图，抽象图表，可读文字，乱码",
+                    "required_subjects": [clue_subject, "线索物件", "材质细节"],
                     "era_feature_checklist": style_guide["era_feature_checklist"],
                 }
             )
@@ -500,22 +648,59 @@ class CompactScriptSeedBuilder:
         positioning: list[dict[str, Any]] = []
         for location in locations:
             for local_index, hotspot in enumerate(location["hotspots"]):
-                global_index = int(hotspot["hotspot_id"].rsplit("_", 1)[1])
-                x = 0.16 + (local_index % 4) * 0.18
-                y = 0.28 + (local_index % 3) * 0.18
+                anchor = anchor_for_index(local_index, location["location_id"])
                 positioning.append(
                     {
                         "location_id": location["location_id"],
                         "hotspot_id": hotspot["hotspot_id"],
                         "visual_asset_id": location["visual_asset_id"],
                         "clue_id": hotspot["clue_ids"][0] if hotspot["clue_ids"] else None,
-                        "anchor_point": {"x": round(min(x + 0.04, 0.92), 4), "y": round(min(y + 0.04, 0.92), 4)},
-                        "bbox": {"x": round(x, 4), "y": round(y, 4), "width": 0.12, "height": 0.12},
+                        "anchor_point": anchor,
+                        "bbox": bbox_from_anchor(anchor),
                         "calibration_status": "pending",
                         "calibrated_against_path": None,
                     }
                 )
         return sorted(positioning, key=lambda item: int(item["hotspot_id"].rsplit("_", 1)[1]))
+
+    def _clamp_unit(self, value: float, low: float = 0.12, high: float = 0.88) -> float:
+        return max(low, min(high, value))
+
+    def _hotspot_base(self, text: str) -> tuple[float, float]:
+        if any(term in text for term in ("脚", "印", "辙", "泥", "灰", "血", "拖", "地", "痕")):
+            return 0.48, 0.7
+        if any(term in text for term in ("门", "窗", "墙", "匾", "帘", "栏", "井")):
+            return 0.74, 0.46
+        if any(term in text for term in ("书", "信", "册", "账", "令", "文", "图", "纸", "符", "印")):
+            return 0.42, 0.54
+        if any(term in text for term in ("杯", "盏", "药", "茶", "碗", "瓶", "袋", "箱", "柜")):
+            return 0.58, 0.58
+        if any(term in text for term in ("尸", "衣", "手", "人", "证言", "口供")):
+            return 0.34, 0.52
+        return 0.5, 0.56
+
+    def _hotspot_anchor(
+        self,
+        location_id: str,
+        hotspot: dict[str, Any],
+        local_index: int,
+        used_points: list[tuple[float, float]],
+    ) -> dict[str, float]:
+        text = f"{hotspot.get('label', '')}{hotspot.get('description', '')}{','.join(hotspot.get('clue_ids', []))}"
+        base_x, base_y = self._hotspot_base(text)
+        digest = hashlib.sha1(f"{location_id}:{hotspot.get('hotspot_id')}:{text}".encode("utf-8")).hexdigest()
+        seed = int(digest[:8], 16)
+        jitter_x = (((seed % 1000) / 999) - 0.5) * 0.24
+        jitter_y = ((((seed // 1000) % 1000) / 999) - 0.5) * 0.18
+        x = self._clamp_unit(base_x + jitter_x + ((local_index % 3) - 1) * 0.055)
+        y = self._clamp_unit(base_y + jitter_y + ((local_index // 3) - 1) * 0.05, 0.22, 0.8)
+        for attempt in range(8):
+            if all((x - prev_x) ** 2 + (y - prev_y) ** 2 >= 0.012 for prev_x, prev_y in used_points):
+                break
+            x = self._clamp_unit(x + (0.07 if attempt % 2 == 0 else -0.05))
+            y = self._clamp_unit(y + (0.055 if attempt % 3 == 0 else -0.045), 0.22, 0.8)
+        used_points.append((x, y))
+        return {"x": round(x, 4), "y": round(y, 4)}
 
     def _stage_for_clue(self, index: int) -> str:
         if index < 5:

@@ -239,7 +239,7 @@ def test_visual_status_and_fallback_asset_endpoints() -> None:
     status = client.get('/api/visual/status')
     assert status.status_code == 200
     payload = status.json()
-    assert payload['provider'] == 'siliconflow'
+    assert payload['provider'] == 'gpt-image-2'
     assert any(asset['asset_id'] == 'scene_bookshop_front_hall' for asset in payload['assets'])
 
     fallback = client.get('/api/visual/assets/scene_bookshop_front_hall')

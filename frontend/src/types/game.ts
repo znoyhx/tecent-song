@@ -189,6 +189,9 @@ export type DeductionSummary = {
   question: string;
   required_clue_ids: string[];
   correct_clue_ids: string[];
+  required_clue_count?: number;
+  discovered_evidence_count?: number;
+  evidence_hint?: string;
   wrong_feedback: string;
   success_text: string;
   effects: Record<string, unknown>;
@@ -197,6 +200,9 @@ export type DeductionSummary = {
 export type DeductionPrompt = {
   deduction_id: string;
   question: string;
+  required_clue_count?: number;
+  discovered_evidence_count?: number;
+  evidence_hint?: string;
 };
 
 export type DialogueTurn = {
