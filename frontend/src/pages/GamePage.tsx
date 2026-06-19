@@ -8,7 +8,7 @@ import { DemoEvidencePanel } from '../components/debug/DemoEvidencePanel';
 import { EndingPanel } from '../components/ending/EndingPanel';
 import { PhaserStage } from '../components/scene/PhaserStage';
 import { ScenePanel } from '../components/scene/ScenePanel';
-import { getTrustLabel, stageDescriptions } from '../store/gameStore';
+import { getTrustLabel } from '../store/gameStore';
 import type { DialogueMessageSource, NPCProfile, Scene, SessionSnapshot } from '../types/game';
 
 type GamePageProps = {
@@ -24,7 +24,7 @@ type GamePageProps = {
   onInspect: (sceneId: string, hotspotId: string, clueId?: string | null) => void;
   onSelectNpc: (npcId: string) => void;
   onSendDialogue: (npcId: string, message: string, presentedClueIds: string[], messageSource: DialogueMessageSource) => void;
-  onSubmitDeduction: (deductionId: string, selectedClueIds: string[]) => void;
+  onOrganizeCaseInference: (inferenceId: string, selectedClueIds: string[]) => void;
   onChoose: (choiceId: string) => void;
   onRestart: () => void;
   onToggleDebug?: () => void;
@@ -88,6 +88,25 @@ function npcDisplayImage(npc: NPCProfile): { url: string; source: 'scene-cutout'
   return { url: '', source: 'portrait' };
 }
 
+function isNpcInterrogable(npc: NPCProfile): boolean {
+  const directMarkers = ['死者', '受害者', '遇害者', '亡者', '尸体', '尸身', '遗体'];
+  const livingRelationMarkers = ['亲属', '家属', '兄', '弟', '妻', '夫', '子', '女', '父', '母', '友', '同僚', '随从'];
+  const identity = npc.public_identity ?? '';
+  const caseConnection = npc.case_connection ?? '';
+  const behavior = npc.event_behavior ?? '';
+  if (directMarkers.some((marker) => identity.includes(marker)) && !livingRelationMarkers.some((marker) => identity.includes(marker))) {
+    return false;
+  }
+  if (directMarkers.some((marker) => caseConnection.trim().startsWith(marker))) {
+    return false;
+  }
+  return !['已身亡', '已经身亡', '当场身亡', '遇害身亡', '中毒身亡', '暴毙', '被杀'].some((marker) => behavior.includes(marker));
+}
+
+function interrogableSceneNpcs(snapshot: SessionSnapshot): NPCProfile[] {
+  return snapshot.scene_npcs.filter(isNpcInterrogable);
+}
+
 function investigationProgress(snapshot: SessionSnapshot): number {
   const cluePool = new Set<string>();
   snapshot.available_scenes.forEach((scene) => {
@@ -103,6 +122,35 @@ function investigationProgress(snapshot: SessionSnapshot): number {
 function hasUndiscoveredSceneClue(scene: Scene, snapshot: SessionSnapshot): boolean {
   const discovered = new Set(snapshot.state.discovered_clue_ids);
   return scene.hotspots.some((hotspot) => hotspot.clue_ids.some((clueId) => !discovered.has(clueId)));
+}
+
+function buildTaskCards(snapshot: SessionSnapshot): Array<{ title: string; body: string; items?: string[] }> {
+  const currentSceneLeads = snapshot.scene.hotspots
+    .filter((hotspot) => hotspot.clue_ids.some((clueId) => !snapshot.state.discovered_clue_ids.includes(clueId)))
+    .slice(0, 4)
+    .map((hotspot) => hotspot.label);
+  const people = interrogableSceneNpcs(snapshot).slice(0, 3).map((npc) => npc.name);
+  const deductionItems = (snapshot.available_case_inferences ?? []).slice(0, 3).map((item) => item.title);
+  const cards = [
+    {
+      title: '眼下要做',
+      body: snapshot.current_goal,
+      items: currentSceneLeads.length > 0 ? currentSceneLeads.map((lead) => `查看「${lead}」`) : undefined,
+    },
+    {
+      title: '可追方向',
+      body: people.length > 0 ? `当前地点可先询问：${people.join('、')}。` : '当前地点暂无线索人物，换个场景继续查验。',
+      items: deductionItems.length > 0 ? deductionItems : undefined,
+    },
+    {
+      title: '案卷进展',
+      body: snapshot.clues.length > 0
+        ? `已记录 ${snapshot.clues.length} 条线索，最近发现「${snapshot.clues[snapshot.clues.length - 1].title}」。`
+        : '案卷还很干净，先从画面中发亮或有轮廓提示的位置查起。',
+      items: snapshot.combo_summaries.slice(-3).map((item) => item.result_title),
+    },
+  ];
+  return cards;
 }
 
 function isProfileRevealUnlocked(
@@ -140,7 +188,7 @@ function TopStatusBar({ snapshot }: { snapshot: SessionSnapshot }) {
         <strong>{snapshot.dynasty.name} · {snapshot.dynasty.period_label}</strong>
         <span>/ {snapshot.scene.name}</span>
         <span>身份：{identity}</span>
-        <span>当前目标：{snapshot.current_goal}</span>
+        <span>主线：{snapshot.current_goal}</span>
       </div>
       <div className="top-status-progress" aria-label="调查进度">
         <span>调查进度</span>
@@ -205,7 +253,7 @@ function LeftCommandBar({
   onToggleCollapsed: () => void;
 }) {
   const npcCount = Object.keys(snapshot.state.npc_trust).length || snapshot.scene_npcs.length;
-  const taskCount = snapshot.available_deductions.length + snapshot.available_choices.length;
+  const taskCount = (snapshot.available_case_inferences ?? []).length + snapshot.available_choices.length;
   const buttons = [
     { id: 'scenes' as const, title: '场景', status: `当前 ${snapshot.scene.name}`, icon: 'scene' as const },
     { id: 'people' as const, title: '人物', status: `关键人物 ${npcCount}`, icon: 'people' as const },
@@ -262,10 +310,11 @@ function SceneGridModal({ snapshot, busy, onClose, onEnterScene }: { snapshot: S
 }
 
 function PeopleModal({ snapshot, selectedNpcId, busy, onClose, onSelectNpc }: { snapshot: SessionSnapshot; selectedNpcId: string | null; busy: boolean; onClose: () => void; onSelectNpc: (npcId: string) => void }) {
+  const people = interrogableSceneNpcs(snapshot);
   return (
     <ModalFrame title="人物" subtitle="当前地点可盘问人物" onClose={onClose}>
       <div className="people-modal-list">
-        {snapshot.scene_npcs.length > 0 ? snapshot.scene_npcs.map((npc) => {
+        {people.length > 0 ? people.map((npc) => {
           const npcImage = npcDisplayImage(npc);
           const trust = snapshot.state.npc_trust[npc.npc_id] ?? npc.initial_trust;
           const relatedClues = snapshot.clues.filter((clue) => clue.source_npc_id === npc.npc_id);
@@ -301,28 +350,60 @@ function PeopleModal({ snapshot, selectedNpcId, busy, onClose, onSelectNpc }: { 
 }
 
 function TaskModal({ snapshot, onClose }: { snapshot: SessionSnapshot; onClose: () => void }) {
+  const taskCards = buildTaskCards(snapshot);
   return (
     <ModalFrame title="任务" subtitle={snapshot.stage_label} onClose={onClose}>
       <div className="task-modal-content">
-        <article>
-          <strong>当前目标</strong>
-          <p>{snapshot.current_goal}</p>
-          <span>{stageDescriptions[snapshot.state.current_stage] ?? '继续推进调查。'}</span>
-        </article>
-        <article>
-          <strong>可提交推理</strong>
-          {snapshot.available_deductions.length > 0 ? (
-            <ul>{snapshot.available_deductions.map((item) => <li key={item.deduction_id}>{item.question}</li>)}</ul>
-          ) : <p>暂无可提交疑团，继续收集证据。</p>}
-        </article>
-        <article>
-          <strong>已完成线索组合</strong>
-          {snapshot.combo_summaries.length > 0 ? (
-            <ul>{snapshot.combo_summaries.map((item) => <li key={item.combo_id}>{item.result_title}</li>)}</ul>
-          ) : <p>暂未形成线索组合。</p>}
-        </article>
+        {taskCards.map((card) => (
+          <article key={card.title}>
+            <strong>{card.title}</strong>
+            <p>{card.body}</p>
+            {card.items && card.items.length > 0 ? (
+              <ul>{card.items.map((item) => <li key={item}>{item}</li>)}</ul>
+            ) : null}
+          </article>
+        ))}
       </div>
     </ModalFrame>
+  );
+}
+
+function SceneHotspotQuickBar({
+  snapshot,
+  busy,
+  onInspect,
+}: {
+  snapshot: SessionSnapshot;
+  busy: boolean;
+  onInspect: (sceneId: string, hotspotId: string, clueId?: string | null) => void;
+}) {
+  const discovered = new Set(snapshot.state.discovered_clue_ids);
+  const hotspots = snapshot.scene.hotspots.slice(0, 5);
+  if (hotspots.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="scene-hotspot-quickbar" aria-label="当前场景可查线索">
+      <span>可查线索</span>
+      <div>
+        {hotspots.map((hotspot) => {
+          const completed = hotspot.clue_ids.length > 0 && hotspot.clue_ids.every((clueId) => discovered.has(clueId));
+          return (
+            <button
+              key={hotspot.hotspot_id}
+              type="button"
+              className={completed ? 'checked' : ''}
+              onClick={() => onInspect(snapshot.scene.scene_id, hotspot.hotspot_id, hotspot.clue_ids[0] ?? null)}
+              disabled={busy}
+            >
+              {hotspot.label}
+              {completed ? <em>已查</em> : null}
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -366,7 +447,7 @@ export function GamePage({
   onInspect,
   onSelectNpc,
   onSendDialogue,
-  onSubmitDeduction,
+  onOrganizeCaseInference,
   onChoose,
   onRestart,
   onToggleDebug,
@@ -461,9 +542,11 @@ export function GamePage({
         </section>
       ) : null}
 
+      <SceneHotspotQuickBar snapshot={snapshot} busy={busy} onInspect={onInspect} />
+
       <DialoguePanel
         snapshot={snapshot}
-        sceneNpcs={snapshot.scene_npcs}
+        sceneNpcs={interrogableSceneNpcs(snapshot)}
         dialogueTurns={snapshot.dialogue_turns}
         selectedNpcId={selectedNpcId}
         suggestedQuestions={suggestedQuestions}
@@ -486,7 +569,7 @@ export function GamePage({
           busy={busy}
           activeTab={investigationTab}
           onActiveTabChange={setInvestigationTab}
-          onSubmitDeduction={onSubmitDeduction}
+          onOrganizeCaseInference={onOrganizeCaseInference}
           onCollapse={() => setRightCollapsed(true)}
         />
       )}

@@ -7,9 +7,17 @@ import { Hotspot } from '../objects/Hotspot';
 import { NPCSprite } from '../objects/NPCSprite';
 
 type StagePoint = { x: number; y: number };
+type StageSize = { width: number; height: number };
 type ImageSize = { width: number; height: number };
 
 const defaultImageSize: ImageSize = { width: 1024, height: 1024 };
+
+const npcSceneCutoutAssetIds: Record<string, string> = {
+  npc_owner: 'npc_xu_owner_cutout',
+  npc_worker: 'npc_ashen_worker_cutout',
+  npc_scholar: 'npc_guwen_scholar_cutout',
+  npc_jinyiwei: 'npc_luzheng_jinyiwei_cutout',
+};
 
 const hotspotSlots: StagePoint[] = [
   { x: 0.2, y: 0.34 },
@@ -32,17 +40,6 @@ const hotspotSlots: StagePoint[] = [
   { x: 0.5, y: 0.58 },
   { x: 0.65, y: 0.58 },
   { x: 0.8, y: 0.58 },
-];
-
-const generatedHotspotSlotVariants: number[][] = [
-  [7, 11, 13, 17, 6, 12],
-  [6, 8, 12, 16, 11, 13],
-  [5, 9, 12, 18, 7, 17],
-  [11, 13, 17, 7, 6, 8],
-  [8, 12, 16, 6, 11, 18],
-  [6, 12, 18, 8, 11, 13],
-  [7, 13, 16, 11, 8, 12],
-  [11, 17, 8, 12, 6, 18],
 ];
 
 const hotspotPositionMap: Record<string, Record<string, StagePoint>> = {
@@ -141,12 +138,40 @@ function fitCover(image: Phaser.GameObjects.Image, width: number, height: number
 function imagePointToCanvas(point: StagePoint, width: number, height: number, sourceSize: ImageSize): StagePoint {
   const sourceWidth = Math.max(sourceSize.width, 1);
   const sourceHeight = Math.max(sourceSize.height, 1);
-  const scale = Math.min(width / sourceWidth, height / sourceHeight);
+  const scale = Math.max(width / sourceWidth, height / sourceHeight);
   const renderedWidth = sourceWidth * scale;
   const renderedHeight = sourceHeight * scale;
   return {
     x: (width - renderedWidth) / 2 + point.x * renderedWidth,
     y: (height - renderedHeight) / 2 + point.y * renderedHeight,
+  };
+}
+
+function normalizedBoxToCanvasSize(
+  box: Scene['hotspots'][number]['bbox'],
+  width: number,
+  height: number,
+  sourceSize: ImageSize,
+): StageSize | null {
+  if (!box || box.width <= 0 || box.height <= 0) {
+    return null;
+  }
+  const sourceWidth = Math.max(sourceSize.width, 1);
+  const sourceHeight = Math.max(sourceSize.height, 1);
+  const scale = Math.max(width / sourceWidth, height / sourceHeight);
+  return {
+    width: Math.max(52, box.width * sourceWidth * scale),
+    height: Math.max(44, box.height * sourceHeight * scale),
+  };
+}
+
+function normalizedBoxCenter(box: Scene['hotspots'][number]['bbox']): StagePoint | null {
+  if (!box || box.width <= 0 || box.height <= 0) {
+    return null;
+  }
+  return {
+    x: Phaser.Math.Clamp(box.x + box.width / 2, 0, 1),
+    y: Phaser.Math.Clamp(box.y + box.height / 2, 0, 1),
   };
 }
 
@@ -158,6 +183,10 @@ function resolveSceneImage(scene: Scene): string {
 }
 
 function resolveNpcImage(npc: NPCProfile): string {
+  const cutoutAssetId = npcSceneCutoutAssetIds[npc.npc_id];
+  if (cutoutAssetId) {
+    return resolveApiUrl(`/api/visual/assets/${cutoutAssetId}`);
+  }
   const directUrl = npc.portraitUrl ?? npc.fallbackPortraitUrl ?? npc.imageUrl ?? npc.avatarUrl;
   if (directUrl) {
     return resolveApiUrl(directUrl);
@@ -172,8 +201,13 @@ function resolveNpcImage(npc: NPCProfile): string {
 }
 
 function calibratedHotspotPoint(hotspot: Scene['hotspots'][number]): StagePoint | null {
+  const approved = hotspot.calibration_status === 'approved' || hotspot.calibration_status === 'manual_approved';
+  const finalCenter = normalizedBoxCenter(hotspot.final_bbox ?? hotspot.bbox);
+  if (finalCenter && approved) {
+    return finalCenter;
+  }
   const point = hotspot.anchor_point;
-  if (!point || hotspot.calibration_status !== 'approved') {
+  if (!point || !approved) {
     return null;
   }
   if (point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) {
@@ -209,10 +243,6 @@ function dedupedSceneHotspots(hotspots: Scene['hotspots']): Scene['hotspots'] {
 }
 
 function generatedHotspotPoint(sceneId: string, hotspot: Scene['hotspots'][number], index: number): StagePoint {
-  if (index >= 0) {
-    const variant = generatedHotspotSlotVariants[generatedSceneVariantIndex(sceneId)];
-    return hotspotSlots[variant[index % variant.length] % hotspotSlots.length];
-  }
   const text = `${sceneId}:${hotspot.hotspot_id}:${hotspot.label}:${hotspot.description ?? ''}:${hotspot.clue_ids.join('|')}`;
   let hash = 2166136261;
   for (let charIndex = 0; charIndex < text.length; charIndex += 1) {
@@ -234,28 +264,14 @@ function generatedHotspotPoint(sceneId: string, hotspot: Scene['hotspots'][numbe
     base = { x: 0.34, y: 0.52 };
   }
 
-  const jitterX = (((hash & 0xff) / 255) - 0.5) * 0.24;
-  const jitterY = ((((hash >> 8) & 0xff) / 255) - 0.5) * 0.18;
-  const ringOffsetX = ((index % 3) - 1) * 0.055;
-  const ringOffsetY = ((Math.floor(index / 3) % 3) - 1) * 0.05;
+  const jitterX = (((hash & 0xff) / 255) - 0.5) * 0.32;
+  const jitterY = ((((hash >> 8) & 0xff) / 255) - 0.5) * 0.24;
+  const ringOffsetX = ((index % 3) - 1) * 0.075;
+  const ringOffsetY = ((Math.floor(index / 3) % 3) - 1) * 0.07;
   return {
     x: Phaser.Math.Clamp(base.x + jitterX + ringOffsetX, 0.14, 0.86),
     y: Phaser.Math.Clamp(base.y + jitterY + ringOffsetY, 0.24, 0.78),
   };
-}
-
-function generatedSceneVariantIndex(sceneId: string): number {
-  const pieces = sceneId.split('_');
-  const tail = pieces[pieces.length - 1] ?? '';
-  const numeric = Number.parseInt(tail, 10);
-  if (Number.isFinite(numeric)) {
-    return numeric % generatedHotspotSlotVariants.length;
-  }
-  let hash = 0;
-  for (let index = 0; index < sceneId.length; index += 1) {
-    hash = (hash + (index + 1) * sceneId.charCodeAt(index)) % generatedHotspotSlotVariants.length;
-  }
-  return hash;
 }
 
 export class MainScene extends Phaser.Scene {
@@ -382,14 +398,14 @@ export class MainScene extends Phaser.Scene {
         width: image.width || defaultImageSize.width,
         height: image.height || defaultImageSize.height,
       };
-      fitContain(image, width, height);
+      fitCover(image, width, height);
       const backdrop = this.add.image(0, 0, key).setOrigin(0.5);
       fitCover(backdrop, width, height);
-      backdrop.setTint(0x2b211c).setAlpha(0.48);
+      backdrop.setTint(0x2b211c).setAlpha(0.24);
       const matte = this.add.rectangle(width / 2, height / 2, width, height, 0x080709, 1);
-      const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x080709, 0.08);
-      const lowerShade = this.add.rectangle(width / 2, height * 0.86, width, height * 0.3, 0x080709, 0.18);
-      const sideShade = this.add.rectangle(width * 0.52, height / 2, width, height, 0x020202, 0.04);
+      const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x080709, 0.02);
+      const lowerShade = this.add.rectangle(width / 2, height * 0.86, width, height * 0.3, 0x080709, 0.1);
+      const sideShade = this.add.rectangle(width * 0.52, height / 2, width, height, 0x020202, 0.02);
       this.backgroundLayer.add([matte, backdrop, image, overlay, sideShade, lowerShade]);
     });
   }
@@ -429,8 +445,8 @@ export class MainScene extends Phaser.Scene {
       return;
     }
 
-    const maxHeight = Math.min(360, Math.max(220, height * 0.28));
-    const maxWidth = Math.min(220, Math.max(148, width / Math.max(count + 5.4, 6.6)));
+    const maxHeight = Math.min(430, Math.max(260, height * 0.42));
+    const maxWidth = Math.min(280, Math.max(170, width / Math.max(count + 4.2, 5.2)));
     const scenePlacements = npcPositionMap[snapshot.scene.scene_id] ?? {};
 
     snapshot.scene_npcs.forEach((npc, index) => {
@@ -448,10 +464,20 @@ export class MainScene extends Phaser.Scene {
         disabled: busy,
         maxWidth,
         maxHeight,
-        integratedScene: true,
+        integratedScene: false,
       });
       this.npcObjects.set(npc.npc_id, npcObject);
       this.characterLayer?.add(npcObject);
+
+      const imageUrl = resolveNpcImage(npc);
+      if (imageUrl) {
+        const key = `npc-${npc.npc_id}-${hashText(imageUrl)}`;
+        this.loadImageTexture(key, imageUrl, () => {
+          if (this.renderToken === token && npcObject.active) {
+            npcObject.setImageKey(key);
+          }
+        });
+      }
     });
   }
 
@@ -470,10 +496,16 @@ export class MainScene extends Phaser.Scene {
       const point = imagePointToCanvas(slot, width, height, this.backgroundImageSize);
       const x = Phaser.Math.Clamp(point.x, minInteractiveX, width - 42);
       const y = Phaser.Math.Clamp(point.y, minInteractiveY, maxInteractiveY);
+      const hitSize = normalizedBoxToCanvasSize(hotspot.final_bbox ?? hotspot.bbox, width, height, this.backgroundImageSize);
+      const visualSize = normalizedBoxToCanvasSize(hotspot.visual_bbox ?? hotspot.final_bbox ?? hotspot.bbox, width, height, this.backgroundImageSize);
       const hotspotObject = new Hotspot(this, x, y, {
         sceneId: snapshot.scene.scene_id,
         hotspot,
         disabled: busy,
+        hitWidth: hitSize ? Phaser.Math.Clamp(hitSize.width, 120, Math.max(160, width * 0.22)) : 132,
+        hitHeight: hitSize ? Phaser.Math.Clamp(hitSize.height, 68, Math.max(96, height * 0.2)) : 78,
+        visualWidth: visualSize ? Phaser.Math.Clamp(visualSize.width, 96, Math.max(140, width * 0.2)) : 116,
+        visualHeight: visualSize ? Phaser.Math.Clamp(visualSize.height, 52, Math.max(84, height * 0.18)) : 62,
       });
       this.hotspotObjects.set(hotspot.hotspot_id, hotspotObject);
       this.hotspotLayer?.add(hotspotObject);

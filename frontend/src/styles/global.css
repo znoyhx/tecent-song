@@ -2620,8 +2620,66 @@ textarea::placeholder { color: #907e67; }
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(2, 2, 3, .66) 0, rgba(2, 2, 3, .18) 15%, transparent 30%, transparent 72%, rgba(2, 2, 3, .2) 84%, rgba(2, 2, 3, .68) 100%),
-    linear-gradient(180deg, rgba(2, 2, 3, .68) 0, rgba(2, 2, 3, .08) 16%, transparent 48%, rgba(2, 2, 3, .1) 68%, rgba(2, 2, 3, .7) 100%);
+    linear-gradient(90deg, rgba(2, 2, 3, .42) 0, rgba(2, 2, 3, .12) 15%, transparent 30%, transparent 72%, rgba(2, 2, 3, .12) 84%, rgba(2, 2, 3, .44) 100%),
+    linear-gradient(180deg, rgba(2, 2, 3, .44) 0, rgba(2, 2, 3, .05) 16%, transparent 48%, rgba(2, 2, 3, .07) 68%, rgba(2, 2, 3, .48) 100%);
+}
+
+.scene-hotspot-quickbar {
+  position: absolute;
+  z-index: 8;
+  left: calc(var(--left-rail-width) + 38px);
+  right: calc(var(--right-panel-width) + 38px);
+  bottom: calc(var(--dialogue-height) + 28px);
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  border: 1px solid rgba(235, 190, 116, .28);
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: linear-gradient(180deg, rgba(17, 13, 11, .86), rgba(8, 7, 7, .72));
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 228, 184, .08);
+  backdrop-filter: blur(10px);
+}
+
+.scene-hotspot-quickbar > span {
+  color: #f1c77e;
+  font-size: .92rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.scene-hotspot-quickbar > div {
+  min-width: 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.scene-hotspot-quickbar button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  border: 1px solid rgba(236, 193, 122, .36);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #fff0d0;
+  background: rgba(91, 49, 29, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 232, 186, .12);
+}
+
+.scene-hotspot-quickbar button.checked {
+  color: #d4bea0;
+  border-color: rgba(205, 172, 122, .2);
+  background: rgba(24, 20, 17, .64);
+}
+
+.scene-hotspot-quickbar button em {
+  margin-left: 6px;
+  color: #9fc58f;
+  font-size: .8rem;
+  font-style: normal;
 }
 
 .game-top-status {
@@ -3122,6 +3180,19 @@ textarea::placeholder { color: #907e67; }
   border-radius: 8px;
   padding: 12px;
   background: rgba(31, 23, 18, .64);
+}
+
+.completed-deduction-list article button {
+  border: 1px solid rgba(222, 178, 116, .18);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: #f1d7aa;
+  background: rgba(83, 54, 36, .42);
+}
+
+.completed-deduction-list article.active-person-note {
+  border-color: rgba(215, 167, 95, .42);
+  background: rgba(66, 45, 29, .72);
 }
 
 .completed-deduction-list p,
